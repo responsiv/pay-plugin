@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Invoice
+
+# Model Form Field configuration
+form: @/plugins/responsiv/pay/models/invoice/fields.yaml
+
+# Model Class name
+modelClass: Responsiv\Pay\Models\Invoice
+
+# Default redirect location
+defaultRedirect: responsiv/pay/invoices
+
+# Create page
+create:
+    title: Create Invoices
+    redirect: responsiv/pay/invoices/update/:id
+    redirectClose: responsiv/pay/invoices
+
+# Update page
+update:
+    title: Edit Invoices
+    redirect: responsiv/pay/invoices
+    redirectClose: responsiv/pay/invoices
+
+# Preview page
+preview:
+    title: Preview Invoices

@@ -1,0 +1,82 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        invisible: true
+
+    user_ip:
+        label: IP Address
+        invisible: true
+
+    first_name:
+        label: First name
+
+    last_name:
+        label: Last name
+        invisible: true
+
+    total:
+        label: Total
+
+    subtotal:
+        label: Subtotal
+
+    email:
+        label: Email
+        invisible: true
+
+    phone:
+        label: Phone
+        invisible: true
+
+    company:
+        label: Company
+        invisible: true
+
+    street_addr:
+        label: Address
+        invisible: true
+
+    city:
+        label: City
+        invisible: true
+
+    zip:
+        label: Zip
+        invisible: true
+
+    state:
+        label: State
+        relation: state
+        select: @name
+        invisible: true
+
+    country:
+        label: Country
+        relation: country
+        select: @name
+        invisible: true
+
+    payment_type:
+        label: Gateway
+        relation: payment_type
+        select: @name
+
+    processed_at:
+        label: Processed at
+        type: date
+
+    status_updated_at:
+        label: Status updated
+        type: date
+
+    sent_at:
+        label: Sent date
+        type: date
+
+    due_at:
+        label: Due date
+        type: date

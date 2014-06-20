@@ -1,0 +1,73 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    items:
+        label: Invoice Items
+        type: datagrid
+        columns:
+            description:
+                title: Description
+
+            quantity:
+                title: Quantity
+                type: number
+                width: 100
+
+            price:
+                title: Unit Price
+                type: number
+                width: 100
+
+            discount:
+                title: Discount (%)
+                type: number
+                width: 100
+
+            total:
+                title: Amount
+                type: number
+                width: 100
+                readOnly: true
+
+tabs:
+    fields:
+        payment_type:
+            label: Payment Gateway
+            type: relation
+            tab: Invoice Details
+            span: left
+
+        is_tax_exempt:
+            label: Tax exempt
+            comment: Tick this checkbox if the tax should not be applied to this invoice
+            type: checkbox
+            tab: Invoice Details
+            span: right
+
+        first_name:
+            label: First name
+            tab: Billing Details
+            span: left
+
+        last_name:
+            label: Surname
+            tab: Billing Details
+            span: right
+
+        email:
+            label: Email
+            tab: Billing Details
+
+        company:
+            label: Company
+            tab: Billing Details
+            span: left
+
+        phone:
+            label: Phone
+            tab: Billing Details
+            span: right
+
+

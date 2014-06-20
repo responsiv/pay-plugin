@@ -1,0 +1,23 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    name:
+        label: Name
+        searchable: true
+
+    gateway_name:
+        label: Gateway Name
+
+    description:
+        label: Description
+        searchable: true
+
+    is_enabled:
+        label: Enabled
+        type: switch
+
+    is_default:
+        label: Default
+        type: switch

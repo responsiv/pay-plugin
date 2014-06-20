@@ -1,0 +1,54 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    rates:
+        label: Rates
+        type: datagrid
+            options:
+                sortable: true
+                scrollable: true
+                allowImport: true
+                allowExport: true
+                exportFileName: tax-table
+            columns:
+                country:
+                    title: Country Code
+                    type: text
+                    autocomplete: remote
+                    autocompleteAllowCustom: true
+                    minLength: 0
+                    width: 100
+
+                state:
+                    title: State Code
+                    autocomplete: remote
+                    autocompleteAllowCustom: true
+                    minLength: 0
+
+                zip:
+                    title: Zip
+                    width: 100
+
+                city:
+                    title: City
+
+                rate:
+                    title: Rate %
+                    width: 60
+                    align: right
+
+                priority:
+                    title: Priority
+                    width: 80
+                    align: right
+
+                tax_name:
+                    title: Tax name
+                    width: 80
+
+                is_compound:
+                    title: Compound
+                    width: 80
+                    type: checkbox
