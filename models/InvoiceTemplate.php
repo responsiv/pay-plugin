@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Models;
 
+use App;
 use File;
 use Model;
 use October\Rain\Syntax\Parser;
@@ -58,6 +59,22 @@ class InvoiceTemplate extends Model
     public function beforeSave()
     {
         $this->makeSyntaxFields($this->content_html);
+    }
+
+    public function renderInvoice($invoice)
+    {
+        $twig = App::make('twig.string');
+        $parser = $this->getSyntaxParser($this->content_html);
+        $invoiceData = $this->getSyntaxData();
+        $invoiceTemplate = $parser->render($invoiceData);
+
+        $twigData = [
+            'invoice' => $invoice,
+            'css' => $this->content_css
+        ];
+
+        $twigTemplate = $twig->render($invoiceTemplate, $twigData);
+        return $twigTemplate;
     }
 
 }

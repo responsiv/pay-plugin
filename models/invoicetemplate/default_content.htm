@@ -1,4 +1,108 @@
-<h3>Invoice {{ invoice_number }}</h3>
-<h5>{text name="company_name" label="Company Name" span="left"}</h5>
-{fileupload name="company_logo" label="Company Logo" span="right"}noimage.jpg{/fileupload}
-<div>{textarea name="company_address" label="Address details" comment="Enter the complete contact details as it should appear on the invoice"}{/textarea}</div>
+<html>
+    <head>
+        <style type="text/css" media="screen">
+            {{ css }}
+        </style>
+    </head>
+    <body>
+
+        <table class="invoice-table invoice-header">
+            <tr>
+                <td>
+                    <img src="{fileupload name="company_logo" label="Company Logo" span="right"}http://octobercms.com/themes/website/assets/images/logo.png{/fileupload}" alt="" />
+                </td>
+                <td>
+                    <div class="invoice-header-number">Invoice #{{ invoice.id }}</div>
+                    <div class="invoice-header-date">10th March 2020</div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="invoice-table invoice-details">
+            <tr>
+                <td>
+                    <div class="invoice-client-label">Customer</div>
+                    <div class="invoice-client-details">
+                        RedDog Media<br />
+                        Attention: Mr Oizo<br />
+                        101 Street Place<br />
+                        Sydney, NSW 2000<br />
+                        Australia<br />
+                        <br />
+                        ABN: 45 123 456 789
+                    </div>
+                </td>
+                <td>
+                    <div class="invoice-company">
+                        <div class="invoice-company-name">
+                            {text name="company_name" label="Company Name" span="left"}Acme Incorporated{/text}
+                        </div>
+                        <div class="invoice-company-details">
+                            {textarea name="company_address" label="Address details" size="small" comment="Enter the complete contact details as it should appear on the invoice"}
+695 Shoehorn Ave
+Sweet Darling Station
+Pitt Bottom, NSW 2022
+Australia
+                            {/textarea}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <br /><br />
+
+        <table class="invoice-table invoice-items">
+            <tr>
+                <th class="invoice-item-quantity">Qty</th>
+                <th class="invoice-item-description">Description</th>
+                <th class="invoice-item-price">Unit Price</th>
+                <th class="invoice-item-tax">Tax</th>
+                <th class="invoice-item-total">Amount</th>
+            </tr>
+
+            {% for item in invoice.items %}
+                <tr>
+                    <td class="invoice-item invoice-item-quantity">{{ item.quantity }}</td>
+                    <td class="invoice-item invoice-item-description">{{ item.description }}</td>
+                    <td class="invoice-item invoice-item-price">{{ item.price }}</td>
+                    <td class="invoice-item invoice-item-tax">{{ item.tax }}</td>
+                    <td class="invoice-item invoice-item-total">{{ item.total }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4" class="invoice-end-label invoice-subtotal-label">Subtotal</td>
+                <td class="invoice-end-amount invoice-subtotal-amount">1898.00</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="invoice-end-label invoice-tax-label">Total Tax</td>
+                <td class="invoice-end-amount invoice-tax-amount">0.00</td>
+            </tr>
+            <tr>
+                <td colspan="3">&nbsp;</td>
+                <td class="invoice-end-label invoice-total-label">Total</td>
+                <td class="invoice-end-amount invoice-total-amount">1898.00</td>
+            </tr>
+        </table>
+
+        <br /><br />
+
+        <table class="invoice-table invoice-footer">
+            <tr>
+                <td>
+                    <div class="invoice-due-date">Due Date: 4th July 2020</div>
+                    <div class="invoice-thanks">Thank you for your business.</div>
+                </td>
+                <td>
+                    <div class="invoice-payment-label">Payment Advice</div>
+                    <div class="invoice-payment-advice">
+                        {textarea name="payment_advice" label="Payment advice" size="small"}
+                            Please send full amount to via any of our accepted Payment methods
+                        {/textarea}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </body>
+</html>

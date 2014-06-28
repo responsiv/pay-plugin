@@ -29,11 +29,11 @@ class InvoiceTemplates extends Controller
     }
 
     /**
-     * Add available permission fields to the User form.
+     * Add dynamic syntax fields
      */
     protected function formExtendFields($host)
     {
-        $fields = $host->model->getSyntaxFields();
+        $fields = $host->model->getFormSyntaxFields();
         if (!is_array($fields)) return;
 
         $defaultTab = 'Invoice';

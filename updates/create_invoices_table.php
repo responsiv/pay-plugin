@@ -12,6 +12,7 @@ class CreateInvoicesTable extends Migration
         {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->integer('template_id')->unsigned()->nullable()->index();
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->string('user_ip', 15)->nullable();
             $table->string('first_name', 100)->nullable();

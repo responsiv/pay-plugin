@@ -1,3 +1,8 @@
+* {
+    color: #333;
+    font-family: sans-serif;
+}
+
 a, a:hover {
     text-decoration: none;
     color: #0862A2;
@@ -9,6 +14,147 @@ td, tr, th, table {
     margin: 0px;
 }
 
-p {
-    margin: 10px 0;
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/*
+ * Invoice Header
+ */
+
+.invoice-header {
+    border-bottom: 2px solid #ededed;
+}
+
+.invoice-header td {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.invoice-header-number,
+.invoice-header-date {
+    text-align: right;
+}
+
+.invoice-header-number {
+    color: #555;
+    font-size: 38px;
+}
+.invoice-header-date {
+    color: #999;
+    font-size: 21px;
+}
+
+/*
+ * Invoice Details
+ */
+
+.invoice-details td {
+    vertical-align: top;
+    padding-top: 20px;
+    width: 50%;
+}
+
+.invoice-company {
+    background-color: #f5f5f5;
+    border: 2px solid #e3e3e3;
+    padding: 20px;
+    float: right;
+}
+
+.invoice-company-name,
+.invoice-company-details {
+    text-align: right;
+}
+
+.invoice-company-name,
+.invoice-client-label {
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+/*
+ * Invoice Items
+ */
+
+.invoice-items th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom: 3px solid #ddd;
+}
+
+.invoice-items td {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.invoice-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.invoice-item-quantity {
+    width: 50px;
+    text-align: right;
+}
+
+.invoice-item-description {
+    text-align: left;
+}
+
+.invoice-item-price {
+    text-align: right;
+}
+
+.invoice-item-tax {
+    text-align: right;
+}
+
+.invoice-item-total {
+    text-align: right;
+}
+
+.invoice-end-label,
+.invoice-end-amount {
+    text-align: right;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.invoice-subtotal-label,
+.invoice-subtotal-amount {
+    padding-top: 20px;
+}
+
+.invoice-total-label,
+.invoice-total-amount {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 3px solid #ddd;
+    font-weight: bold;
+}
+
+/*
+ * Invoice Footer
+ */
+
+.invoice-footer {
+    border-top: 2px solid #ededed;
+}
+
+.invoice-footer td {
+    vertical-align: top;
+    padding-top: 20px;
+    width: 50%;
+}
+
+.invoice-payment-label,
+.invoice-due-date {
+    font-size: 20px;
+    color: #555;
+    padding-bottom: 5px;
 }

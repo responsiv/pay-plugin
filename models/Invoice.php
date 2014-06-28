@@ -41,6 +41,7 @@ class Invoice extends Model
     public $belongsTo = [
         'user' => ['RainLab\User\Models\User'],
         'status' => ['Responsiv\Pay\Models\InvoiceStatus'],
+        'template' => ['Responsiv\Pay\Models\InvoiceTemplate'],
         'payment_type' => ['Responsiv\Pay\Models\Type'],
     ];
 
