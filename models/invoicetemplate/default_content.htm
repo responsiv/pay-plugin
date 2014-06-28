@@ -14,7 +14,7 @@
                     </td>
                     <td>
                         <div class="invoice-header-number">Invoice #{{ invoice.id }}</div>
-                        <div class="invoice-header-date">10th March 2020</div>
+                        <div class="invoice-header-date">{{ invoice.created_at.toFormattedDateString }}</div>
                     </td>
                 </tr>
             </table>
@@ -24,11 +24,11 @@
                     <td>
                         <div class="invoice-client-label">Customer</div>
                         <div class="invoice-client-details">
-                            RedDog Media<br />
-                            Attention: Mr Oizo<br />
-                            101 Street Place<br />
-                            Sydney, NSW 2000<br />
-                            Australia<br />
+                            {{ invoice.company }}<br />
+                            Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
+                            {{ invoice.street_addr }}<br />
+                            {{ invoice.city }}, {{ invoice.state.name }} {{ invoice.zip }}<br />
+                            {{ invoice.country.name }}<br />
                             <br />
                             ABN: 45 123 456 789
                         </div>
@@ -40,10 +40,10 @@
                             </div>
                             <div class="invoice-company-details">
                                 {textarea name="company_address" label="Address details" size="small" comment="Enter the complete contact details as it should appear on the invoice"}
-    695 Shoehorn Ave
-    Sweet Darling Station
-    Pitt Bottom, NSW 2022
-    Australia
+695 Shoehorn Ave
+Sweet Darling Station
+Pitt Bottom, NSW 2022
+Australia
                                 {/textarea}
                             </div>
                         </div>
