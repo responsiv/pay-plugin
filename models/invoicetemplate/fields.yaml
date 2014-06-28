@@ -4,15 +4,21 @@
 
 tabs:
     fields:
+
+        # Reserved for future use
         name:
             label: Name
             tab: Invoice
             span: left
+            cssClass: hidden
 
+        # Reserved for future use
         code:
             label: Code
             tab: Invoice
             span: right
+            hidden: true
+            cssClass: hidden
 
         content_html:
             type: codeeditor

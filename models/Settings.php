@@ -16,7 +16,7 @@ class Settings extends Model
         $this->currency_symbol = '$';
         $this->decimal_point = '.';
         $this->thousand_separator = ',';
-        $this->place_sign_before = true;
+        $this->place_symbol_before = true;
     }
 
     /**
@@ -42,11 +42,11 @@ class Settings extends Model
 
         $number = number_format($number, $decimals, $settings->decimal_point, $settings->thousand_separator);
 
-        if ($settings->place_sign_before) {
-            return $negativeSymbol . $settings->sign . $number;
+        if ($settings->place_symbol_before) {
+            return $negativeSymbol . $settings->currency_symbol . $number;
         }
         else {
-            return $negativeSymbol . $number . $settings->sign;
+            return $negativeSymbol . $number . $settings->currency_symbol;
         }
     }
 

@@ -35,7 +35,7 @@ tabs:
       span: auto
       tab: Currency
 
-    place_sign_before:
+    place_symbol_before:
       label: Place symbol before number
       type: checkbox
       span: auto

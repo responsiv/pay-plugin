@@ -25,20 +25,26 @@ class Invoices extends Controller
         BackendMenu::setContext('Responsiv.Pay', 'pay', 'invoices');
     }
 
+    public function preview($recordId = null, $context = null)
+    {
+        $this->bodyClass = 'slim-container';
+        return $this->getClassExtension('Backend.Behaviors.FormController')->preview($recordId, $context);
+    }
+
     /**
      * Add the custom invoice partial to the preview form
      */
-    protected function formExtendFieldsBefore($host)
-    {
-        if ($host->getContext() != 'preview') return;
+    // protected function formExtendFieldsBefore($host)
+    // {
+    //     if ($host->getContext() != 'preview') return;
 
-        $fields = [
-            'invoice_iframe' => [
-                'tab' => 'invoice',
-                'type' => 'partial',
-            ]
-        ];
+    //     $fields = [
+    //         'invoice_iframe' => [
+    //             'tab' => 'invoice',
+    //             'type' => 'partial',
+    //         ]
+    //     ];
 
-        $host->addTabFields($fields, 'primary');
-    }
+    //     $host->addTabFields($fields, 'primary');
+    // }
 }

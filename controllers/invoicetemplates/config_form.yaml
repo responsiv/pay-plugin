@@ -16,6 +16,6 @@ defaultRedirect: responsiv/pay/invoicetemplates
 
 # Update page
 update:
-    title: Edit InvoicesTemplates
+    title: Edit Invoice Template
     redirect: responsiv/pay/invoicetemplates
-    redirectClose: responsiv/pay/invoicetemplates
+    redirectClose: system/settings

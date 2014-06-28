@@ -14,6 +14,10 @@ td, tr, th, table {
     margin: 0px;
 }
 
+.responsiv-pay-invoice {
+    min-width: 680px;
+}
+
 .invoice-table {
     width: 100%;
     border-collapse: collapse;

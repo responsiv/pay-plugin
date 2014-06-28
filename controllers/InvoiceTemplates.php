@@ -20,7 +20,7 @@ class InvoiceTemplates extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Responsiv.Pay', 'pay', 'invoicetemplates');
+        BackendMenu::setContext('October.System', 'system', 'settings');
     }
 
     public function index()
