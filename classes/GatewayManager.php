@@ -1,7 +1,12 @@
 <?php namespace Responsiv\Pay\Classes;
 
+use Str;
+use File;
 use Response;
+use Cms\Classes\Theme;
+use Cms\Classes\Partial;
 use System\Classes\PluginManager;
+use Responsiv\Pay\Models\Type as TypeModel;
 
 /**
  * Manages payment gateways
@@ -186,6 +191,57 @@ class GatewayManager
         }
 
         return Response::make('Access Forbidden', '403');
+    }
+
+
+    //
+    // Partials
+    //
+
+    /**
+     * Loops over each payment type and ensures the editing theme has a payment form partial,
+     * if the partial does not exist, it will create one.
+     * @return void
+     */
+    public static function createPartials()
+    {
+        $partials = Partial::lists('baseFileName', 'baseFileName');
+        $paymentTypes = TypeModel::all();
+
+        foreach ($paymentTypes as $paymentType) {
+            $class = $paymentType->class_name;
+
+            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase')
+                continue;
+
+            $partialName = 'pay/'.strtolower(Str::getRealClass($class));
+            $partialExists = array_key_exists($partialName, $partials);
+
+            if (!$partialExists) {
+                $filePath = dirname(File::fromClass($class)).'/'.strtolower(Str::getRealClass($class)).'/payment_form.htm';
+                self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
+            }
+        }
+    }
+
+    /**
+     * Creates a partial using the contents of a specified file.
+     * @param  string $name      New Partial name
+     * @param  string $filePath  File containing partial contents
+     * @param  string $themeCode Theme to create the partial
+     * @return void
+     */
+    protected static function createPartialFromFile($name, $filePath, $themeCode)
+    {
+        if (!File::exists($filePath))
+            return;
+
+        $partial = new Partial($themeCode);
+        $partial->fill([
+            'fileName' => $name,
+            'markup' => File::get($filePath)
+        ]);
+        $partial->save();
     }
 
 }

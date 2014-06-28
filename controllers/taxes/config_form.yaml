@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Tax
+
+# Model Form Field configuration
+form: @/plugins/responsiv/pay/models/tax/fields.yaml
+
+# Model Class name
+modelClass: Responsiv\Pay\Models\Tax
+
+# Default redirect location
+defaultRedirect: responsiv/pay/taxes
+
+# Create page
+create:
+    title: Create Taxes
+    redirect: responsiv/pay/taxes/update/:id
+    redirectClose: responsiv/pay/taxes
+
+# Update page
+update:
+    title: Edit Taxes
+    redirect: responsiv/pay/taxes
+    redirectClose: responsiv/pay/taxes
+
+# Preview page
+preview:
+    title: Preview Taxes

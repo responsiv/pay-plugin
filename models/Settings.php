@@ -1,6 +1,7 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
+use Cms\Classes\Page;
 
 class Settings extends Model
 {
@@ -47,5 +48,10 @@ class Settings extends Model
         else {
             return $negativeSymbol . $number . $settings->sign;
         }
+    }
+
+    public function getDefaultPaymentPageOptions()
+    {
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 }

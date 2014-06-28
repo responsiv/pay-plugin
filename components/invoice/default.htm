@@ -1,0 +1,60 @@
+{% if invoice %}
+
+    <!-- Invoice header -->
+    <div class="row">
+        <div class="col-md-6">
+
+            <h4>Bill to</h4>
+
+            <p>
+                {{ invoice.name }}<br />
+                {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                {% if invoice.city or invoice.zip %}{{ invoice.city }} {{ invoice.zip }}<br />{% endif %}
+                {% if invoice.state %}{{ invoice.state.name }}, {% endif %}
+                {% if invoice.country %}{{ invoice.country.name }}{% endif %}
+                {% if invoice.phone %}<br />{{ invoice.phone }}{% endif %}
+            </p>
+        </div>
+        <div class="col-md-6 align-right">
+            <h2>Invoice {{ invoice.id }}</h2>
+            <p>Date: {{ invoice.sent_at|date }} <!-- Long date --></p>
+        </div>
+    </div>
+
+    <!-- Invoice table -->
+    <div id="partialPaymentInvoice">
+        {% partial '@invoice_table' %}
+    </div>
+
+    <!-- Status -->
+    {% if invoice.payment_type %}
+        {% if invoice.payment_type.hasPaymentForm and not invoice.isPaymentProcessed %}
+            <div class="align-right">
+                <div class="alert alert-error">
+                    <i class="icon-exclamation-sign"></i>
+                    This invoice has not been paid
+                </div>
+            </div>
+            <div class="form-actions align-right">
+                <a class="btn btn-success btn-large btn-icon" href="{{ payPage|page({ (payPageIdParam): invoice.hash }) }}">
+                    <i class="icon-ok"></i>
+                    Pay this Invoice
+                </a>
+            </div>
+        {% else %}
+            <div class="align-right">
+                <div class="alert alert-success">
+                    <i class="icon-ok"></i> This invoice has been paid!
+                </div>
+            </div>
+            <div class="form-actions align-right">
+                <p>Thank you for your business.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-error">Sorry there are no payment gateways available to use!</div>
+    {% endif %}
+
+{% else %}
+    Sorry, that invoice could not be found
+{% endif %}

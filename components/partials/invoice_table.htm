@@ -1,0 +1,43 @@
+<table class="table table-striped table-invoice">
+    <thead>
+        <tr>
+            <th class="item-description">Item</th>
+            <th class="numeric">Price</th>
+            <th class="numeric">Discount</th>
+            <th class="numeric">Tax</th>
+            <th class="numeric last">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in invoice.items %}
+            <tr>
+                <td>
+                    <div class="product_description">
+                        {{ item.quantity }}x {{ item.description }}
+                    </div>
+                </td>
+                <td class="numeric">{{ item.price|currency }}</td>
+                <td class="numeric">{{ item.discount|currency }}</td>
+                <td class="numeric">{{ item.tax|currency }}</td>
+                <td class="numeric last total">{{ item.total|currency }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" class="align-right">Subtotal</td>
+            <td class="numeric total">{{ invoice.subtotal|currency }}</td>
+        </tr>
+        {% for tax in invoice.listItemTaxes %}
+            <tr>
+                <td class="numeric" colspan="4">Sales tax ({{ tax.name }})</td>
+                <td class="numeric total">{{ tax.total|currency }}</td>
+            </tr>
+        {% endfor %}
+        <tr class="grand-total">
+            <td class="blank">&nbsp;</td>
+            <td class="numeric" colspan="3">Total</td>
+            <td class="numeric"><span class="product_price">{{ invoice.total|currency }}</span></td>
+        </tr>
+    </tfoot>
+</table>​

@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('responsiv/pay/invoices') ?>">Invoices</a></li>
+        <li><a href="<?= Backend::url('responsiv/pay/taxes') ?>">Taxes</a></li>
         <li><?= e($this->pageTitle) ?></li>
     </ul>
 <?php Block::endPut() ?>
@@ -11,8 +11,6 @@
 
         <?= $this->formRender() ?>
 
-        <?= $this->relationRender('items', $this->formGetSessionKey()) ?>
-
         <div class="form-buttons layout-item fix">
             <div class="loading-indicator-container">
                 <button
@@ -20,7 +18,7 @@
                     data-request="onSave"
                     data-hotkey="ctrl+s"
                     data-hotkey-mac="cmd+s"
-                    data-load-indicator="Creating Invoice..."
+                    data-load-indicator="Creating Tax..."
                     class="btn btn-primary">
                     Create
                 </button>
@@ -30,12 +28,12 @@
                     data-request-data="close:1"
                     data-hotkey="ctrl+enter"
                     data-hotkey-mac="cmd+enter"
-                    data-load-indicator="Creating Invoice..."
+                    data-load-indicator="Creating Tax..."
                     class="btn btn-default">
                     Create and Close
                 </button>
                 <span class="btn-text">
-                    or <a href="<?= Backend::url('responsiv/pay/invoices') ?>">Cancel</a>
+                    or <a href="<?= Backend::url('responsiv/pay/taxes') ?>">Cancel</a>
                 </span>
             </div>
         </div>
@@ -45,6 +43,6 @@
 <?php else: ?>
 
     <p class="flash-message static error"><?= e($this->fatalError) ?></p>
-    <p><a href="<?= Backend::url('responsiv/pay/invoices') ?>" class="btn btn-default">Return to invoices list</a></p>
+    <p><a href="<?= Backend::url('responsiv/pay/taxes') ?>" class="btn btn-default">Return to taxes list</a></p>
 
 <?php endif ?>

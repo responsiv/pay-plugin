@@ -1,0 +1,19 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    description:
+        label: Description
+
+    quantity:
+        label: Qty
+
+    price:
+        label: Price
+
+    discount:
+        label: Discount
+
+    total:
+        label: Amount

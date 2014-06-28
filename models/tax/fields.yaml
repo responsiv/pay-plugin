@@ -2,30 +2,49 @@
 #  Form Field Definitions
 # ===================================
 
-fields:
-    rates:
-        label: Rates
-        type: datagrid
-            options:
-                sortable: true
-                scrollable: true
-                allowImport: true
-                allowExport: true
-                exportFileName: tax-table
+tabs:
+    fields:
+
+        name:
+            label: Name
+            tab: Tax Table
+
+        description:
+            label: Description
+            tab: Tax Table
+            type: textarea
+            size: small
+            commentAbove: Providing a description is optional.
+
+        is_default:
+            label: Default
+            type: checkbox
+            tab: Tax Table
+            comment: Place a tick in this checkbox if you want to use this tax table by default.
+
+        rates:
+            tab: Rates
+            type: datagrid
+            size: large
+            # sortable: true
+            # scrollable: true
+            # allowImport: true
+            # allowExport: true
+            # exportFileName: tax-table
             columns:
                 country:
                     title: Country Code
-                    type: text
-                    autocomplete: remote
-                    autocompleteAllowCustom: true
+                    type: autocomplete
+                    strict: false
                     minLength: 0
                     width: 100
 
                 state:
                     title: State Code
-                    autocomplete: remote
-                    autocompleteAllowCustom: true
+                    type: autocomplete
+                    strict: false
                     minLength: 0
+                    width: 100
 
                 zip:
                     title: Zip
@@ -38,11 +57,13 @@ fields:
                     title: Rate %
                     width: 60
                     align: right
+                    type: number
 
                 priority:
                     title: Priority
                     width: 80
                     align: right
+                    type: number
 
                 tax_name:
                     title: Tax name
@@ -50,5 +71,6 @@ fields:
 
                 is_compound:
                     title: Compound
-                    width: 80
+                    width: 100
                     type: checkbox
+

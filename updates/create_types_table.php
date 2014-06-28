@@ -52,9 +52,9 @@ class CreateTypesTable extends Migration
 
     public function down()
     {
-        Schema::drop('responsiv_pay_types');
-        Schema::drop('responsiv_pay_types_countries');
-        Schema::drop('responsiv_pay_type_logs');
+        Schema::dropIfExists('responsiv_pay_types');
+        Schema::dropIfExists('responsiv_pay_types_countries');
+        Schema::dropIfExists('responsiv_pay_type_logs');
     }
 
 }

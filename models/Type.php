@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Models;
 
+use Str;
 use Model;
 
 /**
@@ -81,6 +82,14 @@ class Type extends Model
             return;
     }
 
+    public function beforeCreate()
+    {
+        $this->hash = $this->createHash();
+        while ($this->newQuery()->where('hash', $this->hash)->count() > 0) {
+            $this->hash = $this->createHash();
+        }
+    }
+
     public function beforeSave()
     {
         $configData = [];
@@ -96,6 +105,34 @@ class Type extends Model
         }
 
         $this->config_data = $configData;
+    }
+
+    public function scopeIsEnabled($query)
+    {
+        return $query
+            ->whereNotNull('is_enabled')
+            ->where('is_enabled', 1)
+        ;
+    }
+
+    public static function listApplicable($countryId = null)
+    {
+        return self::isEnabled()->get();
+    }
+
+    protected function createHash()
+    {
+        return md5(uniqid('invoice', microtime()));
+    }
+
+    public function renderPaymentForm($controller)
+    {
+        $this->beforeRenderPaymentForm($this);
+
+        $paymentTypeFile = strtolower(Str::getRealClass($this->class_name));
+        $partialName = 'pay/'.$paymentTypeFile;
+
+        return $controller->renderPartial($partialName);
     }
 
 }

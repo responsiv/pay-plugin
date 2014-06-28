@@ -3,16 +3,16 @@
 # ===================================
 
 # Model List Column configuration
-list: @/plugins/responsiv/pay/models/invoice/columns.yaml
+list: @/plugins/responsiv/pay/models/tax/columns.yaml
 
 # Model Class name
-modelClass: Responsiv\Pay\Models\Invoice
+modelClass: Responsiv\Pay\Models\Tax
 
 # List Title
-title: Manage Invoices
+title: Manage Taxes
 
 # Link URL for each record
-recordUrl: responsiv/pay/invoices/preview/:id
+recordUrl: responsiv/pay/taxes/update/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records

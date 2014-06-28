@@ -27,6 +27,8 @@ class Types extends Controller
         parent::__construct();
 
         BackendMenu::setContext('Responsiv.Pay', 'pay', 'types');
+
+        GatewayManager::createPartials();
     }
 
     protected function index_onLoadAddPopup()

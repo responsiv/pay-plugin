@@ -1,0 +1,14 @@
+a, a:hover {
+    text-decoration: none;
+    color: #0862A2;
+    font-weight: bold;
+}
+
+td, tr, th, table {
+    padding: 0px;
+    margin: 0px;
+}
+
+p {
+    margin: 10px 0;
+}

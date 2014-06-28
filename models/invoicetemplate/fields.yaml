@@ -1,0 +1,28 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+tabs:
+    fields:
+        name:
+            label: Name
+            tab: Invoice
+            span: left
+
+        code:
+            label: Code
+            tab: Invoice
+            span: right
+
+        content_html:
+            type: codeeditor
+            size: giant
+            tab: HTML
+            language: html
+
+        content_css:
+            type: codeeditor
+            size: giant
+            tab: CSS
+            language: css
+

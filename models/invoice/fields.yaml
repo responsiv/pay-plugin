@@ -2,42 +2,57 @@
 #  Form Field Definitions
 # ===================================
 
-fields:
-    items:
-        label: Invoice Items
-        type: datagrid
-        columns:
-            description:
-                title: Description
+# fields:
+#     items:
+#         label: Invoice Items
+#         type: datagrid
+#         columns:
+#             description:
+#                 title: Description
 
-            quantity:
-                title: Quantity
-                type: number
-                width: 100
+#             quantity:
+#                 title: Quantity
+#                 type: number
+#                 width: 100
 
-            price:
-                title: Unit Price
-                type: number
-                width: 100
+#             price:
+#                 title: Unit Price
+#                 type: number
+#                 width: 100
 
-            discount:
-                title: Discount (%)
-                type: number
-                width: 100
+#             discount:
+#                 title: Discount (%)
+#                 type: number
+#                 width: 100
 
-            total:
-                title: Amount
-                type: number
-                width: 100
-                readOnly: true
+#             total:
+#                 title: Amount
+#                 type: number
+#                 width: 100
+#                 readOnly: true
 
 tabs:
     fields:
-        payment_type:
-            label: Payment Gateway
-            type: relation
-            tab: Invoice Details
+        # payment_type:
+        #     label: Payment Gateway
+        #     type: relation
+        #     tab: Invoice Details
+        #     span: left
+
+
+        created_at:
+            label: Date
+            type: datepicker
+            mode: date
             span: left
+            tab: Invoice Details
+
+        due_at:
+            label: Due Date
+            type: datepicker
+            mode: date
+            span: right
+            tab: Invoice Details
 
         is_tax_exempt:
             label: Tax exempt

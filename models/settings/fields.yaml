@@ -2,30 +2,42 @@
 #  Field Definitions
 # ===================================
 
-fields:
+tabs:
+  fields:
 
-  currency_code:
-    label: Currency code
-    comment: International currency code, e.g. USD
-    span: auto
+    default_payment_page:
+      label: Default payment page
+      tab: Payments
+      type: dropdown
+      comment: Used for creating payment links from the backend and invoice templates.
 
-  currency_symbol:
-    label: Symbol
-    comment: Symbol to put beside amount, e.g. $
-    span: auto
+    currency_code:
+      label: Currency code
+      comment: International currency code, e.g. USD
+      span: auto
+      tab: Currency
 
-  decimal_point:
-    label: Decimal Point
-    comment: Character to use as decimal point
-    span: auto
+    currency_symbol:
+      label: Symbol
+      comment: Symbol to put beside amount, e.g. $
+      span: auto
+      tab: Currency
 
-  thousand_separator:
-    label: Thousand Separator
-    comment: Character to separate thousands
-    span: auto
+    decimal_point:
+      label: Decimal Point
+      comment: Character to use as decimal point
+      span: auto
+      tab: Currency
 
-  place_sign_before:
-    label: Place symbol before number
-    type: checkbox
-    span: auto
+    thousand_separator:
+      label: Thousand Separator
+      comment: Character to separate thousands
+      span: auto
+      tab: Currency
+
+    place_sign_before:
+      label: Place symbol before number
+      type: checkbox
+      span: auto
+      tab: Currency
 

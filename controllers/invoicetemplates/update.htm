@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('responsiv/pay/invoices') ?>">Invoices</a></li>
+        <li><a href="<?= Backend::url('responsiv/pay/invoicestemplates') ?>">InvoicesTemplates</a></li>
         <li><?= e($this->pageTitle) ?></li>
     </ul>
 <?php Block::endPut() ?>
@@ -11,18 +11,17 @@
 
         <?= $this->formRender() ?>
 
-        <?= $this->relationRender('items', $this->formGetSessionKey()) ?>
-
         <div class="form-buttons layout-item fix">
             <div class="loading-indicator-container">
                 <button
                     type="submit"
                     data-request="onSave"
+                    data-request-data="redirect:0"
                     data-hotkey="ctrl+s"
                     data-hotkey-mac="cmd+s"
-                    data-load-indicator="Creating Invoice..."
+                    data-load-indicator="Saving InvoicesTemplate..."
                     class="btn btn-primary">
-                    Create
+                    <u>S</u>ave
                 </button>
                 <button
                     type="button"
@@ -30,12 +29,19 @@
                     data-request-data="close:1"
                     data-hotkey="ctrl+enter"
                     data-hotkey-mac="cmd+enter"
-                    data-load-indicator="Creating Invoice..."
+                    data-load-indicator="Saving InvoicesTemplate..."
                     class="btn btn-default">
-                    Create and Close
+                    Save and Close
+                </button>
+                <button
+                    type="button"
+                    class="oc-icon-trash-o btn-icon danger pull-right"
+                    data-request="onDelete"
+                    data-load-indicator="Deleting InvoicesTemplate..."
+                    data-request-confirm="Do you really want to delete this invoicestemplate?">
                 </button>
                 <span class="btn-text">
-                    or <a href="<?= Backend::url('responsiv/pay/invoices') ?>">Cancel</a>
+                    or <a href="<?= Backend::url('responsiv/pay/invoicestemplates') ?>">Cancel</a>
                 </span>
             </div>
         </div>
@@ -45,6 +51,6 @@
 <?php else: ?>
 
     <p class="flash-message static error"><?= e($this->fatalError) ?></p>
-    <p><a href="<?= Backend::url('responsiv/pay/invoices') ?>" class="btn btn-default">Return to invoices list</a></p>
+    <p><a href="<?= Backend::url('responsiv/pay/invoicestemplates') ?>" class="btn btn-default">Return to invoicestemplates list</a></p>
 
 <?php endif ?>

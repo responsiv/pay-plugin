@@ -26,6 +26,14 @@ class Plugin extends PluginBase
         ];
     }
 
+    public function registerComponents()
+    {
+        return [
+            'Responsiv\Pay\Components\Payment' => 'payment',
+            'Responsiv\Pay\Components\Invoice' => 'invoice',
+        ];
+    }
+
     public function registerNavigation()
     {
         return [
@@ -70,6 +78,26 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-usd',
                 'class'       => 'Responsiv\Pay\Models\Settings',
                 'sort'        => 100
+            ],
+            'invoices' => [
+                'label'       => 'Invoice Template',
+                'description' => 'Customize the template used for invoices.',
+                'icon'        => 'icon-usd',
+                'url'         => Backend::url('responsiv/pay/invoicetemplates'),
+                'sort'        => 100
+            ]
+        ];
+    }
+
+    /**
+     * Register new Twig variables
+     * @return array
+     */
+    public function registerMarkupTags()
+    {
+        return [
+            'filters' => [
+                'currency' => ['Responsiv\Pay\Models\Settings', 'formatCurrency'],
             ]
         ];
     }

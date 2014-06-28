@@ -2,6 +2,7 @@
 
 use URL;
 use System\Classes\ModelBehavior;
+use Responsiv\Pay\Models\TypeLog;
 
 /**
  * Represents the generic payment type.
@@ -11,11 +12,22 @@ class GatewayBase extends ModelBehavior
 {
     use \System\Traits\ConfigMaker;
 
+    /**
+     * Returns information about the payment type
+     * Must return array:
+     * 
+     * [
+     *      'name'        => 'Authorize.net',
+     *      'description' => 'Authorize.net simple integration method with hosted payment form.'
+     * ]
+     *
+     * @return array
+     */
     public function gatewayDetails()
     {
         return [
             'name'        => 'Unknown',
-            'description' => 'Unknown payment gateway'
+            'description' => 'Unknown payment gateway.'
         ];
     }
 
@@ -54,23 +66,23 @@ class GatewayBase extends ModelBehavior
      * with an existing model.
      * @return array
      */
-    public function boot($hostObj)
+    public function boot($host)
     {
-        if (!$hostObj->exists)
-            $this->initConfigData($hostObj);
+        if (!$host->exists)
+            $this->initConfigData($host);
 
         // Apply validation rules
-        $hostObj->rules = array_merge($hostObj->rules, $this->defineValidationRules());
+        $host->rules = array_merge($host->rules, $this->defineValidationRules());
 
         // Define model relations
-        $this->defineRelationships($hostObj);
+        $this->defineRelationships($host);
     }
 
     /**
      * Defines any required model relationships.
-     * @param  Model $hostObj
+     * @param  Model $host
      */
-    public function defineRelationships($hostObj){}
+    public function defineRelationships($host){}
 
     /**
      * Extra field configuration for the payment type.
@@ -82,9 +94,9 @@ class GatewayBase extends ModelBehavior
 
     /**
      * Initializes configuration data when the payment method is first created.
-     * @param  Model $hostObj
+     * @param  Model $host
      */
-    public function initConfigData($hostObj){}
+    public function initConfigData($host){}
 
     /**
      * Defines validation rules for the custom fields.
@@ -95,6 +107,17 @@ class GatewayBase extends ModelBehavior
         return [];
     }
 
+    /**
+     * Registers a hidden page with specific URL. Use this method for cases when you
+     * need to have a hidden landing page for a specific payment gateway. For example,
+     * PayPal needs a landing page for the auto-return feature.
+     * Important! Payment module access point names should have a prefix.
+     * @return array Returns an array containing page URLs and methods to call for each URL:
+     * return array('paypal_autoreturn'=>'processPaypalAutoreturn'). The processing methods must be declared
+     * in the payment type class. Processing methods must accept one parameter - an array of URL segments
+     * following the access point. For example, if URL is /api_pay_paypal_autoreturn/1234 an array with single
+     * value '1234' will be passed to processPaypalAutoreturn method.
+     */
     public function registerAccessPoints()
     {
         return [];
@@ -119,13 +142,101 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Processes payment using passed data
-     * @param array $data Posted payment form data
-     * @param $hostObj Type model object containing configuration fields values
-     * @param $invoice Invoice model object
-     * @param $isAdmin Determines whether the function is called from the administration area
+     * This function is called before an invoice status deletion.
+     * Use this method to check whether the payment type
+     * references an invoice status. If so, throw ApplicationException
+     * with explanation why the status cannot be deleted.
+     * @param Model         $host   Model object containing configuration fields values.
+     * @param InvoiceStatus $status Specifies a status to be deleted.
      */
-    public function processPaymentForm($data, $hostObj, $invoice, $isAdmin = false) { }
+    public function status_deletion_check($host, $status) { }
+
+    /**
+     * Returns true if the payment type is applicable for a specified invoice amount
+     * @param float $amount Specifies an invoice amount
+     * @param $host Model object to add fields to
+     * @return true
+     */
+    public function is_applicable($amount, $host)
+    {
+        return true;
+    }
+
+    /**
+     * Processes payment using passed data.
+     * @param array $data Posted payment form data.
+     * @param Model $host Type model object containing configuration fields values.
+     * @param Model $invoice Invoice model object.
+     * @param bool  $isAdmin Determines whether the function is called from the administration area.
+     */
+    public function processPaymentForm($data, $host, $invoice, $isAdmin = false) { }
+
+    /**
+     * This method is called when an invoice with this payment method is created
+     * @param $host Model object containing configuration fields values
+     * @param $invoice Invoice object
+     */
+    public function invoiceAfterCreate($host, $invoice) { }
+
+    /**
+     * Adds a log record to the invoice payment attempts log.
+     * @param mixed  $invoice           Invoice object the payment attempt is belongs to.
+     * @param string $message           Log message.
+     * @param bool   $isSuccess         Indicates that the attempt was successful.
+     * @param array  $requestArray      An array containing data posted to the payment gateway.
+     * @param array  $responseArray     An array containing data received from the payment gateway.
+     * @param string $responseText      Raw gateway response text.
+     * @param string $ccvResponseCode   Card code verification response code.
+     * @param string $ccvResponseText   Card code verification response text.
+     * @param string $avsResponseCode   Address verification response code.
+     * @param string $avsResponseText   Address verification response text.
+     */
+    protected function logPaymentAttempt(
+        $invoice,
+        $message,
+        $isSuccess,
+        $requestArray,
+        $responseArray,
+        $responseText,
+        $ccvResponseCode = null,
+        $ccvResponseText = null,
+        $avsResponseCode = null,
+        $avsResponseText = null
+    ) {
+        $info = $this->gatewayDetails();
+
+        $record = new TypeLog;
+        $record->message = $message;
+        $record->invoice_id = $invoice->id;
+        $record->payment_type_name = $info['name'];
+        $record->is_success = $isSuccess;
+        
+        $record->raw_response = $responseText;
+        $record->request_data = $requestArray;
+        $record->response_data = $responseArray;
+
+        $record->ccv_response_code = $ccvResponseCode;
+        $record->ccv_response_text = $ccvResponseText;
+        $record->avs_response_code = $avsResponseCode;
+        $record->avs_response_text = $avsResponseText;
+
+        $record->save();
+    }
+
+    /**
+     * This method returns true for non-offline payment types
+     */
+    public function hasPaymentForm()
+    {
+        $info = $this->gatewayDetails();
+        return array_key_exists('offline', $info) && $info['offline'] ? false : true;
+    }
+
+    /**
+     * This method is called before the payment form is rendered
+     * @param $host Model object containing configuration fields values
+     */
+    public function beforeRenderPaymentForm($host) { }
 
 }
 

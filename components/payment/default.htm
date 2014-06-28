@@ -1,0 +1,139 @@
+{% if invoice %}
+
+    {% if invoice.isPaymentProcessed %}
+
+        <h4 class="text-success">
+            <span class="ring-badge ring-badge-success"><i class="icon-ok"></i></span>
+            This invoice has already been paid!
+        </h4>
+        <p>View <a href="{{ invoicePage|page({ (invoicePageIdParam): invoice.id }) }}">invoice {{ invoice.id }}</a></p>
+
+    {% else %}
+
+        <!-- Invoice header -->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_open({ id: formInvoiceDetails }) }}
+
+                    <h4>Bill to</h4>
+                    <div class="form-field name">
+                        <label>Your name</label>
+                        <div class="edit row">
+                            <div class="col-md-6">
+                                <input
+                                    type="text"
+                                    name="Invoice[first_name]"
+                                    value="{{ form_value(invoice, 'first_name') }}"
+                                    placeholder="Your name"
+                                    id="invoiceFirstName"
+                                    />
+                            </div>
+                            <div class="col-md-6">
+                                <input
+                                    type="text"
+                                    name="Invoice[last_name]"
+                                    value="{{ form_value(invoice, 'last_name') }}"
+                                    placeholder="Your surname"
+                                    id="invoiceLastName"
+                                    />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-field address" id="profileDetailsAddress">
+                        <label for="invoiceAddress">Business address</label>
+                        <div class="edit">
+                            <input
+                                type="text"
+                                name="Invoice[street_addr]"
+                                value="{{ form_value(invoice, 'street_addr') }}"
+                                placeholder="<?= __('Business address') ?>"
+                                class="span12"
+                                id="invoiceAddress"
+                                />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input
+                                        type="text"
+                                        name="Invoice[city]"
+                                        value="{{ form_value(invoice, 'city') }}"
+                                        placeholder="City"
+                                        class="span12"
+                                        id="invoice_city"
+                                        />
+                                </div>
+                                <div class="col-md-6">
+                                    <input
+                                        type="text"
+                                        name="Invoice[zip]"
+                                        value="{{ form_value(invoice, 'zip') }}"
+                                        placeholder="Zip / Postal Code"
+                                        class="span12"
+                                        id="invoice_zip"
+                                        />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form_select_country('Invoice[country_id]', form_value(invoice, 'country_id'), {id: 'invoiceCountryId', emptyOption: '-- Select --'}) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_select_state('Invoice[state_id]', form_value(invoice, 'country_id'), form_value(invoice, 'state_id'), {id: 'invoiceStateId', emptyOption: '-- Select --'}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-field phone">
+                        <label for="provide_phone">Phone number</label>
+                        <div class="edit">
+                            <input
+                                type="text"
+                                name="Invoice[phone]"
+                                value="{{ form_value(invoice, 'phone') }}"
+                                placeholder="Phone number"
+                                class="span12"
+                                id="invoicePhone"
+                                />
+                        </div>
+                    </div>
+
+                {{ form_close() }}
+            </div>
+            <div class="col-md-6 align-right">
+                <h2>Invoice {{ invoice.id }}</h2>
+                <p>Date: {{ invoice.sent_at|date }} <!-- Long date --></p>
+            </div>
+        </div>
+
+        <!-- Invoice table -->
+        <div id="partialPaymentInvoice">
+            {% partial '@invoice_table' %}
+        </div>
+
+        <!-- Payment method -->
+        <h5>Please choose a payment method</h5>
+
+        {{ form_open() }}
+            {% for type in paymentTypes %}
+                <label for="type{{ type.id }}" class="radio">
+                    <input
+                        type="radio"
+                        {{ type.id == invoice.payment_type_id ? 'checked="checked' }}
+                        value="{{ type.id }}"
+                        name="payment_type"
+                        id="type{{ type.id }}"
+                        onchange="$(this).phpr().post('payment:on_update_payment_type').update('#p_payment_form', 'payment:form').send()"
+                        />
+                    {{ type.name }}
+                </label>
+            {% endfor %}
+        {{ form_close() }}
+
+        <!-- Payment form -->
+        <div id="partialPaymentForm">{% partial '@payment_form' %}</div>
+
+    {% endif %}
+{% else %}
+    Sorry, that payment could not be found
+{% endif %}

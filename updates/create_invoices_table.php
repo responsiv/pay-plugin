@@ -13,7 +13,7 @@ class CreateInvoicesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned()->nullable()->index();
-            $table->string('user_ip', 15);
+            $table->string('user_ip', 15)->nullable();
             $table->string('first_name', 100)->nullable();
             $table->string('last_name', 100)->nullable();
             $table->string('email', 50)->nullable();
@@ -26,11 +26,11 @@ class CreateInvoicesTable extends Migration
             $table->integer('country_id')->unsigned()->nullable()->index();
             $table->float('total')->default(0);
             $table->float('subtotal')->default(0);
-            $table->integer('discount')->default(0);
+            $table->float('discount')->default(0);
             $table->float('tax')->default(0);
             $table->float('tax_discount')->default(0);
             $table->boolean('is_tax_exempt')->default(false);
-            $table->text('tax_data');
+            $table->text('tax_data')->nullable();
             $table->integer('payment_type_id')->unsigned()->nullable()->index();
             $table->timestamp('processed_at')->nullable();
             $table->integer('status_id')->unsigned()->nullable()->index();
@@ -51,7 +51,7 @@ class CreateInvoicesTable extends Migration
             $table->integer('quantity')->default(0);
             $table->float('price')->default(0);
             $table->float('total')->default(0);
-            $table->integer('discount')->default(0);
+            $table->float('discount')->default(0);
             $table->float('subtotal')->default(0);
             $table->boolean('is_tax_exempt')->default(false);
             $table->float('tax')->default(0);
@@ -81,14 +81,29 @@ class CreateInvoicesTable extends Migration
             $table->integer('admin_id')->unsigned()->nullable()->index();
             $table->timestamps();
         });
+
+        Schema::create('responsiv_pay_invoice_templates', function($table)
+        {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->string('name')->nullable();
+            $table->string('code')->nullable();
+            $table->text('content_html')->nullable();
+            $table->text('content_css')->nullable();
+            $table->text('syntax_data')->nullable();
+            $table->text('syntax_fields')->nullable();
+            $table->boolean('is_default')->default(false);
+            $table->timestamps();
+        });
     }
 
     public function down()
     {
-        Schema::drop('responsiv_pay_invoices');
-        Schema::drop('responsiv_pay_invoice_items');
-        Schema::drop('responsiv_pay_invoice_statuses');
-        Schema::drop('responsiv_pay_invoice_logs');
+        Schema::dropIfExists('responsiv_pay_invoices');
+        Schema::dropIfExists('responsiv_pay_invoice_items');
+        Schema::dropIfExists('responsiv_pay_invoice_statuses');
+        Schema::dropIfExists('responsiv_pay_invoice_logs');
+        Schema::dropIfExists('responsiv_pay_invoice_templates');
     }
 
 }

@@ -2,4 +2,5 @@
   - First version of Pay
   - create_invoices_table.php
   - create_types_table.php
+  - create_taxes_table.php
   - seed_all_tables.php

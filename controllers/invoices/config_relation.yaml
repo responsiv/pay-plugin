@@ -1,0 +1,9 @@
+# ===================================
+#  Relation Behavior Config
+# ===================================
+
+items:
+    label: Line Item
+    emptyMessage: Invoice has no line items
+    list: @/plugins/responsiv/pay/models/invoiceitem/columns.yaml
+    form: @/plugins/responsiv/pay/models/invoiceitem/fields.yaml
