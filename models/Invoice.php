@@ -49,6 +49,7 @@ class Invoice extends Model
 
     public $hasMany = [
         'items' => ['Responsiv\Pay\Models\InvoiceItem'],
+        'history' => ['Responsiv\Pay\Models\InvoiceLog'],
     ];
 
     public function beforeSave()

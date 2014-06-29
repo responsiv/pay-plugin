@@ -7,3 +7,8 @@ items:
     emptyMessage: Invoice has no line items
     list: @/plugins/responsiv/pay/models/invoiceitem/columns.yaml
     form: @/plugins/responsiv/pay/models/invoiceitem/fields.yaml
+
+# history:
+#     label: History
+#     emptyMessage: Invoice has not changed
+#     list: @/plugins/responsiv/pay/models/invoicelog/columns.yaml

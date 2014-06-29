@@ -13,6 +13,8 @@ class InvoiceStatus extends Model
     const STATUS_PAID = 'paid';
     const STATUS_VOID = 'void';
 
+    protected static $codeCache = [];
+
     /**
      * @var string The database table used by the model.
      */
@@ -48,4 +50,18 @@ class InvoiceStatus extends Model
     public $attachOne = [];
     public $attachMany = [];
 
+    public static function getStatusPaid()
+    {
+        return static::getStatusPaid(static::STATUS_PAID);
+    }
+
+    public static function getByCode($code)
+    {
+        if (array_key_exists($code, static::$codeCache))
+            return static::$codeCache[$code];
+
+        $status = static::whereCode($code)->first();
+
+        return static::$codeCache[$code] = $status;
+    }
 }
