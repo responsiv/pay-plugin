@@ -27,6 +27,11 @@ tabs:
             type: number
             tab: Tax & Discounts
 
+        tax_class:
+            label: Tax Class
+            type: relation
+            tab: Tax & Discounts
+
         is_tax_exempt:
             label: Tax exempt
             comment: Tick this checkbox if the tax should not be applied to this line item

@@ -5,3 +5,14 @@
 columns:
     id:
         label: ID
+        invisible: true
+
+    name:
+        label: Class Name
+
+    description:
+        label: Description
+
+    is_default:
+        label: Default
+        type: switch

@@ -17,6 +17,7 @@ class Settings extends Model
         $this->decimal_point = '.';
         $this->thousand_separator = ',';
         $this->place_symbol_before = true;
+        $this->default_invoice_template = 1;
     }
 
     /**

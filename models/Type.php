@@ -82,14 +82,6 @@ class Type extends Model
             return;
     }
 
-    public function beforeCreate()
-    {
-        $this->hash = $this->createHash();
-        while ($this->newQuery()->where('hash', $this->hash)->count() > 0) {
-            $this->hash = $this->createHash();
-        }
-    }
-
     public function beforeSave()
     {
         $configData = [];
@@ -118,11 +110,6 @@ class Type extends Model
     public static function listApplicable($countryId = null)
     {
         return self::isEnabled()->get();
-    }
-
-    protected function createHash()
-    {
-        return md5(uniqid('invoice', microtime()));
     }
 
     public function renderPaymentForm($controller)

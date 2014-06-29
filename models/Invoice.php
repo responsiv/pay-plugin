@@ -1,8 +1,13 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
+use Request;
 use DB as Db;
 use Carbon\Carbon;
+use RainLab\User\Models\Settings as UserSettings;
+use Responsiv\Pay\Models\Settings as InvoiceSettings;
+use RainLab\User\Models\State;
+use RainLab\User\Models\Country;
 
 /**
  * Invoice Model
@@ -18,12 +23,7 @@ class Invoice extends Model
     /**
      * @var array Guarded fields
      */
-    protected $guarded = ['*'];
-
-    /**
-     * @var array Fillable fields
-     */
-    protected $fillable = [];
+    protected $guarded = [];
 
     /**
      * @var array Validation rules
@@ -39,15 +39,64 @@ class Invoice extends Model
      * @var array Relations
      */
     public $belongsTo = [
-        'user' => ['RainLab\User\Models\User'],
-        'status' => ['Responsiv\Pay\Models\InvoiceStatus'],
-        'template' => ['Responsiv\Pay\Models\InvoiceTemplate'],
+        'user'         => ['RainLab\User\Models\User'],
+        'status'       => ['Responsiv\Pay\Models\InvoiceStatus'],
+        'template'     => ['Responsiv\Pay\Models\InvoiceTemplate'],
         'payment_type' => ['Responsiv\Pay\Models\Type'],
+        'country'      => ['RainLab\User\Models\Country'],
+        'state'        => ['RainLab\User\Models\State'],
     ];
 
     public $hasMany = [
         'items' => ['Responsiv\Pay\Models\InvoiceItem'],
     ];
+
+    public function beforeSave()
+    {
+        $this->setDefaults();
+        $this->calculateTotals();
+    }
+
+    public function beforeCreate()
+    {
+        $this->generateHash();
+
+        if (!$this->sent_at)
+            $this->sent_at = Carbon::now();
+
+        $this->user_ip = Request::getClientIp();
+    }
+
+    public function getCountryOptions()
+    {
+        return Country::getNameList();
+    }
+
+    public function getStateOptions()
+    {
+        return State::getNameList($this->country_id);
+    }
+
+    public function setDefaults()
+    {
+        if (!$this->status_id)
+            $this->setStatus(InvoiceStatus::STATUS_DRAFT);
+
+        if (!$this->country_id)
+            $this->country_id = UserSettings::get('default_country', 1);
+
+        if (!$this->state_id)
+            $this->state_id = UserSettings::get('default_state', 1);
+
+        if (!$this->template_id)
+            $this->template_id = InvoiceSettings::get('default_invoice_template', 1);
+    }
+
+    public function setStatus($statusCode)
+    {
+        $this->status_updated_at = Carbon::now();
+        $this->status = InvoiceStatus::whereCode($statusCode)->first();
+    }
 
     public function isPaymentProcessed($force = false)
     {
@@ -57,6 +106,10 @@ class Invoice extends Model
         return $this->processed_at;
     }
 
+    /**
+     * Flags this invoice as having payment processed
+     * @return boolean
+     */
     public function markAsPaymentProcessed()
     {
         if (!$isPaid = $this->isPaymentProcessed(true)) {
@@ -75,6 +128,102 @@ class Invoice extends Model
     {
         // @todo Need a way to obtain this
         return '/receipt_url';
+    }
+
+    /**
+     * Calculate totals from invoice items
+     * @param  Model $items
+     * @return float
+     */
+    public function calculateTotals($items = null)
+    {
+        if (!$items)
+            $items = $this->items;
+
+        /*
+         * Discount and subtotal
+         */
+        $discount = 0;
+        $subtotal = 0;
+        foreach ($items as $item) {
+            $subtotal += $item->subtotal;
+            $discount += $item->discount;
+        }
+
+        /*
+         * Calculate tax
+         */
+        $taxInfo = Tax::calculateTaxes($items, $this->getLocationInfo());
+        $this->setSalesTaxes($taxInfo->taxes);
+        $tax = $taxInfo->tax_total;
+
+        /*
+         * Grand total
+         */
+        $this->discount = $discount;
+        $this->subtotal = $subtotal;
+        $this->tax = $tax;
+        $this->total = ($subtotal - $discount) + $tax;
+
+        return $this->total;
+    }
+
+    /**
+     * Build a helper object for this invoice's location, used by tax calcuation.
+     * @return object
+     */
+    public function getLocationInfo()
+    {
+        $this->setDefaults();
+        $location = [
+            'street_addr' => $this->street_addr,
+            'city'        => $this->city,
+            'zip'         => $this->zip,
+            'state_id'    => $this->state_id,
+            'country_id'  => $this->country_id,
+        ];
+
+        return (object) $location;
+    }
+
+    /**
+     * Sets the tax data for the invoice
+     * @param array $taxes
+     * @return void
+     */
+    public function setSalesTaxes($taxes)
+    {
+        if (!is_array($taxes))
+            $taxes = [];
+
+        $taxesToSave = $taxes;
+
+        foreach ($taxesToSave as $taxName => &$taxInfo) {
+            $taxInfo->total = round($taxInfo->total, 2);
+        }
+
+        $this->tax_data = serialize($taxesToSave);
+    }
+
+    /**
+     * Internal helper, and set generate a unique hash for this invoice.
+     * @return string
+     */
+    protected function generateHash()
+    {
+        $this->hash = $this->createHash();
+        while ($this->newQuery()->where('hash', $this->hash)->count() > 0) {
+            $this->hash = $this->createHash();
+        }
+    }
+
+    /**
+     * Internal helper, create a hash for this invoice.
+     * @return string
+     */
+    protected function createHash()
+    {
+        return md5(uniqid('invoice', microtime()));
     }
 
 }

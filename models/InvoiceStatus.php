@@ -8,6 +8,11 @@ use Model;
 class InvoiceStatus extends Model
 {
 
+    const STATUS_DRAFT = 'draft';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_PAID = 'paid';
+    const STATUS_VOID = 'void';
+
     /**
      * @var string The database table used by the model.
      */

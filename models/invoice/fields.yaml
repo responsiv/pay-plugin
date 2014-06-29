@@ -2,35 +2,6 @@
 #  Form Field Definitions
 # ===================================
 
-# fields:
-#     items:
-#         label: Invoice Items
-#         type: datagrid
-#         columns:
-#             description:
-#                 title: Description
-
-#             quantity:
-#                 title: Quantity
-#                 type: number
-#                 width: 100
-
-#             price:
-#                 title: Unit Price
-#                 type: number
-#                 width: 100
-
-#             discount:
-#                 title: Discount (%)
-#                 type: number
-#                 width: 100
-
-#             total:
-#                 title: Amount
-#                 type: number
-#                 width: 100
-#                 readOnly: true
-
 tabs:
     fields:
         # payment_type:
@@ -40,12 +11,13 @@ tabs:
         #     span: left
 
 
-        created_at:
+        sent_at:
             label: Date
             type: datepicker
             mode: date
             span: left
             tab: Invoice Details
+            context: update
 
         due_at:
             label: Due Date
@@ -85,4 +57,16 @@ tabs:
             tab: Billing Details
             span: right
 
+        country:
+            label: Country
+            type: dropdown
+            tab: Billing Details
+            span: left
+
+        state:
+            label: State
+            type: dropdown
+            tab: Billing Details
+            span: right
+            depends: country
 
