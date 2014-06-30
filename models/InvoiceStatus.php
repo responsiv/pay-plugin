@@ -50,9 +50,24 @@ class InvoiceStatus extends Model
     public $attachOne = [];
     public $attachMany = [];
 
+    public static function getStatusDraft()
+    {
+        return static::getByCode(static::STATUS_DRAFT);
+    }
+
+    public static function getStatusApproved()
+    {
+        return static::getByCode(static::STATUS_APPROVED);
+    }
+
     public static function getStatusPaid()
     {
-        return static::getStatusPaid(static::STATUS_PAID);
+        return static::getByCode(static::STATUS_PAID);
+    }
+
+    public static function getStatusVoid()
+    {
+        return static::getByCode(static::STATUS_VOID);
     }
 
     public static function getByCode($code)

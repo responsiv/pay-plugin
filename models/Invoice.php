@@ -49,7 +49,7 @@ class Invoice extends Model
 
     public $hasMany = [
         'items' => ['Responsiv\Pay\Models\InvoiceItem'],
-        'history' => ['Responsiv\Pay\Models\InvoiceLog'],
+        'status_log' => ['Responsiv\Pay\Models\InvoiceStatusLog'],
     ];
 
     public function beforeSave()
@@ -68,6 +68,11 @@ class Invoice extends Model
         $this->user_ip = Request::getClientIp();
     }
 
+    public function afterCreate()
+    {
+        InvoiceStatusLog::createRecord(InvoiceStatus::getStatusPaid(), $this);
+    }
+
     public function getCountryOptions()
     {
         return Country::getNameList();
@@ -80,9 +85,6 @@ class Invoice extends Model
 
     public function setDefaults()
     {
-        if (!$this->status_id)
-            $this->setStatus(InvoiceStatus::STATUS_DRAFT);
-
         if (!$this->country_id)
             $this->country_id = UserSettings::get('default_country', 1);
 
@@ -91,12 +93,6 @@ class Invoice extends Model
 
         if (!$this->template_id)
             $this->template_id = InvoiceSettings::get('default_invoice_template', 1);
-    }
-
-    public function setStatus($statusCode)
-    {
-        $this->status_updated_at = Carbon::now();
-        $this->status = InvoiceStatus::whereCode($statusCode)->first();
     }
 
     public function isPaymentProcessed($force = false)

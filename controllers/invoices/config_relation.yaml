@@ -8,7 +8,8 @@ items:
     list: @/plugins/responsiv/pay/models/invoiceitem/columns.yaml
     form: @/plugins/responsiv/pay/models/invoiceitem/fields.yaml
 
-# history:
-#     label: History
-#     emptyMessage: Invoice has not changed
-#     list: @/plugins/responsiv/pay/models/invoicelog/columns.yaml
+status_log:
+    label: History
+    emptyMessage: Invoice has no status history
+    list: @/plugins/responsiv/pay/models/invoicestatuslog/columns.yaml
+    readOnly: true

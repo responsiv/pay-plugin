@@ -57,6 +57,20 @@ tabs:
             tab: Billing Details
             span: right
 
+        city:
+            label: City
+            tab: Billing Details
+            span: left
+
+        zip:
+            label: Zip
+            tab: Billing Details
+            span: right
+
+        street_addr:
+            label: Street Address
+            tab: Billing Details
+
         country:
             label: Country
             type: dropdown

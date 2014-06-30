@@ -4,7 +4,7 @@ use Backend;
 use Cms\Classes\Page;
 use Responsiv\Pay\Models\Settings;
 use Responsiv\Pay\Models\Invoice;
-use Responsiv\Pay\Models\InvoiceLog;
+use Responsiv\Pay\Models\InvoiceStatusLog;
 use Responsiv\Pay\Classes\GatewayBase;
 use Cms\Classes\Controller as CmsController;
 use System\Classes\ApplicationException;
@@ -217,7 +217,7 @@ class PaypalStandard extends GatewayBase
                     if (strpos($response, 'VERIFIED') !== false) {
                         if ($invoice->markAsPaymentProcessed()) {
                             $this->logPaymentAttempt($invoice, 'Successful payment', 1, [], $_POST, $response);
-                            InvoiceLog::createRecord($invoice->payment_type->invoice_status, $invoice);
+                            InvoiceStatusLog::createRecord($invoice->payment_type->invoice_status, $invoice);
                         }
                     } else {
                         $this->logPaymentAttempt($invoice, 'Invalid payment notification', 0, [], $_POST, $response);
@@ -294,7 +294,7 @@ class PaypalStandard extends GatewayBase
 
                     if ($invoice->markAsPaymentProcessed()) {
                         $this->logPaymentAttempt($invoice, 'Successful payment', 1, [], $_GET, $response);
-                        InvoiceLog::createRecord($invoice->payment_type->invoice_status, $invoice);
+                        InvoiceStatusLog::createRecord($invoice->payment_type->invoice_status, $invoice);
                     }
                 }
             }

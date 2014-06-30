@@ -73,7 +73,7 @@ class CreateInvoicesTable extends Migration
             $table->string('notify_template')->index()->nullable();
         });
 
-        Schema::create('responsiv_pay_invoice_logs', function($table)
+        Schema::create('responsiv_pay_invoice_status_logs', function($table)
         {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -104,7 +104,7 @@ class CreateInvoicesTable extends Migration
         Schema::dropIfExists('responsiv_pay_invoices');
         Schema::dropIfExists('responsiv_pay_invoice_items');
         Schema::dropIfExists('responsiv_pay_invoice_statuses');
-        Schema::dropIfExists('responsiv_pay_invoice_logs');
+        Schema::dropIfExists('responsiv_pay_invoice_status_logs');
         Schema::dropIfExists('responsiv_pay_invoice_templates');
     }
 

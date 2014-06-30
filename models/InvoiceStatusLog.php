@@ -5,15 +5,15 @@ use Model;
 use Carbon\Carbon;
 
 /**
- * InvoiceLog Model
+ * Invoice Status Log Model
  */
-class InvoiceLog extends Model
+class InvoiceStatusLog extends Model
 {
 
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'responsiv_pay_invoice_logs';
+    public $table = 'responsiv_pay_invoice_status_logs';
 
     /**
      * @var array Guarded fields
@@ -40,27 +40,31 @@ class InvoiceLog extends Model
 
     public static function createRecord($statusId, $invoice, $comment = null)
     {
+        if ($statusId instanceof Model)
+            $statusId = $statusId->getKey();
+
         if ($invoice->status_id == $statusId)
             return false;
 
-        /*
-         * Extensibility
-         */
         $previousStatus = $invoice->status_id;
-
-        if (Event::fire('responsiv.pay:beforeUpdateInvoiceStatus', [$invoice, $statusId, $previousStatus], true) === false)
-            return false;
-
-        if ($this->fireEvent('pay:beforeUpdateInvoiceStatus', [$invoice, $statusId, $previousStatus], true) === false)
-            return false;
 
         /*
          * Create record
          */
-        $record = new static;;
+        $record = new static;
         $record->status_id = $statusId;
         $record->invoice_id = $invoice->id;
         $record->comment = $comment;
+
+        /*
+         * Extensibility
+         */
+        if (Event::fire('responsiv.pay:beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+            return false;
+
+        if ($record->fireEvent('pay:beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+            return false;
+
         $record->save();
 
         /*
@@ -68,7 +72,7 @@ class InvoiceLog extends Model
          */
         $invoice->update([
             'status_id' => $statusId,
-            'status_updated_at' => Carbon:: now()
+            'status_updated_at' => Carbon::now()
         ]);
 
         $statusPaid = InvoiceStatus::getStatusPaid();
