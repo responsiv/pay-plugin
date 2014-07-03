@@ -1,3 +1,7 @@
+body {
+    min-width: 900px;
+}
+
 * {
     color: #333;
     font-family: sans-serif;

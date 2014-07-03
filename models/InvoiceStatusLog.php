@@ -38,6 +38,11 @@ class InvoiceStatusLog extends Model
         'invoice' => ['Responsiv\Pay\Models\Invoice', 'push' => false],
     ];
 
+    public function getStatusOptions()
+    {
+        return InvoiceStatus::lists('name', 'id');
+    }
+
     public static function createRecord($statusId, $invoice, $comment = null)
     {
         if ($statusId instanceof Model)
@@ -70,7 +75,7 @@ class InvoiceStatusLog extends Model
         /*
          * Update invoice status
          */
-        $invoice->update([
+        $invoice->newQuery()->update([
             'status_id' => $statusId,
             'status_updated_at' => Carbon::now()
         ]);

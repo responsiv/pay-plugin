@@ -28,7 +28,7 @@
             <td colspan="4" class="align-right">Subtotal</td>
             <td class="numeric total">{{ invoice.subtotal|currency }}</td>
         </tr>
-        {% for tax in invoice.listItemTaxes %}
+        {% for tax in invoice.listSalesTaxes %}
             <tr>
                 <td class="numeric" colspan="4">Sales tax ({{ tax.name }})</td>
                 <td class="numeric total">{{ tax.total|currency }}</td>

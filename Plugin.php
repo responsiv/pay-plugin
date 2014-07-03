@@ -75,15 +75,17 @@ class Plugin extends PluginBase
             'settings' => [
                 'label'       => 'Payment Settings',
                 'description' => 'Manage currency configuration.',
-                'icon'        => 'icon-usd',
+                'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
+                'category'    => 'Payments',
                 'sort'        => 100
             ],
             'invoices' => [
                 'label'       => 'Invoice Template',
                 'description' => 'Customize the template used for invoices.',
-                'icon'        => 'icon-usd',
+                'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
+                'category'    => 'Payments',
                 'sort'        => 100
             ]
         ];
@@ -112,6 +114,8 @@ class Plugin extends PluginBase
     {
         return [
             'Responsiv\Pay\PaymentTypes\PaypalStandard' => 'paypal-standard',
+            'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
+            'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
         ];
     }
 

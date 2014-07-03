@@ -1,0 +1,14 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    status:
+        label: New Status
+        type: dropdown
+        emptyOption: - select a status -
+
+    comment:
+        label: Comment
+        type: textarea
+        size: small

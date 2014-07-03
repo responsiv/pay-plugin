@@ -10,9 +10,25 @@ tabs:
         #     tab: Invoice Details
         #     span: left
 
+        # is_tax_exempt:
+        #     label: Tax exempt
+        #     comment: Tick this checkbox if the tax should not be applied to this invoice
+        #     type: checkbox
+        #     tab: Invoice Details
+        #     span: auto
+
+        user:
+            label: User
+            type: recordfinder
+            list: @/plugins/rainlab/user/models/user/columns.yaml
+            prompt: Click the %s button to find a user
+            nameColumn: name
+            descriptionColumn: email
+            tab: Invoice Details
+            span: left
 
         sent_at:
-            label: Date
+            label: Sent Date
             type: datepicker
             mode: date
             span: left
@@ -23,64 +39,61 @@ tabs:
             label: Due Date
             type: datepicker
             mode: date
-            span: right
+            span: auto
             tab: Invoice Details
-
-        is_tax_exempt:
-            label: Tax exempt
-            comment: Tick this checkbox if the tax should not be applied to this invoice
-            type: checkbox
-            tab: Invoice Details
-            span: right
 
         first_name:
             label: First name
-            tab: Billing Details
+            tab: Customer Details
             span: left
+            depends: user
 
         last_name:
             label: Surname
-            tab: Billing Details
+            tab: Customer Details
             span: right
 
         email:
             label: Email
-            tab: Billing Details
+            tab: Customer Details
+            depends: user
 
         company:
             label: Company
-            tab: Billing Details
+            tab: Customer Details
             span: left
+            depends: user
 
         phone:
             label: Phone
-            tab: Billing Details
+            tab: Customer Details
             span: right
+            depends: user
 
         city:
             label: City
-            tab: Billing Details
+            tab: Billing Address
             span: left
 
         zip:
             label: Zip
-            tab: Billing Details
+            tab: Billing Address
             span: right
 
         street_addr:
             label: Street Address
-            tab: Billing Details
+            tab: Billing Address
 
         country:
             label: Country
             type: dropdown
-            tab: Billing Details
+            tab: Billing Address
             span: left
 
         state:
             label: State
             type: dropdown
-            tab: Billing Details
+            tab: Billing Address
             span: right
             depends: country
 

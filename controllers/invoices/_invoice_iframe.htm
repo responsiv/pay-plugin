@@ -9,14 +9,26 @@
         <?= $template->renderInvoice($invoice) ?>
     </script>
     <script>
-        $(document).render(function(){
-            var frame = $('#<?= $this->getId('invoiceIframe') ?>'),
-                frameContents = frame.contents().find('html'),
-                invoiceContents = $('#<?= $this->getId('invoiceContents') ?>').html()
+        (function($){
+            var invoiceContents,
+                invoiceFrame = $('#<?= $this->getId('invoiceIframe') ?>')
 
-            frameContents.html(invoiceContents)
-            frame.height(frameContents.height() + 100)
-        })
+            $(document).render(function(){
+                var frameContents = invoiceFrame.contents().find('html')
+                invoiceContents = $('#<?= $this->getId('invoiceContents') ?>').html()
+                frameContents.html(invoiceContents)
+                invoiceFrame.height(frameContents.height() + 100)
+            })
+
+            invoiceFrame.on('print.invoice', function(){
+               var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0')
+               printWindow.document.write(invoiceContents)
+               printWindow.document.close()
+               printWindow.focus()
+               printWindow.print()
+               printWindow.close()
+            })
+        })(window.jQuery);
     </script>
 
 <?php else: ?>

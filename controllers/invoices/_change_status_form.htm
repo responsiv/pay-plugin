@@ -1,0 +1,36 @@
+<?= Form::open(['id' => 'disableForm']) ?>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="popup">&times;</button>
+        <h4 class="modal-title"><?= e(trans('responsiv.pay::lang.invoice.change_status_title')) ?></h4>
+    </div>
+    <div class="modal-body">
+
+        <?php if ($this->fatalError): ?>
+            <p class="flash-message static error"><?= $fatalError ?></p>
+        <?php endif ?>
+
+        <p><?= e(trans('responsiv.pay::lang.invoice.current_status_name', ['name'=> $currentStatus])) ?></p>
+
+        <div class="form-preview">
+            <?= $widget->render() ?>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button
+            type="submit"
+            class="btn btn-primary"
+            data-request="onChangeStatus"
+            data-request-confirm="Are you sure?"
+            data-stripe-load-indicator>
+            <?= e(trans('backend::lang.form.save')) ?>
+        </button>
+        <button
+            type="button"
+            class="btn btn-default"
+            data-dismiss="popup">
+            <?= e(trans('backend::lang.form.cancel')) ?>
+        </button>
+    </div>
+<?= Form::close() ?>

@@ -1,3 +1,7 @@
+# ===================================
+#  Gateway Field Definitions
+# ===================================
+
 fields:
     test_mode:
         label: Sandbox mode
@@ -28,7 +32,6 @@ fields:
         tab: Configuration
         span: auto
         type: relation
-
 
     invoice_status_id:
         label: Invoice Status ID

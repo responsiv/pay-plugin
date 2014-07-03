@@ -1,0 +1,17 @@
+# ===================================
+#  Gateway Field Definitions
+# ===================================
+
+fields:
+
+    invoice_status:
+        label: Invoice status
+        comment: Select the status to assign the invoice if this type is selected.
+        span: auto
+        type: relation
+        tab: Configuration
+
+    payment_instructions:
+        label: Payment instructions
+        type: richeditor
+        tab: Configuration

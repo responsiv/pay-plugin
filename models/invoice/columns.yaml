@@ -5,14 +5,17 @@
 columns:
     id:
         label: ID
-        invisible: true
 
     user_ip:
         label: IP Address
         invisible: true
 
+    email:
+        label: Email
+
     first_name:
         label: First name
+        invisible: true
 
     last_name:
         label: Last name

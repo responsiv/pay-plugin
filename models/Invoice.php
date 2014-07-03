@@ -8,6 +8,7 @@ use RainLab\User\Models\Settings as UserSettings;
 use Responsiv\Pay\Models\Settings as InvoiceSettings;
 use RainLab\User\Models\State;
 use RainLab\User\Models\Country;
+use Exception;
 
 /**
  * Invoice Model
@@ -70,7 +71,7 @@ class Invoice extends Model
 
     public function afterCreate()
     {
-        InvoiceStatusLog::createRecord(InvoiceStatus::getStatusPaid(), $this);
+        InvoiceStatusLog::createRecord(InvoiceStatus::getStatusDraft(), $this);
     }
 
     public function getCountryOptions()
@@ -200,6 +201,63 @@ class Invoice extends Model
         }
 
         $this->tax_data = serialize($taxesToSave);
+    }
+
+    /**
+     * Lists tax breakdown for this invoice.
+     * @return array
+     */
+    public function listSalesTaxes()
+    {
+        $result = [];
+
+        if (!strlen($this->tax_data))
+            return $result;
+
+        try {
+            $taxes = unserialize($this->tax_data);
+            foreach ($taxes as $taxName => $taxInfo) {
+                if ($taxInfo->total <= 0)
+                    continue;
+
+                $result = $this->addTaxItem($result, $taxName, $taxInfo->total, 0, 'Sales tax');
+            }
+        }
+        catch (Exception $ex) {
+            return $result;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Internal method, adds a tax item to the list of taxes.
+     * @param array  $list
+     * @param string $name
+     * @param float  $amount
+     * @param float  $discount
+     * @param string $defaultName
+     * @return array
+     */
+    protected function addTaxItem($list, $name, $amount, $discount, $defaultName = 'Tax')
+    {
+        if (!$name)
+            $name = $defaultName;
+
+        if (!array_key_exists($name, $list)) {
+            $taxInfo = [
+                'name'     => $name,
+                'amount'   => 0,
+                'discount' => 0,
+                'total'    => 0
+            ];
+            $list[$name] = (object) $taxInfo;
+        }
+
+        $list[$name]->amount += $amount;
+        $list[$name]->discount += $discount;
+        $list[$name]->total += ($amount - $discount);
+        return $list;
     }
 
     /**

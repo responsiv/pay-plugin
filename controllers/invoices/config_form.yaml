@@ -16,16 +16,16 @@ defaultRedirect: responsiv/pay/invoices
 
 # Create page
 create:
-    title: Create Invoices
+    title: Create Invoice
     redirect: responsiv/pay/invoices/update/:id
     redirectClose: responsiv/pay/invoices/preview/:id
 
 # Update page
 update:
-    title: Edit Invoices
+    title: Edit Invoice
     redirect: responsiv/pay/invoices/update/:id
     redirectClose: responsiv/pay/invoices/preview/:id
 
 # Preview page
 preview:
-    title: Preview Invoices
+    title: Preview Invoice

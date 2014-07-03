@@ -1,6 +1,6 @@
 <html>
     <head>
-        <style type="text/css" media="screen">
+        <style type="text/css" media="screen, print">
             {{ css }}
         </style>
     </head>
@@ -55,8 +55,8 @@ Australia
 
             <table class="invoice-table invoice-items">
                 <tr>
-                    <th class="invoice-item-quantity">Qty</th>
                     <th class="invoice-item-description">Description</th>
+                    <th class="invoice-item-quantity">Qty</th>
                     <th class="invoice-item-price">Unit Price</th>
                     <th class="invoice-item-tax">Tax</th>
                     <th class="invoice-item-total">Amount</th>
@@ -64,8 +64,8 @@ Australia
 
                 {% for item in invoice.items %}
                     <tr>
-                        <td class="invoice-item invoice-item-quantity">{{ item.quantity }}</td>
                         <td class="invoice-item invoice-item-description">{{ item.description }}</td>
+                        <td class="invoice-item invoice-item-quantity">{{ item.quantity }}</td>
                         <td class="invoice-item invoice-item-price">{{ item.price|currency }}</td>
                         <td class="invoice-item invoice-item-tax">{{ item.tax|currency }}</td>
                         <td class="invoice-item invoice-item-total">{{ item.total|currency }}</td>
@@ -75,6 +75,12 @@ Australia
                     <td colspan="4" class="invoice-end-label invoice-subtotal-label">Subtotal</td>
                     <td class="invoice-end-amount invoice-subtotal-amount">{{ invoice.subtotal|currency }}</td>
                 </tr>
+                {% for tax in invoice.listSalesTaxes %}
+                    <tr>
+                        <td colspan="4" class="invoice-end-label invoice-tax-label">Sales tax ({{ tax.name }})</td>
+                        <td class="invoice-end-amount invoice-tax-amount">{{ tax.total|currency }}</td>
+                    </tr>
+                {% endfor %}
                 <tr>
                     <td colspan="4" class="invoice-end-label invoice-tax-label">Total Tax</td>
                     <td class="invoice-end-amount invoice-tax-amount">{{ invoice.tax|currency }}</td>
@@ -91,11 +97,11 @@ Australia
             <table class="invoice-table invoice-footer">
                 <tr>
                     <td>
-                        <div class="invoice-due-date">Due Date: 4th July 2020</div>
+                        <div class="invoice-due-date">Due date: {{ invoice.due_at.toFormattedDateString }}</div>
                         <div class="invoice-thanks">Thank you for your business.</div>
                     </td>
                     <td>
-                        <div class="invoice-payment-label">Payment Advice</div>
+                        <div class="invoice-payment-label">Payment advice</div>
                         <div class="invoice-payment-advice">
                             {textarea name="payment_advice" label="Payment advice" size="small"}
                                 Please send full amount to via any of our accepted Payment methods

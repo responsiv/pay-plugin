@@ -47,22 +47,30 @@ use Responsiv\Pay\Models\Settings;
                 Edit details
             </a>
             <a
-                href="#"
+                href="javascript:;"
+                data-control="popup"
+                data-handler="onLoadChangeStatusForm"
                 class="btn btn-default">
                 Update status
             </a>
             <a
-                href="#"
+                href="javascript:;"
+                onclick="$('#<?= $this->getId('invoiceIframe') ?>').trigger('print.invoice')"
                 class="btn btn-default">
                 Print invoice
             </a>
+            <? /* @todo
             <a
                 href="#"
                 class="btn btn-default">
                 Email invoice
             </a>
+            */ ?>
             <a
-                href="#"
+                href="javascript:;"
+                data-request="onDelete"
+                data-load-indicator="Deleting Invoice..."
+                data-request-confirm="Do you really want to delete this invoice?"
                 class="btn btn-danger">
                 Delete
             </a>
