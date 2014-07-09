@@ -149,7 +149,7 @@ class GatewayBase extends ModelBehavior
      * @param Model         $host   Model object containing configuration fields values.
      * @param InvoiceStatus $status Specifies a status to be deleted.
      */
-    public function status_deletion_check($host, $status) { }
+    public function statusDeletionCheck($host, $status) { }
 
     /**
      * Returns true if the payment type is applicable for a specified invoice amount
@@ -157,7 +157,7 @@ class GatewayBase extends ModelBehavior
      * @param $host Model object to add fields to
      * @return true
      */
-    public function is_applicable($amount, $host)
+    public function isApplicable($amount, $host)
     {
         return true;
     }
@@ -210,7 +210,7 @@ class GatewayBase extends ModelBehavior
         $record->invoice_id = $invoice->id;
         $record->payment_type_name = $info['name'];
         $record->is_success = $isSuccess;
-        
+
         $record->raw_response = $responseText;
         $record->request_data = $requestArray;
         $record->response_data = $responseArray;

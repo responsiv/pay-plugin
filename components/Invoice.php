@@ -64,12 +64,15 @@ class Invoice extends ComponentBase
 
         $invoice =  InvoiceModel::where('id', $id)->first();
 
-        // $user = Auth::getUser();
-        // if (!$user)
-        //     $invoice = null;
+        /*
+         * Only users can view their own invoices
+         */
+        $user = Auth::getUser();
+        if (!$user)
+            $invoice = null;
 
-        // if ($invoice && $invoice->user_id != $user->id)
-        //     $invoice = null;
+        if ($invoice && $invoice->user_id != $user->id)
+            $invoice = null;
 
         return $this->invoice = $invoice;
     }

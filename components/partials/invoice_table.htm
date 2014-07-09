@@ -25,19 +25,19 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="4" class="align-right">Subtotal</td>
+            <td colspan="4" class="text-right">Subtotal</td>
             <td class="numeric total">{{ invoice.subtotal|currency }}</td>
         </tr>
         {% for tax in invoice.listSalesTaxes %}
             <tr>
-                <td class="numeric" colspan="4">Sales tax ({{ tax.name }})</td>
+                <td colspan="4" class="text-right" colspan="4">Sales tax ({{ tax.name }})</td>
                 <td class="numeric total">{{ tax.total|currency }}</td>
             </tr>
         {% endfor %}
         <tr class="grand-total">
             <td class="blank">&nbsp;</td>
-            <td class="numeric" colspan="3">Total</td>
-            <td class="numeric"><span class="product_price">{{ invoice.total|currency }}</span></td>
+            <td class="text-right" colspan="3"><h4>Total</h4></td>
+            <td class="numeric"><h4>{{ invoice.total|currency }}</h4></td>
         </tr>
     </tfoot>
 </table>​

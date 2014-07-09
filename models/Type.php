@@ -2,6 +2,7 @@
 
 use Str;
 use Model;
+use Exception;
 
 /**
  * Payment Type Model
@@ -47,6 +48,11 @@ class Type extends Model
     public $belongsToMany = [
         'countries' => ['RainLab\User\Models\Country', 'table' => 'responsiv_pay_types_countries']
     ];
+
+    /**
+     * @var self Default type cache.
+     */
+    private static $defaultType;
 
     /**
      * Extends this class with the gateway class
@@ -120,6 +126,40 @@ class Type extends Model
         $partialName = 'pay/'.$paymentTypeFile;
 
         return $controller->renderPartial($partialName);
+    }
+
+    public function makeDefault()
+    {
+        if (!$this->is_enabled)
+            throw new Exception(sprintf('Payment type %s is disabled and cannot be set as default.', $this->name));
+
+        $this->newQuery()->where('id', $this->id)->update(['is_default' => true]);
+        $this->newQuery()->where('id', '<>', $this->id)->update(['is_default' => false]);
+    }
+
+    /**
+     * Returns the default payment gateway.
+     * @param  int $countryId
+     * @return self
+     * @todo Apply a filter for country.
+     */
+    public static function getDefault($countryId = null)
+    {
+        if (self::$defaultType !== null)
+            return self::$defaultType;
+
+        $defaultType = self::isEnabled()->where('is_default', true)->first();
+
+        /*
+         * If no default is found, find the first type and make it the default.
+         */
+        if (!$defaultType) {
+            $defaultType = self::isEnabled()->first();
+            if ($defaultType)
+                $defaultType->makeDefault();
+        }
+
+        return self::$defaultType = $defaultType;
     }
 
 }

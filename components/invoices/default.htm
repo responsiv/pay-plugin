@@ -1,0 +1,29 @@
+{% if invoices %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+                {% set invoiceUrl = invoicePage|page({ (invoicePageIdParam): invoice.id }) %}
+                <tr class="invoice-status-{{ invoice.status.code }}">
+                    <td><a href="{{ invoiceUrl }}">{{ invoice.id }}</a></td>
+                    <td><a href="{{ invoiceUrl }}">{{ invoice.sent_at }}</a></td>
+                    <td><a href="{{ invoiceUrl }}"><strong>{{ invoice.status.name }}</strong> since {{ invoice.status_updated_at }}</a></td>
+                    <td class="total text-right"><a href="{{ invoiceUrl }}">{{ invoice.total|currency }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+
+    <p>No invoices found.</p>
+
+{% endif %}

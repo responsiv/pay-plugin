@@ -100,7 +100,7 @@ class PaypalStandard extends GatewayBase
 
         $result['address1'] = $invoice->street_addr;
         $result['city'] = $invoice->city;
-        
+
         if ($invoice->country)
             $result['country'] = $invoice->country->code;
 
@@ -114,8 +114,7 @@ class PaypalStandard extends GatewayBase
          * Invoice items
          */
         $itemIndex = 1;
-        foreach ($invoice->items as $item)
-        {
+        foreach ($invoice->items as $item) {
             $result['item_name_'.$itemIndex] = $item->description;
             $result['amount_'.$itemIndex] = round($item->price, 2);
             $result['quantity_'.$itemIndex] = $item->quantity;

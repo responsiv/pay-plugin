@@ -74,26 +74,32 @@ tabs:
             label: City
             tab: Billing Address
             span: left
+            depends: user
 
         zip:
             label: Zip
             tab: Billing Address
             span: right
+            depends: user
 
         street_addr:
             label: Street Address
             tab: Billing Address
+            depends: user
 
         country:
             label: Country
             type: dropdown
             tab: Billing Address
             span: left
+            depends: user
+            placeholder: -- select country --
 
         state:
             label: State
             type: dropdown
             tab: Billing Address
             span: right
-            depends: country
+            depends: [country, user]
+            placeholder: -- select state --
 

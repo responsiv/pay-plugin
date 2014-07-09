@@ -15,3 +15,7 @@ fields:
         label: Payment instructions
         type: richeditor
         tab: Configuration
+
+    invoice_status_id:
+        label: Invoice Status ID
+        context: hidden

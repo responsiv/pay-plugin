@@ -4,6 +4,7 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Responsiv\Pay\Models\Type as TypeModel;
+use System\Classes\ApplicationException;
 
 class Payment extends ComponentBase
 {
@@ -71,6 +72,24 @@ class Payment extends ComponentBase
          */
         $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
         $this->invoicePageIdParam = $this->page['invoicePageIdParam'] = $this->property('invoicePageIdParam');
+    }
+
+    public function onUpdatePaymentType()
+    {
+        if (!$invoice = $this->getInvoice())
+            throw new ApplicationException('Invoice not found!');
+
+        if (!$typeId = post('payment_type'))
+            throw new ApplicationException('Payment type not specified!');
+
+        if (!$type = TypeModel::find($typeId))
+            throw new ApplicationException('Payment type not found!');
+
+        $invoice->payment_type = $type;
+        $invoice->save();
+
+        $this->page['invoice'] = $invoice;
+        $this->page['paymentType'] = $type;
     }
 
 

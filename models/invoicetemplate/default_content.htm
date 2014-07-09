@@ -24,13 +24,14 @@
                     <td>
                         <div class="invoice-client-label">Customer</div>
                         <div class="invoice-client-details">
-                            {{ invoice.company }}<br />
+                            {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
                             Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                            {{ invoice.street_addr }}<br />
-                            {{ invoice.city }}, {{ invoice.state.name }} {{ invoice.zip }}<br />
+                            {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                            {% if invoice.city %}{{ invoice.city }}, {% endif %}
+                            {{ invoice.state.name }} {{ invoice.zip }}<br />
                             {{ invoice.country.name }}<br />
                             <br />
-                            ABN: 45 123 456 789
+                            {text name="company_registration" label="Company Registration Number" span="left"}ABN: 45 123 456 789{/text}
                         </div>
                     </td>
                     <td>

@@ -53,6 +53,12 @@ class Invoice extends Model
         'status_log' => ['Responsiv\Pay\Models\InvoiceStatusLog'],
     ];
 
+    public function afterFetch()
+    {
+        if (!$this->payment_type_id)
+            $this->payment_type = Type::getDefault($this->country_id);
+    }
+
     public function beforeSave()
     {
         $this->setDefaults();

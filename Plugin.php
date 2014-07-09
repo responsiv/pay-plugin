@@ -29,8 +29,9 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            'Responsiv\Pay\Components\Payment' => 'payment',
-            'Responsiv\Pay\Components\Invoice' => 'invoice',
+            'Responsiv\Pay\Components\Payment'  => 'payment',
+            'Responsiv\Pay\Components\Invoice'  => 'invoice',
+            'Responsiv\Pay\Components\Invoices' => 'invoices',
         ];
     }
 
