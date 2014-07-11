@@ -7,7 +7,6 @@ use Model;
  */
 class InvoiceStatus extends Model
 {
-
     const STATUS_DRAFT = 'draft';
     const STATUS_APPROVED = 'approved';
     const STATUS_PAID = 'paid';
@@ -29,11 +28,6 @@ class InvoiceStatus extends Model
      * @var array Fillable fields
      */
     protected $fillable = [];
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [];
 
     public $timestamps = false;
 

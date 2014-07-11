@@ -1,14 +1,14 @@
 <?php namespace Responsiv\Pay\PaymentTypes;
 
 use Backend;
+use Redirect;
 use Cms\Classes\Page;
-use Responsiv\Pay\Models\Settings;
-use Responsiv\Pay\Models\Invoice;
-use Responsiv\Pay\Models\InvoiceStatusLog;
-use Responsiv\Pay\Classes\GatewayBase;
-use Cms\Classes\Controller as CmsController;
-use System\Classes\ApplicationException;
 use October\Rain\Network\Http;
+use Responsiv\Pay\Models\Invoice;
+use Responsiv\Pay\Models\Settings;
+use Responsiv\Pay\Classes\GatewayBase;
+use Responsiv\Pay\Models\InvoiceStatusLog;
+use System\Classes\ApplicationException;
 
 class PaypalStandard extends GatewayBase
 {
@@ -74,7 +74,7 @@ class PaypalStandard extends GatewayBase
      */
     public function getCancelPageOptions($keyValue = -1)
     {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+        return Page::getNameList();
     }
 
     /**
@@ -86,6 +86,16 @@ class PaypalStandard extends GatewayBase
             return "https://www.sandbox.paypal.com/cgi-bin/webscr";
         else
             return "https://www.paypal.com/cgi-bin/webscr";
+    }
+
+    public function getAutoreturnUrl()
+    {
+        return $this->makeAccessPointLink('paypal_standard_autoreturn');
+    }
+
+    public function getIpnUrl()
+    {
+        return $this->makeAccessPointLink('paypal_standard_ipn');
     }
 
     public function getHiddenFields($host, $invoice, $isAdmin = false)
@@ -133,21 +143,20 @@ class PaypalStandard extends GatewayBase
         $result['currency_code'] = Settings::get('currency_code', 'USD');
         $result['tax'] = number_format($invoice->tax, 2, '.', '');
 
-        $result['notify_url'] = $this->makeAccessPointLink('api_pay_paypal_ipn/'.$invoice->hash);
+        $result['notify_url'] = $this->getIpnUrl().'/'.$invoice->hash;
 
         if (!$isAdmin) {
-            $result['return'] = $this->makeAccessPointLink('api_pay_paypal_autoreturn/'.$invoice->hash);
+            $result['return'] = $this->getAutoreturnUrl().'/'.$invoice->hash;
 
             if ($host->cancel_page) {
-                $controller = new CmsController;
-                $result['cancel_return'] = $controller->pageUrl($host->cancel_page, [
+                $result['cancel_return'] = Page::url($host->cancel_page, [
                     'invoice_id' => $invoice->id,
                     'invoice_hash' => $invoice->hash
                 ]);
             }
         }
         else {
-            $result['return'] = $this->makeAccessPointLink('api_pay_paypal_autoreturn/'.$invoice->hash.'/admin');
+            $result['return'] = $this->getAutoreturnUrl().'/'.$invoice->hash.'/admin';
             $result['cancel_return'] = Backend::url('responsiv/pay/invoices/pay/'.$invoice->id.'?'.uniqid());
         }
 
@@ -180,7 +189,7 @@ class PaypalStandard extends GatewayBase
             if (!$hash)
                 throw new ApplicationException('Invoice not found');
 
-            $invoice = Invoice::whereHas($hash)->first();
+            $invoice = Invoice::whereHash($hash)->first();
             if (!$invoice)
                 throw new ApplicationException('Invoice not found');
 
@@ -243,7 +252,7 @@ class PaypalStandard extends GatewayBase
             if (!$hash)
                 throw new ApplicationException('Invoice not found');
 
-            $invoice = Invoice::whereHas($hash)->first();
+            $invoice = Invoice::whereHash($hash)->first();
             if (!$invoice)
                 throw new ApplicationException('Invoice not found');
 
@@ -299,17 +308,15 @@ class PaypalStandard extends GatewayBase
             }
 
             $googleTrackingCode = 'utm_nooverride=1';
-            $returnPage = $invoice->getReceiptUrl();
-            if ($returnPage)
-                Phpr::$response->redirect($returnPage.'?'.$googleTrackingCode);
-            else
+            if (!$returnPage = $invoice->getReceiptUrl())
                 throw new ApplicationException('PayPal Standard Receipt page is not found');
 
+            return Redirect::to($returnPage.'?'.$googleTrackingCode);
         }
         catch (Exception $ex)
         {
             if ($invoice)
-                $this->logPaymentAttempt($invoice, $ex->getMessage(), 0, [], Phpr::$request->get_fields, $response);
+                $this->logPaymentAttempt($invoice, $ex->getMessage(), 0, [], $_GET, $response);
 
             throw new ApplicationException($ex->getMessage());
         }
@@ -354,4 +361,3 @@ class PaypalStandard extends GatewayBase
     }
 
 }
-

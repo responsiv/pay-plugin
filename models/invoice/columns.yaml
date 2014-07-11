@@ -21,14 +21,29 @@ columns:
         label: Last name
         invisible: true
 
+    processed_at:
+        label: Processed at
+        type: date
+        invisible: true
+
+    status_updated_at:
+        label: Status updated
+        type: date
+        invisible: true
+
+    sent_at:
+        label: Date
+        type: date
+
+    due_at:
+        label: Due date
+        type: date
+
     total:
         label: Total
 
     subtotal:
         label: Subtotal
-
-    email:
-        label: Email
         invisible: true
 
     phone:
@@ -67,19 +82,4 @@ columns:
         label: Gateway
         relation: payment_type
         select: @name
-
-    processed_at:
-        label: Processed at
-        type: date
-
-    status_updated_at:
-        label: Status updated
-        type: date
-
-    sent_at:
-        label: Sent date
-        type: date
-
-    due_at:
-        label: Due date
-        type: date
+        invisible: true

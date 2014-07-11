@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Components;
 
+use Redirect;
 use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
@@ -52,6 +53,9 @@ class Payment extends ComponentBase
         $this->page['paymentTypes'] = TypeModel::listApplicable($invoice->country_id);
         $this->page['paymentType'] = $invoice ? $invoice->payment_type : null;
         $this->prepareVars();
+
+        if (post('submit_payment'))
+            $this->onPay();
     }
 
     public function getInvoice()
@@ -92,5 +96,22 @@ class Payment extends ComponentBase
         $this->page['paymentType'] = $type;
     }
 
+    public function onPay($invoice = null)
+    {
+        if (!$invoice = $this->getInvoice())
+            return;
+
+        if (!$paymentType = $invoice->payment_type)
+            return;
+
+        $redirect = $paymentType->processPaymentForm(post(), $paymentType, $invoice);
+        if ($redirect === false)
+            return;
+
+        if (!$returnPage = $invoice->getReceiptUrl())
+            return;
+
+        return Redirect::to($returnPage);
+    }
 
 }

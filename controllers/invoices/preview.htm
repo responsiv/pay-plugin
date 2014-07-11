@@ -79,8 +79,9 @@ use Responsiv\Pay\Models\Settings;
 
     <div class="control-tabs content-tabs tabs-offset" data-control="tab">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#templates">Invoice</a></li>
-            <li><a href="#status_log">History</a></li>
+            <li class="active"><a href="#invoiceTemplate">Invoice</a></li>
+            <li><a href="#statusLog">Status history</a></li>
+            <li><a href="#typeLog">Pay attempts</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
@@ -91,6 +92,11 @@ use Responsiv\Pay\Models\Settings;
             <div class="tab-pane">
                 <div class="relation-flush">
                     <?= $this->relationRender('status_log') ?>
+                </div>
+            </div>
+            <div class="tab-pane">
+                <div class="relation-flush">
+                    <?= $this->relationRender('type_log') ?>
                 </div>
             </div>
         </div>

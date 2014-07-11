@@ -44,15 +44,24 @@ class Settings extends Model
         $number = number_format($number, $decimals, $settings->decimal_point, $settings->thousand_separator);
 
         if ($settings->place_symbol_before) {
-            return $negativeSymbol . $settings->currency_symbol . $number;
+            return $negativeSymbol.$settings->currency_symbol.$number;
         }
         else {
-            return $negativeSymbol . $number . $settings->currency_symbol;
+            return $negativeSymbol.$number.$settings->currency_symbol;
         }
     }
 
     public function getDefaultPaymentPageOptions()
     {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+        return Page::getNameList();
+    }
+
+    public static function getDetaultPaymentPage($params = [])
+    {
+        $settings = self::instance();
+        if (empty($settings->default_payment_page))
+            return null;
+
+        return Page::url($settings->default_payment_page, $params);
     }
 }

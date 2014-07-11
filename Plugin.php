@@ -115,6 +115,7 @@ class Plugin extends PluginBase
     {
         return [
             'Responsiv\Pay\PaymentTypes\PaypalStandard' => 'paypal-standard',
+            'Responsiv\Pay\PaymentTypes\PaypalPro'      => 'paypal-pro',
             'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
             'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
         ];

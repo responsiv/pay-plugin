@@ -9,19 +9,26 @@ fields:
         tab: Configuration
         comment: Use the PayPal Sandbox Test Environment to try out payments using this gateway.
 
-    business_email:
-        label: Business email
-        comment: PayPal business account email address.
+    api_signature:
+        label: API Signature
+        comment: You can find your API signature, username and password on PayPal profile page in Account Information > API Access section.
         tab: Configuration
 
-    pdt_token:
-        label: PDT token
-        comment: PayPal Payment Data Transfer token.
+    api_user_name:
+        label: API Username
+        comment: Specify your PayPal API username.
+        span: auto
         tab: Configuration
 
-    cancel_page:
-        label: Cancel page
-        comment: Page to which the user’s browser is redirected if payment is cancelled.
+    api_password:
+        label: API Password
+        comment: Specify your PayPal API password.
+        span: auto
+        tab: Configuration
+
+    paypal_action:
+        label: PayPal action
+        comment: The action PayPal should perform with buyers credit card.
         tab: Configuration
         span: auto
         type: dropdown
@@ -40,5 +47,5 @@ fields:
     setup_help:
         type: partial
         tab: Help
-        path: @/plugins/responsiv/pay/paymenttypes/paypalstandard/setup_help.htm
+        path: @/plugins/responsiv/pay/paymenttypes/paypalpro/setup_help.htm
 

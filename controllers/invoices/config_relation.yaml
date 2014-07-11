@@ -13,3 +13,13 @@ status_log:
     emptyMessage: Invoice has no status history
     list: @/plugins/responsiv/pay/models/invoicestatuslog/columns.yaml
     readOnly: true
+    showSorting: false
+    defaultSort: created_at
+
+type_log:
+    label: Payments
+    emptyMessage: Invoice has no payment attempts
+    list: @/plugins/responsiv/pay/models/invoicetypelog/columns.yaml
+    readOnly: true
+    showSorting: false
+    defaultSort: created_at

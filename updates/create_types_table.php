@@ -35,7 +35,7 @@ class CreateTypesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('invoice_id')->unsigned()->nullable()->index();
-            $table->string('type_name')->nullable();
+            $table->string('payment_type_name')->nullable();
             $table->boolean('is_success')->default(false);
             $table->string('message')->nullable();
             $table->text('raw_response')->nullable();

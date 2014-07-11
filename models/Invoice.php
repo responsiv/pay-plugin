@@ -15,7 +15,6 @@ use Exception;
  */
 class Invoice extends Model
 {
-
     /**
      * @var string The database table used by the model.
      */
@@ -25,11 +24,6 @@ class Invoice extends Model
      * @var array Guarded fields
      */
     protected $guarded = [];
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [];
 
     /**
      * @var array List of datetime attributes to convert to an instance of Carbon/DateTime objects.
@@ -49,8 +43,9 @@ class Invoice extends Model
     ];
 
     public $hasMany = [
-        'items' => ['Responsiv\Pay\Models\InvoiceItem'],
+        'items'      => ['Responsiv\Pay\Models\InvoiceItem'],
         'status_log' => ['Responsiv\Pay\Models\InvoiceStatusLog'],
+        'type_log'   => ['Responsiv\Pay\Models\InvoiceTypeLog'],
     ];
 
     public function afterFetch()
@@ -128,10 +123,12 @@ class Invoice extends Model
         return !$isPaid;
     }
 
-    public function getReceiptUrl($page = null, $addHostname = false)
+    public function getReceiptUrl()
     {
-        // @todo Need a way to obtain this
-        return '/receipt_url';
+        return Settings::getDetaultPaymentPage([
+            'id' => $this->id,
+            'hash' => $this->hash,
+        ]);
     }
 
     /**

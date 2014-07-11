@@ -31,11 +31,6 @@ class Tax extends Model
     protected $jsonable = ['rates'];
 
     /**
-     * @var array Validation rules
-     */
-    public $rules = [];
-
-    /**
      * @var array Object cache of self.
      */
     protected static $cache = [];

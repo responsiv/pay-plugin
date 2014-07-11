@@ -7,7 +7,6 @@ use Model;
  */
 class InvoiceItem extends Model
 {
-
     /**
      * @var string The database table used by the model.
      */
@@ -22,11 +21,6 @@ class InvoiceItem extends Model
      * @var array Fillable fields
      */
     protected $fillable = [];
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [];
 
     /**
      * @var array Relations

@@ -10,7 +10,6 @@ use October\Rain\Syntax\Parser;
  */
 class InvoiceTemplate extends Model
 {
-
     use \October\Rain\Syntax\SyntaxModelTrait;
 
     /**
@@ -27,11 +26,6 @@ class InvoiceTemplate extends Model
      * @var array Fillable fields
      */
     protected $fillable = [];
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [];
 
     /**
      * @var array List of attribute names which are json encoded and decoded from the database.

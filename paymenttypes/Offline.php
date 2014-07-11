@@ -25,14 +25,6 @@ class Offline extends GatewayBase
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function defineRelationships($host)
-    {
-        $host->belongsTo['invoice_status'] = ['Responsiv\Pay\Models\InvoiceStatus'];
-    }
-
-    /**
      * Returns the payment instructions for offline payment
      * @param  Model $host
      * @param  Model $invoice

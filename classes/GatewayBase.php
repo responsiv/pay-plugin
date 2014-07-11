@@ -1,8 +1,10 @@
 <?php namespace Responsiv\Pay\Classes;
 
+use Str;
 use URL;
+use File;
 use System\Classes\ModelBehavior;
-use Responsiv\Pay\Models\TypeLog;
+use Responsiv\Pay\Models\InvoiceTypeLog;
 
 /**
  * Represents the generic payment type.
@@ -68,14 +70,15 @@ class GatewayBase extends ModelBehavior
      */
     public function boot($host)
     {
+        // Define model relations
+        $this->defineRelationships($host);
+
+        // Set default data
         if (!$host->exists)
             $this->initConfigData($host);
 
         // Apply validation rules
         $host->rules = array_merge($host->rules, $this->defineValidationRules());
-
-        // Define model relations
-        $this->defineRelationships($host);
     }
 
     /**
@@ -115,7 +118,7 @@ class GatewayBase extends ModelBehavior
      * @return array Returns an array containing page URLs and methods to call for each URL:
      * return array('paypal_autoreturn'=>'processPaypalAutoreturn'). The processing methods must be declared
      * in the payment type class. Processing methods must accept one parameter - an array of URL segments
-     * following the access point. For example, if URL is /api_pay_paypal_autoreturn/1234 an array with single
+     * following the access point. For example, if URL is /paypal_autoreturn/1234 an array with single
      * value '1234' will be passed to processPaypalAutoreturn method.
      */
     public function registerAccessPoints()
@@ -205,7 +208,7 @@ class GatewayBase extends ModelBehavior
     ) {
         $info = $this->gatewayDetails();
 
-        $record = new TypeLog;
+        $record = new InvoiceTypeLog;
         $record->message = $message;
         $record->invoice_id = $invoice->id;
         $record->payment_type_name = $info['name'];

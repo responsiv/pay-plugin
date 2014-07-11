@@ -134,11 +134,11 @@ class GatewayManager
             $gatewayObj = new $gateway->class;
             $gatewayDetails = $gatewayObj->gatewayDetails();
             $collection[$gateway->alias] = (object)[
-                'owner' => $gateway->owner,
-                'class' => $gateway->class,
-                'alias' => $gateway->alias,
-                'object' => $gatewayObj,
-                'name' => array_get($gatewayDetails, 'name', 'Undefined'),
+                'owner'       => $gateway->owner,
+                'class'       => $gateway->class,
+                'alias'       => $gateway->alias,
+                'object'      => $gatewayObj,
+                'name'        => array_get($gatewayDetails, 'name', 'Undefined'),
                 'description' => array_get($gatewayDetails, 'description', 'Undefined'),
             ];
         }
@@ -184,8 +184,8 @@ class GatewayManager
 
         $gateways = self::instance()->listGatewayObjects();
         foreach ($gateways as $gateway) {
-
             $points = $gateway->registerAccessPoints();
+
             if (isset($points[$code]))
                 return $gateway->{$points[$code]}($params);
         }

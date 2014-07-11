@@ -9,7 +9,6 @@ use Carbon\Carbon;
  */
 class InvoiceStatusLog extends Model
 {
-
     /**
      * @var string The database table used by the model.
      */
@@ -24,11 +23,6 @@ class InvoiceStatusLog extends Model
      * @var array Fillable fields
      */
     protected $fillable = [];
-
-    /**
-     * @var array Validation rules
-     */
-    public $rules = [];
 
     /**
      * @var array Relations
