@@ -80,7 +80,7 @@ class Tax extends Model
     }
 
     /**
-     * Locate a tax table by it's identifier, cached.
+     * Locate a tax table by its identifier, cached.
      * @param  int $id
      * @return Model
      */

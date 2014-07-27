@@ -2,7 +2,7 @@
 
 use Str;
 use Model;
-use Exception;
+use October\Rain\Support\ValidationException;
 
 /**
  * Payment Type Model
@@ -133,7 +133,7 @@ class Type extends Model
     public function makeDefault()
     {
         if (!$this->is_enabled)
-            throw new Exception(sprintf('Payment type %s is disabled and cannot be set as default.', $this->name));
+            throw new ValidationException(['is_enabled' => sprintf('"%s" is disabled and cannot be set as default.', $this->name)]);
 
         $this->newQuery()->where('id', $this->id)->update(['is_default' => true]);
         $this->newQuery()->where('id', '<>', $this->id)->update(['is_default' => false]);

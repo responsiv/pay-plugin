@@ -79,7 +79,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
                 'category'    => 'Payments',
-                'sort'        => 100
+                'order'       => 500,
             ],
             'invoices' => [
                 'label'       => 'Invoice Template',
@@ -87,7 +87,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
                 'category'    => 'Payments',
-                'sort'        => 100
+                'order'       => 500,
             ]
         ];
     }
