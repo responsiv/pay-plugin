@@ -35,7 +35,7 @@ class Tax extends Model
      */
     protected static $cache = [];
 
-    public function getGridAutocompleteValues($field, $value, $data)
+    public function getRatesAutocompleteValues($field, $value, $data)
     {
         if ($field == 'country')
             return $this->getCountryList($value);
