@@ -6,9 +6,9 @@ use October\Rain\Support\ValidationException;
 use Responsiv\Payd\PaymentMethodInterface;
 
 /**
- * Payment Type Model
+ * Payment Method Model
  */
-class Type extends Model implements PaymentMethodInterface
+class PaymentMethod extends Model implements PaymentMethodInterface
 {
     use \October\Rain\Database\Traits\Purgeable;
     use \October\Rain\Database\Traits\Validation;
@@ -16,7 +16,7 @@ class Type extends Model implements PaymentMethodInterface
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'responsiv_pay_types';
+    public $table = 'responsiv_pay_methods';
 
     /**
      * @var array Guarded fields
@@ -49,13 +49,13 @@ class Type extends Model implements PaymentMethodInterface
      * @var array Relations
      */
     public $belongsToMany = [
-        'countries' => ['RainLab\User\Models\Country', 'table' => 'responsiv_pay_types_countries']
+        'countries' => ['RainLab\User\Models\Country', 'table' => 'responsiv_pay_methods_countries']
     ];
 
     /**
-     * @var self Default type cache.
+     * @var self Default method cache.
      */
-    private static $defaultType;
+    protected static $defaultMethod;
 
     /**
      * Extends this class with the gateway class
@@ -125,8 +125,8 @@ class Type extends Model implements PaymentMethodInterface
     {
         $this->beforeRenderPaymentForm($this);
 
-        $paymentTypeFile = strtolower(Str::getRealClass($this->class_name));
-        $partialName = 'pay/'.$paymentTypeFile;
+        $paymentMethodFile = strtolower(Str::getRealClass($this->class_name));
+        $partialName = 'pay/'.$paymentMethodFile;
 
         return $controller->renderPartial($partialName);
     }
@@ -148,21 +148,21 @@ class Type extends Model implements PaymentMethodInterface
      */
     public static function getDefault($countryId = null)
     {
-        if (self::$defaultType !== null)
-            return self::$defaultType;
+        if (self::$defaultMethod !== null)
+            return self::$defaultMethod;
 
-        $defaultType = self::isEnabled()->where('is_default', true)->first();
+        $defaultMethod = self::isEnabled()->where('is_default', true)->first();
 
         /*
-         * If no default is found, find the first type and make it the default.
+         * If no default is found, find the first method and make it the default.
          */
-        if (!$defaultType) {
-            $defaultType = self::isEnabled()->first();
-            if ($defaultType)
-                $defaultType->makeDefault();
+        if (!$defaultMethod) {
+            $defaultMethod = self::isEnabled()->first();
+            if ($defaultMethod)
+                $defaultMethod->makeDefault();
         }
 
-        return self::$defaultType = $defaultType;
+        return self::$defaultMethod = $defaultMethod;
     }
 
     /**

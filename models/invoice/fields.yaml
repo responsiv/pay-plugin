@@ -4,7 +4,7 @@
 
 tabs:
     fields:
-        # payment_type:
+        # payment_method:
         #     label: Payment Gateway
         #     type: relation
         #     tab: Invoice Details

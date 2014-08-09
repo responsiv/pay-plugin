@@ -32,7 +32,7 @@ class CreateInvoicesTable extends Migration
             $table->decimal('tax_discount', 15, 2)->default(0);
             $table->boolean('is_tax_exempt')->default(false);
             $table->text('tax_data')->nullable();
-            $table->integer('payment_type_id')->unsigned()->nullable()->index();
+            $table->integer('payment_method_id')->unsigned()->nullable()->index();
             $table->timestamp('processed_at')->nullable();
             $table->integer('status_id')->unsigned()->nullable()->index();
             $table->timestamp('status_updated_at')->nullable();
@@ -40,6 +40,25 @@ class CreateInvoicesTable extends Migration
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('due_at')->nullable();
             $table->string('hash', 40)->nullable()->index();
+            $table->timestamps();
+        });
+
+        Schema::create('responsiv_pay_invoice_logs', function($table)
+        {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->integer('invoice_id')->unsigned()->nullable()->index();
+            $table->string('payment_method_name')->nullable();
+            $table->boolean('is_success')->default(false);
+            $table->string('message')->nullable();
+            $table->text('raw_response')->nullable();
+            $table->text('request_data')->nullable();
+            $table->text('response_data')->nullable();
+            $table->string('ccv_response_code', 20)->nullable();
+            $table->string('ccv_response_text')->nullable();
+            $table->string('avs_response_code', 20)->nullable();
+            $table->string('avs_response_text')->nullable();
+            $table->integer('admin_id')->unsigned()->nullable()->index();
             $table->timestamps();
         });
 

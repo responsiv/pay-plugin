@@ -6,7 +6,7 @@
 list: @/plugins/responsiv/pay/models/type/columns.yaml
 
 # Model Class name
-modelClass: Responsiv\Pay\Models\Type
+modelClass: Responsiv\Pay\Models\PaymentMethod
 
 # List Title
 title: Manage Types

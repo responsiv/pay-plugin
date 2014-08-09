@@ -38,7 +38,7 @@ class Invoice extends Model implements InvoiceInterface
         'user'         => ['RainLab\User\Models\User'],
         'status'       => ['Responsiv\Pay\Models\InvoiceStatus'],
         'template'     => ['Responsiv\Pay\Models\InvoiceTemplate'],
-        'payment_type' => ['Responsiv\Pay\Models\Type'],
+        'payment_method' => ['Responsiv\Pay\Models\PaymentMethod'],
         'country'      => ['RainLab\User\Models\Country'],
         'state'        => ['RainLab\User\Models\State'],
     ];
@@ -46,13 +46,13 @@ class Invoice extends Model implements InvoiceInterface
     public $hasMany = [
         'items'      => ['Responsiv\Pay\Models\InvoiceItem'],
         'status_log' => ['Responsiv\Pay\Models\InvoiceStatusLog'],
-        'type_log'   => ['Responsiv\Pay\Models\InvoiceTypeLog'],
+        'payment_log'   => ['Responsiv\Pay\Models\InvoiceLog'],
     ];
 
     public function afterFetch()
     {
-        if (!$this->payment_type_id)
-            $this->payment_type = Type::getDefault($this->country_id);
+        if (!$this->payment_method_id)
+            $this->payment_method = Type::getDefault($this->country_id);
     }
 
     public function beforeSave()
@@ -378,7 +378,7 @@ class Invoice extends Model implements InvoiceInterface
 
             $this->save();
 
-            InvoiceStatusLog::createRecord($this->payment_type->invoice_status, $this);
+            InvoiceStatusLog::createRecord($this->payment_method->invoice_status, $this);
         }
 
         return !$isPaid;
@@ -389,7 +389,7 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function getPaymentMethod()
     {
-        return $this->payment_type;
+        return $this->payment_method;
     }
 
     /**
@@ -410,10 +410,10 @@ class Invoice extends Model implements InvoiceInterface
 
         $info = $this->getPaymentMethod()->gatewayDetails();
 
-        $record = new InvoiceTypeLog;
+        $record = new InvoiceLog;
         $record->message = $message;
         $record->invoice_id = $this->id;
-        $record->payment_type_name = $info['name'];
+        $record->payment_method_name = $info['name'];
         $record->is_success = $isSuccess;
 
         $record->raw_response = $responseText;

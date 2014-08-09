@@ -9,7 +9,7 @@ name: Payment Type
 form: @/plugins/responsiv/pay/models/type/fields.yaml
 
 # Model Class name
-modelClass: Responsiv\Pay\Models\Type
+modelClass: Responsiv\Pay\Models\PaymentMethod
 
 # Default redirect location
 defaultRedirect: responsiv/pay/types

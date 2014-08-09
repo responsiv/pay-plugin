@@ -44,10 +44,10 @@
                 <label for="type{{ type.id }}" class="radio">
                     <input
                         id="type{{ type.id }}"
-                        name="payment_type"
+                        name="payment_method"
                         value="{{ type.id }}"
                         type="radio"
-                        {{ type.id == invoice.payment_type_id ? 'checked' }}
+                        {{ type.id == invoice.payment_method_id ? 'checked' }}
                         data-request="onUpdatePaymentType"
                         data-request-update="'@payment_form': '#partialPaymentForm'"
                         />

@@ -16,7 +16,7 @@ status_log:
     showSorting: false
     defaultSort: created_at
 
-type_log:
+payment_log:
     label: Payments
     emptyMessage: Invoice has no payment attempts
     list: @/plugins/responsiv/pay/models/invoicetypelog/columns.yaml

@@ -3,7 +3,7 @@
 # ===================================
 
 columns:
-    payment_type_name:
+    payment_method_name:
         label: Gateway
 
     message:

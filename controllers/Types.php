@@ -3,7 +3,7 @@
 use BackendMenu;
 use Backend\Classes\Controller;
 use Responsiv\Pay\Classes\GatewayManager;
-use Responsiv\Pay\Models\Type as TypeModel;
+use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use Exception;
 
 /**

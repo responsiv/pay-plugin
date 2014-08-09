@@ -5,12 +5,12 @@ use Model;
 /**
  * Invoice payment log
  */
-class InvoiceTypeLog extends Model
+class InvoiceLog extends Model
 {
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'responsiv_pay_invoice_type_logs';
+    public $table = 'responsiv_pay_invoice_logs';
 
     /**
      * @var array Guarded fields

@@ -6,7 +6,7 @@ use Response;
 use Cms\Classes\Theme;
 use Cms\Classes\Partial;
 use System\Classes\PluginManager;
-use Responsiv\Pay\Models\Type as TypeModel;
+use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 
 /**
  * Manages payment gateways

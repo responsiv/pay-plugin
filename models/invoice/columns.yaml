@@ -78,8 +78,8 @@ columns:
         select: @name
         invisible: true
 
-    payment_type:
+    payment_method:
         label: Gateway
-        relation: payment_type
+        relation: payment_method
         select: @name
         invisible: true

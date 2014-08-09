@@ -4,7 +4,7 @@ use Redirect;
 use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
-use Responsiv\Pay\Models\Type as TypeModel;
+use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use System\Classes\ApplicationException;
 
 class Payment extends ComponentBase
@@ -51,7 +51,7 @@ class Payment extends ComponentBase
     {
         $this->page['invoice'] = $invoice = $this->getInvoice();
         $this->page['paymentTypes'] = TypeModel::listApplicable($invoice->country_id);
-        $this->page['paymentType'] = $invoice ? $invoice->payment_type : null;
+        $this->page['paymentType'] = $invoice ? $invoice->payment_method : null;
         $this->prepareVars();
 
         if (post('submit_payment'))
@@ -83,13 +83,13 @@ class Payment extends ComponentBase
         if (!$invoice = $this->getInvoice())
             throw new ApplicationException('Invoice not found!');
 
-        if (!$typeId = post('payment_type'))
+        if (!$typeId = post('payment_method'))
             throw new ApplicationException('Payment type not specified!');
 
         if (!$type = TypeModel::find($typeId))
             throw new ApplicationException('Payment type not found!');
 
-        $invoice->payment_type = $type;
+        $invoice->payment_method = $type;
         $invoice->save();
 
         $this->page['invoice'] = $invoice;
@@ -101,7 +101,7 @@ class Payment extends ComponentBase
         if (!$invoice = $this->getInvoice())
             return;
 
-        if (!$paymentType = $invoice->payment_type)
+        if (!$paymentType = $invoice->payment_method)
             return;
 
         $redirect = $paymentType->processPaymentForm(post(), $paymentType, $invoice);
