@@ -1,11 +1,12 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
+use Responsiv\Payd\InvoiceStatusInterface;
 
 /**
  * InvoiceStatus Model
  */
-class InvoiceStatus extends Model
+class InvoiceStatus extends Model implements InvoiceStatusInterface
 {
     const STATUS_DRAFT = 'draft';
     const STATUS_APPROVED = 'approved';
@@ -73,4 +74,33 @@ class InvoiceStatus extends Model
 
         return static::$codeCache[$code] = $status;
     }
+
+    //
+    // InvoiceStatusInterface obligations
+    //
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaidStatus()
+    {
+        return static::STATUS_PAID;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getNewStatus()
+    {
+        return static::STATUS_NEW;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function listStatuses()
+    {
+        return static::lists('name', 'code');
+    }
+
 }

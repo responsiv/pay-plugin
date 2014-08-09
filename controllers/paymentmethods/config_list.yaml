@@ -9,10 +9,10 @@ list: @/plugins/responsiv/pay/models/paymentmethod/columns.yaml
 modelClass: Responsiv\Pay\Models\PaymentMethod
 
 # List Title
-title: Manage Types
+title: Manage Payment Methods
 
 # Link URL for each record
-recordUrl: responsiv/pay/types/update/:id
+recordUrl: responsiv/pay/paymentmethods/update/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records

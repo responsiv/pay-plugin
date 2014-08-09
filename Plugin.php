@@ -55,7 +55,7 @@ class Plugin extends PluginBase
                     'types' => [
                         'label'       => 'Gateways',
                         'icon'        => 'icon-money',
-                        'url'         => Backend::url('responsiv/pay/types'),
+                        'url'         => Backend::url('responsiv/pay/paymentmethods'),
                         'permissions' => ['pay.access_gateways'],
                     ],
                     'taxes' => [

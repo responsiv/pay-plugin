@@ -54,10 +54,6 @@ class CreateInvoicesTable extends Migration
             $table->text('raw_response')->nullable();
             $table->text('request_data')->nullable();
             $table->text('response_data')->nullable();
-            $table->string('ccv_response_code', 20)->nullable();
-            $table->string('ccv_response_text')->nullable();
-            $table->string('avs_response_code', 20)->nullable();
-            $table->string('avs_response_text')->nullable();
             $table->integer('admin_id')->unsigned()->nullable()->index();
             $table->timestamps();
         });
@@ -125,6 +121,7 @@ class CreateInvoicesTable extends Migration
         Schema::dropIfExists('responsiv_pay_invoice_statuses');
         Schema::dropIfExists('responsiv_pay_invoice_status_logs');
         Schema::dropIfExists('responsiv_pay_invoice_templates');
+        Schema::dropIfExists('responsiv_pay_invoice_logs');
     }
 
 }

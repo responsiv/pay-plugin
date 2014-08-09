@@ -25,9 +25,9 @@ class CreateTypesTable extends Migration
         Schema::create('responsiv_pay_methods_countries', function($table)
         {
             $table->engine = 'InnoDB';
-            $table->integer('type_id')->unsigned();
+            $table->integer('payment_method_id')->unsigned();
             $table->integer('country_id')->unsigned();
-            $table->primary(['type_id', 'country_id']);
+            $table->primary(['payment_method_id', 'country_id'], 'method_country');
         });
     }
 
@@ -35,7 +35,6 @@ class CreateTypesTable extends Migration
     {
         Schema::dropIfExists('responsiv_pay_methods');
         Schema::dropIfExists('responsiv_pay_methods_countries');
-        Schema::dropIfExists('responsiv_pay_invoice_logs');
     }
 
 }

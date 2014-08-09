@@ -12,19 +12,19 @@ form: @/plugins/responsiv/pay/models/paymentmethod/fields.yaml
 modelClass: Responsiv\Pay\Models\PaymentMethod
 
 # Default redirect location
-defaultRedirect: responsiv/pay/types
+defaultRedirect: responsiv/pay/paymentmethods
 
 # Create page
 create:
     title: Create Payment Type
-    redirect: responsiv/pay/types/update/:id
-    redirectClose: responsiv/pay/types
+    redirect: responsiv/pay/paymentmethods/update/:id
+    redirectClose: responsiv/pay/paymentmethods
 
 # Update page
 update:
     title: Edit Payment Type
-    redirect: responsiv/pay/types
-    redirectClose: responsiv/pay/types
+    redirect: responsiv/pay/paymentmethods
+    redirectClose: responsiv/pay/paymentmethods
 
 # Preview page
 preview:

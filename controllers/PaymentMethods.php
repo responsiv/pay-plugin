@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Controllers;
 
+use File;
 use BackendMenu;
 use Backend\Classes\Controller;
 use Responsiv\Pay\Classes\GatewayManager;
@@ -7,9 +8,9 @@ use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use Exception;
 
 /**
- * Types Back-end Controller
+ * Payment Methods Back-end Controller
  */
-class Types extends Controller
+class PaymentMethods extends Controller
 {
     public $implement = [
         'Backend.Behaviors.FormController',
@@ -77,6 +78,20 @@ class Types extends Controller
         $model = $widget->model;
         $config = $model->getFieldConfig();
         $widget->addFields($config->fields, 'primary');
+
+        /*
+         * Add the set up help partial
+         */
+        $setupPartial = $model->getPartialPath().'/setup_help.htm';
+        if (File::exists($setupPartial)) {
+            $widget->addFields([
+                'setup_help' => [
+                    'type' => 'partial',
+                    'tab'  => 'Help',
+                    'path' => $setupPartial,
+                ]
+            ], 'primary');
+        }
     }
 
     protected function getGatewayClass()

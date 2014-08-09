@@ -251,7 +251,6 @@ class Invoice extends Model implements InvoiceInterface
         return md5(uniqid('invoice', microtime()));
     }
 
-
     //
     // InvoiceInterface obligations
     //
@@ -377,8 +376,6 @@ class Invoice extends Model implements InvoiceInterface
             $this->where('id', $this->id)->update(['processed_at' => $now]);
 
             $this->save();
-
-            InvoiceStatusLog::createRecord($this->payment_method->invoice_status, $this);
         }
 
         return !$isPaid;
@@ -395,19 +392,8 @@ class Invoice extends Model implements InvoiceInterface
     /**
      * {@inheritDoc}
      */
-    public function logPaymentAttempt(
-        $message,
-        $isSuccess,
-        $requestArray,
-        $responseArray,
-        $responseText,
-        $ccvResponseCode = null,
-        $ccvResponseText = null,
-        $avsResponseCode = null,
-        $avsResponseText = null
-    )
+    public function logPaymentAttempt($message, $isSuccess, $requestArray, $responseArray, $responseText)
     {
-
         $info = $this->getPaymentMethod()->gatewayDetails();
 
         $record = new InvoiceLog;
@@ -420,12 +406,16 @@ class Invoice extends Model implements InvoiceInterface
         $record->request_data = $requestArray;
         $record->response_data = $responseArray;
 
-        $record->ccv_response_code = $ccvResponseCode;
-        $record->ccv_response_text = $ccvResponseText;
-        $record->avs_response_code = $avsResponseCode;
-        $record->avs_response_text = $avsResponseText;
-
         $record->save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateInvoiceStatus($statusCode)
+    {
+        if ($status = InvoiceStatus::getByCode($statusCode))
+            InvoiceStatusLog::createRecord($status, $this);
     }
 
 }
