@@ -40,7 +40,7 @@
         <h5>Please choose a payment method</h5>
 
         {{ form_open() }}
-            {% for type in paymentTypes %}
+            {% for type in paymentMethods %}
                 <label for="type{{ type.id }}" class="radio">
                     <input
                         id="type{{ type.id }}"

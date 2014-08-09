@@ -35,18 +35,18 @@ class Invoice extends Model implements InvoiceInterface
      * @var array Relations
      */
     public $belongsTo = [
-        'user'         => ['RainLab\User\Models\User'],
-        'status'       => ['Responsiv\Pay\Models\InvoiceStatus'],
-        'template'     => ['Responsiv\Pay\Models\InvoiceTemplate'],
+        'user'           => ['RainLab\User\Models\User'],
+        'status'         => ['Responsiv\Pay\Models\InvoiceStatus'],
+        'template'       => ['Responsiv\Pay\Models\InvoiceTemplate'],
         'payment_method' => ['Responsiv\Pay\Models\PaymentMethod'],
-        'country'      => ['RainLab\User\Models\Country'],
-        'state'        => ['RainLab\User\Models\State'],
+        'country'        => ['RainLab\User\Models\Country'],
+        'state'          => ['RainLab\User\Models\State'],
     ];
 
     public $hasMany = [
-        'items'      => ['Responsiv\Pay\Models\InvoiceItem'],
-        'status_log' => ['Responsiv\Pay\Models\InvoiceStatusLog'],
-        'payment_log'   => ['Responsiv\Pay\Models\InvoiceLog'],
+        'items'       => ['Responsiv\Pay\Models\InvoiceItem'],
+        'status_log'  => ['Responsiv\Pay\Models\InvoiceStatusLog'],
+        'payment_log' => ['Responsiv\Pay\Models\InvoiceLog'],
     ];
 
     public function afterFetch()

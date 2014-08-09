@@ -50,8 +50,8 @@ class Payment extends ComponentBase
     public function onRun()
     {
         $this->page['invoice'] = $invoice = $this->getInvoice();
-        $this->page['paymentTypes'] = TypeModel::listApplicable($invoice->country_id);
-        $this->page['paymentType'] = $invoice ? $invoice->payment_method : null;
+        $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
+        $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
         $this->prepareVars();
 
         if (post('submit_payment'))
@@ -83,17 +83,17 @@ class Payment extends ComponentBase
         if (!$invoice = $this->getInvoice())
             throw new ApplicationException('Invoice not found!');
 
-        if (!$typeId = post('payment_method'))
+        if (!$methodId = post('payment_method'))
             throw new ApplicationException('Payment type not specified!');
 
-        if (!$type = TypeModel::find($typeId))
+        if (!$method = TypeModel::find($methodId))
             throw new ApplicationException('Payment type not found!');
 
-        $invoice->payment_method = $type;
+        $invoice->payment_method = $method;
         $invoice->save();
 
         $this->page['invoice'] = $invoice;
-        $this->page['paymentType'] = $type;
+        $this->page['paymentMethod'] = $method;
     }
 
     public function onPay($invoice = null)
@@ -101,10 +101,10 @@ class Payment extends ComponentBase
         if (!$invoice = $this->getInvoice())
             return;
 
-        if (!$paymentType = $invoice->payment_method)
+        if (!$paymentMethod = $invoice->payment_method)
             return;
 
-        $redirect = $paymentType->processPaymentForm(post(), $paymentType, $invoice);
+        $redirect = $paymentMethod->processPaymentForm(post(), $paymentMethod, $invoice);
         if ($redirect === false)
             return;
 
