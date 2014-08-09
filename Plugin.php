@@ -114,10 +114,10 @@ class Plugin extends PluginBase
     public function registerPaymentGateways()
     {
         return [
-            'Responsiv\Payd\PaymentTypes\PaypalStandard' => 'paypal-standard',
-            'Responsiv\Payd\PaymentTypes\PaypalPro'      => 'paypal-pro',
-            'Responsiv\Payd\PaymentTypes\Offline'        => 'offline',
-            'Responsiv\Payd\PaymentTypes\Skrill'         => 'skrill',
+            'Responsiv\Payd\Gateways\PaypalStandard' => 'paypal-standard',
+            'Responsiv\Payd\Gateways\PaypalPro'      => 'paypal-pro',
+            'Responsiv\Payd\Gateways\Offline'        => 'offline',
+            'Responsiv\Payd\Gateways\Skrill'         => 'skrill',
         ];
     }
 
