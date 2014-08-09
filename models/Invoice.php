@@ -344,7 +344,7 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function getTotalDetails()
     {
-        $details [
+        $details = [
             'total'    => $this->total,
             'subtotal' => $this->subtotal,
             'tax'      => $this->tax,
