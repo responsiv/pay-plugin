@@ -1,6 +1,6 @@
 1.0.1:
   - First version of Pay
   - create_invoices_table.php
-  - create_payment_method_table.php
+  - create_methods_table.php
   - create_taxes_table.php
   - seed_all_tables.php
