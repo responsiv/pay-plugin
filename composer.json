@@ -1,0 +1,17 @@
+{
+    "name": "responsiv/pay",
+    "description": "Payment plugin for OctoberCMS",
+    "homepage": "http://octobercms.com",
+    "keywords": ["october", "cms", "responsiv", "payment", "gateway"],
+    "authors": [
+        {
+            "name": "Samuel Georges",
+            "email": "daftspunky@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "responsiv/payd": "~1.0"
+    },
+    "minimum-stability": "dev"
+}

@@ -211,7 +211,7 @@ class GatewayManager
         foreach ($paymentTypes as $paymentType) {
             $class = $paymentType->class_name;
 
-            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase')
+            if (!$class || get_parent_class($class) != 'Responsiv\Payd\GatewayBase')
                 continue;
 
             $partialName = 'pay/'.strtolower(Str::getRealClass($class));

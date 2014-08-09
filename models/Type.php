@@ -3,11 +3,12 @@
 use Str;
 use Model;
 use October\Rain\Support\ValidationException;
+use Responsiv\Payd\PaymentMethodInterface;
 
 /**
  * Payment Type Model
  */
-class Type extends Model
+class Type extends Model implements PaymentMethodInterface
 {
     use \October\Rain\Database\Traits\Purgeable;
     use \October\Rain\Database\Traits\Validation;
@@ -162,6 +163,14 @@ class Type extends Model
         }
 
         return self::$defaultType = $defaultType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getGatewayClass()
+    {
+        return $this->class_name;
     }
 
 }

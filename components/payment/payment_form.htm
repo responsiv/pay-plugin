@@ -1,12 +1,5 @@
 {% if paymentType %}
-    {% if paymentType.hasPaymentForm %}
-        <div class="payment_form">
-            {{ paymentType.renderPaymentForm(this.controller)|raw }}
-        </div>
-    {% else %}
-        <p>Payment method {{ paymentType.name }} has no payment form. Please pay and notify us of your action.</p>
-        <ul>
-            <li><a href="/">Return to the homepage</a></li>
-        </ul>
-    {% endif %}
+    <div class="payment_form">
+        {{ paymentType.renderPaymentForm(this.controller)|raw }}
+    </div>
 {% endif %}
