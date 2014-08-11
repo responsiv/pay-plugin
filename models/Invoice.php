@@ -6,9 +6,9 @@ use DB as Db;
 use Carbon\Carbon;
 use RainLab\User\Models\Settings as UserSettings;
 use Responsiv\Pay\Models\Settings as InvoiceSettings;
+use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use RainLab\User\Models\State;
 use RainLab\User\Models\Country;
-use Responsiv\Payd\InvoiceInterface;
 use Exception;
 
 /**

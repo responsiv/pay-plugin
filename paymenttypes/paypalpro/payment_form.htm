@@ -1,0 +1,98 @@
+<p>Please enter your credit card information</p>
+
+{{ form_ajax('onPay') }}
+
+    <div class="form-group">
+        <label>Credit Card Type</label>
+        <label for="ccVisa" class="checkbox-inline">
+            <input
+                autocomplete="off"
+                type="radio"
+                name="card_type"
+                id="ccVisa"
+                value="Visa"/> Visa
+        </label>
+        <label for="ccMastercard" class="checkbox-inline">
+            <input
+                autocomplete="off"
+                type="radio"
+                name="card_type"
+                id="ccMastercard"
+                value="MasterCard"/> MasterCard
+        </label>
+        <label for="ccDiscover" class="checkbox-inline">
+            <input
+                autocomplete="off"
+                type="radio"
+                name="card_type"
+                id="ccDiscover"
+                value="Discover"/> Discover
+        </label>
+        <label for="ccAmex" class="checkbox-inline">
+            <input
+                autocomplete="off"
+                type="radio"
+                name="card_type"
+                id="ccAmex"
+                value="Amex"/> Amex
+        </label>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cardFirstName">Cardholder First Name</label>
+            <div><input autocomplete="off" name="first_name" value="" id="cardFirstName" type="text" class="form-control" /></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="cardLastName">Cardholder Last Name</label>
+            <div><input autocomplete="off" name="last_name" value="" id="cardLastName" type="text" class="form-control" /></div>
+        </div>
+    </div>
+
+    <label for="cardAcct">Credit Card Number</label>
+    <div><input autocomplete="off" name="card_number" value="" id="cardAcct" type="text" class="form-control" /></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cardExpDate-Month">Expiration Date - Month</label>
+            <select autocomplete="off" name="expiry_date_month" id="cardExpDate-Month" class="form-control">
+                {% for month in 1..12 %}
+                    <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="cardExpDate-Year">Expiration Date - Year</label>
+            <select autocomplete="off" name="expiry_date_year" id="cardExpDate-Year" class="form-control">
+                {% set startYear = 'now'|date('Y') %}
+                {% for year in startYear..(startYear+10) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="CVV">
+                CVV
+            </label>
+            <div>
+                <input autocomplete="off" name="CVV" value="" id="CVV" type="text" class="form-control" />
+                <small class="text-muted">
+                    For MasterCard, Visa, and Discover, the CVV is the last three digits in the
+                    signature area on the back of your card. For American Express, it's the four
+                    digits on the front of the card.
+                </small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <button class="btn">
+                Submit payment
+            </button>
+        </div>
+    </div>
+
+{{ form_close() }}

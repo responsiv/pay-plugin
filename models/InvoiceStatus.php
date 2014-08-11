@@ -1,7 +1,7 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use Responsiv\Payd\InvoiceStatusInterface;
+use Responsiv\Pay\Interfaces\InvoiceStatus as InvoiceStatusInterface;
 
 /**
  * InvoiceStatus Model

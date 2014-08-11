@@ -1,0 +1,11 @@
+# ===================================
+#  Gateway Field Definitions
+# ===================================
+
+fields:
+
+    payment_instructions:
+        label: Payment instructions
+        type: richeditor
+        tab: Configuration
+

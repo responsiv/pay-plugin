@@ -3,7 +3,7 @@
 use Str;
 use Model;
 use October\Rain\Support\ValidationException;
-use Responsiv\Payd\PaymentMethodInterface;
+use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
 
 /**
  * Payment Method Model

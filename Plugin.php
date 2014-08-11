@@ -52,18 +52,6 @@ class Plugin extends PluginBase
                         'url'         => Backend::url('responsiv/pay/invoices'),
                         'permissions' => ['pay.access_invoices'],
                     ],
-                    'types' => [
-                        'label'       => 'Gateways',
-                        'icon'        => 'icon-money',
-                        'url'         => Backend::url('responsiv/pay/paymentmethods'),
-                        'permissions' => ['pay.access_gateways'],
-                    ],
-                    'taxes' => [
-                        'label'       => 'Tax Tables',
-                        'icon'        => 'icon-table',
-                        'url'         => Backend::url('responsiv/pay/taxes'),
-                        'permissions' => ['pay.access_taxes'],
-                    ],
                 ]
 
             ]
@@ -73,6 +61,22 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
+            'types' => [
+                'label'       => 'Gateways',
+                'description' => 'Configure payment methods for taking payments.',
+                'icon'        => 'icon-money',
+                'url'         => Backend::url('responsiv/pay/paymentmethods'),
+                'category'    => 'Payments',
+                'order'       => 500,
+            ],
+            'taxes' => [
+                'label'       => 'Tax Tables',
+                'description' => 'Configure tax rules.',
+                'icon'        => 'icon-table',
+                'url'         => Backend::url('responsiv/pay/taxes'),
+                'category'    => 'Payments',
+                'order'       => 500,
+            ],
             'settings' => [
                 'label'       => 'Payment Settings',
                 'description' => 'Manage currency configuration.',
@@ -114,10 +118,10 @@ class Plugin extends PluginBase
     public function registerPaymentGateways()
     {
         return [
-            'Responsiv\Payd\Gateways\PaypalStandard' => 'paypal-standard',
-            'Responsiv\Payd\Gateways\PaypalPro'      => 'paypal-pro',
-            'Responsiv\Payd\Gateways\Offline'        => 'offline',
-            'Responsiv\Payd\Gateways\Skrill'         => 'skrill',
+            'Responsiv\Pay\PaymentTypes\PaypalStandard' => 'paypal-standard',
+            'Responsiv\Pay\PaymentTypes\PaypalPro'      => 'paypal-pro',
+            'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
+            'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
         ];
     }
 
