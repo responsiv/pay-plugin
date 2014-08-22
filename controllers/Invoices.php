@@ -32,12 +32,12 @@ class Invoices extends Controller
     public function preview($recordId = null, $context = null)
     {
         $this->bodyClass = 'slim-container';
-        return $this->getClassExtension('Backend.Behaviors.FormController')->preview($recordId, $context);
+        return $this->asExtension('FormController')->preview($recordId, $context);
     }
 
     public function preview_onDelete($recordId = null)
     {
-        return $this->getClassExtension('Backend.Behaviors.FormController')->update_onDelete($recordId);
+        return $this->asExtension('FormController')->update_onDelete($recordId);
     }
 
     public function preview_onLoadChangeStatusForm($recordId = null)

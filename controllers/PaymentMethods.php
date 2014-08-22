@@ -59,7 +59,7 @@ class PaymentMethods extends Controller
     {
         try {
             $this->gatewayAlias = $gatewayAlias;
-            $this->getClassExtension('Backend.Behaviors.FormController')->create();
+            $this->asExtension('FormController')->create();
         }
         catch (Exception $ex) {
             $this->handleError($ex);
