@@ -418,4 +418,19 @@ class Invoice extends Model implements InvoiceInterface
             InvoiceStatusLog::createRecord($status, $this);
     }
 
+    /**
+     * Sets the "url" attribute with a URL to this object
+     * @param string $pageName
+     * @param Cms\Classes\Controller $controller
+     */
+    public function setUrl($pageName, $controller)
+    {
+        $params = [
+            'id' => $this->id,
+            'hash' => $this->hash,
+        ];
+
+        return $this->url = $controller->pageUrl($pageName, $params);
+    }
+
 }

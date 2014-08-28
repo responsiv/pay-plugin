@@ -37,7 +37,7 @@
                 <p>Thank you for your business.</p>
             {% else %}
                 <h4>This invoice has not been paid</h4>
-                <a class="btn btn-success btn-lg" href="{{ payPage|page({ (payPageIdParam): invoice.hash }) }}">
+                <a class="btn btn-success btn-lg" href="{{ invoice.url }}">
                     Pay this Invoice
                 </a>
             {% endif %}

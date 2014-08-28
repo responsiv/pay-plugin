@@ -33,12 +33,6 @@ class Invoice extends ComponentBase
                 'type'        => 'dropdown',
                 'default'     => 'pay/pay'
             ],
-            'payPageIdParam' => [
-                'title'       => 'Payment page param name',
-                'description' => 'The expected parameter name used when creating links to the payment page.',
-                'type'        => 'string',
-                'default'     => ':hash',
-            ],
         ];
     }
 
@@ -49,9 +43,8 @@ class Invoice extends ComponentBase
 
     public function onRun()
     {
+        $this->payPage = $this->page['payPage'] = $this->property('payPage');
         $this->page['invoice'] = $invoice = $this->getInvoice();
-
-        $this->prepareVars();
     }
 
     public function getInvoice()
@@ -74,16 +67,10 @@ class Invoice extends ComponentBase
         if ($invoice && $invoice->user_id != $user->id)
             $invoice = null;
 
-        return $this->invoice = $invoice;
-    }
+        if ($invoice)
+            $invoice->setUrl($this->payPage, $this->controller);
 
-    protected function prepareVars()
-    {
-        /*
-         * Page links
-         */
-        $this->payPage = $this->page['payPage'] = $this->property('payPage');
-        $this->payPageIdParam = $this->page['payPageIdParam'] = $this->property('payPageIdParam');
+        return $this->invoice = $invoice;
     }
 
 }

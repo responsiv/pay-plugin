@@ -33,12 +33,6 @@ class Payment extends ComponentBase
                 'type'        => 'dropdown',
                 'default'     => 'pay/pay'
             ],
-            'invoicePageIdParam' => [
-                'title'       => 'Invoice page param name',
-                'description' => 'The expected parameter name used when creating links to the invoice page.',
-                'type'        => 'string',
-                'default'     => ':id',
-            ],
         ];
     }
 
@@ -49,10 +43,10 @@ class Payment extends ComponentBase
 
     public function onRun()
     {
+        $this->prepareVars();
         $this->page['invoice'] = $invoice = $this->getInvoice();
         $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
         $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
-        $this->prepareVars();
 
         if (post('submit_payment'))
             $this->onPay();
@@ -66,7 +60,12 @@ class Payment extends ComponentBase
         if (!$hash = $this->propertyOrParam('idParam'))
             return null;
 
-        return $this->invoice = InvoiceModel::whereHash($hash)->first();
+        $invoice = InvoiceModel::whereHash($hash)->first();
+
+        if ($invoice)
+            $invoice->setUrl($this->invoicePage, $this->controller);
+
+        return $this->invoice = $invoice;
     }
 
     protected function prepareVars()
@@ -75,7 +74,6 @@ class Payment extends ComponentBase
          * Page links
          */
         $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
-        $this->invoicePageIdParam = $this->page['invoicePageIdParam'] = $this->property('invoicePageIdParam');
     }
 
     public function onUpdatePaymentType()

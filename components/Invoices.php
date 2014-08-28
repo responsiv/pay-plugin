@@ -26,12 +26,6 @@ class Invoices extends ComponentBase
                 'description' => 'Name of the invoice page file for the invoice links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
             ],
-            'invoicePageIdParam' => [
-                'title'       => 'Invoice page param name',
-                'description' => 'The expected parameter name used when creating links to the invoice page.',
-                'type'        => 'string',
-                'default'     => ':id',
-            ],
         ];
     }
 
@@ -42,9 +36,8 @@ class Invoices extends ComponentBase
 
     public function onRun()
     {
-        $this->invoices = $this->page['invoices'] = $this->loadInvoices();
         $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
-        $this->invoicePageIdParam = $this->page['invoicePageIdParam'] = $this->property('invoicePageIdParam');
+        $this->invoices = $this->page['invoices'] = $this->loadInvoices();
     }
 
     protected function loadInvoices()
@@ -53,8 +46,13 @@ class Invoices extends ComponentBase
             throw new \Exception('You must be logged in');
 
         $invoices = InvoiceModel::orderBy('sent_at');
-        $invoices->where('user_id', $user->id);
-        return $invoices->get();
+        $invoices->where('user_id', $user->id)->get();
+
+        $invoices->each(function($invoice){
+            $invoice->setUrl($this->invoicePage, $this->controller);
+        });
+
+        return $invoices;
     }
 
 }

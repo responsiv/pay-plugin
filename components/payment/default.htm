@@ -6,7 +6,7 @@
             This invoice has been paid. Thank-you!
         </h4>
         <p>
-            View <a href="{{ invoicePage|page({ (invoicePageIdParam): invoice.id }) }}">invoice {{ invoice.id }}</a>
+            View <a href="{{ invoice.url }}">invoice {{ invoice.id }}</a>
         </p>
 
     {% else %}
