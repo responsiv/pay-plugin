@@ -4,22 +4,24 @@
 
 items:
     label: Line Item
-    emptyMessage: Invoice has no line items
     list: @/plugins/responsiv/pay/models/invoiceitem/columns.yaml
     form: @/plugins/responsiv/pay/models/invoiceitem/fields.yaml
+    emptyMessage: Invoice has no line items
 
 status_log:
     label: History
     emptyMessage: Invoice has no status history
     list: @/plugins/responsiv/pay/models/invoicestatuslog/columns.yaml
     readOnly: true
-    showSorting: false
-    defaultSort: created_at
+    view:
+        showSorting: false
+        defaultSort: created_at
 
 payment_log:
     label: Payments
     emptyMessage: Invoice has no payment attempts
     list: @/plugins/responsiv/pay/models/invoicetypelog/columns.yaml
     readOnly: true
-    showSorting: false
-    defaultSort: created_at
+    view:
+        showSorting: false
+        defaultSort: created_at
