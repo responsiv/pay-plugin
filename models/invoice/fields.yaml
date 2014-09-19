@@ -22,8 +22,8 @@ tabs:
             type: recordfinder
             list: @/plugins/rainlab/user/models/user/columns.yaml
             prompt: Click the %s button to find a user
-            nameColumn: name
-            descriptionColumn: email
+            nameFrom: name
+            descriptionFrom: email
             tab: Invoice Details
             span: left
 
