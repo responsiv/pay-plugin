@@ -314,7 +314,9 @@ class Invoice extends Model implements InvoiceInterface
             'city'        => $this->city,
             'zip'         => $this->zip,
             'state_id'    => $this->state->code,
+            'state'       => $this->state->name,
             'country_id'  => $this->country->code,
+            'country'     => $this->country->name
         ];
 
         return $details;
