@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use RainLab\User\Models\Settings as UserSettings;
 use Responsiv\Pay\Models\Settings as InvoiceSettings;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
+use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\User\Models\State;
 use RainLab\User\Models\Country;
 use Exception;
@@ -52,7 +53,7 @@ class Invoice extends Model implements InvoiceInterface
     public function afterFetch()
     {
         if (!$this->payment_method_id)
-            $this->payment_method = Type::getDefault($this->country_id);
+            $this->payment_method = TypeModel::getDefault($this->country_id);
     }
 
     public function beforeSave()
