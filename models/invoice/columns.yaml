@@ -83,3 +83,9 @@ columns:
         relation: payment_method
         select: @name
         invisible: true
+
+    status:
+        label: Invoice Status
+        relation: status
+        select: @name
+        invisible: true
