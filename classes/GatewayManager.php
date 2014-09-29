@@ -1,6 +1,5 @@
 <?php namespace Responsiv\Pay\Classes;
 
-use Str;
 use File;
 use Response;
 use Cms\Classes\Theme;
@@ -214,11 +213,11 @@ class GatewayManager
             if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase')
                 continue;
 
-            $partialName = 'pay/'.strtolower(Str::getRealClass($class));
+            $partialName = 'pay/'.strtolower(class_basename($class));
             $partialExists = array_key_exists($partialName, $partials);
 
             if (!$partialExists) {
-                $filePath = dirname(File::fromClass($class)).'/'.strtolower(Str::getRealClass($class)).'/payment_form.htm';
+                $filePath = dirname(File::fromClass($class)).'/'.strtolower(class_basename($class)).'/payment_form.htm';
                 self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
             }
         }
