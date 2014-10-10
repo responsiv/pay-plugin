@@ -10,7 +10,8 @@ columns:
     status:
         label: Status
         relation: status
-        select: @name
+        select: name
+        sortable: false
 
     created_at:
         label: Recorded

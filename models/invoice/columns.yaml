@@ -69,23 +69,27 @@ columns:
     state:
         label: State
         relation: state
-        select: @name
+        select: name
+        sortable: false
         invisible: true
 
     country:
         label: Country
         relation: country
-        select: @name
+        select: name
+        sortable: false
         invisible: true
 
     payment_method:
         label: Gateway
         relation: payment_method
-        select: @name
+        select: name
+        sortable: false
         invisible: true
 
     status:
         label: Invoice Status
         relation: status
-        select: @name
+        select: name
+        sortable: false
         invisible: true
