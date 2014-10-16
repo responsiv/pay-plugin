@@ -70,7 +70,7 @@ class Plugin extends PluginBase
                 'order'       => 500,
             ],
             'taxes' => [
-                'label'       => 'Tax Tables',
+                'label'       => 'Tax tables',
                 'description' => 'Configure tax rules.',
                 'icon'        => 'icon-table',
                 'url'         => Backend::url('responsiv/pay/taxes'),
@@ -78,7 +78,7 @@ class Plugin extends PluginBase
                 'order'       => 500,
             ],
             'settings' => [
-                'label'       => 'Payment Settings',
+                'label'       => 'Payment settings',
                 'description' => 'Manage currency configuration.',
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
@@ -86,7 +86,7 @@ class Plugin extends PluginBase
                 'order'       => 500,
             ],
             'invoices' => [
-                'label'       => 'Invoice Template',
+                'label'       => 'Invoice template',
                 'description' => 'Customize the template used for invoices.',
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),

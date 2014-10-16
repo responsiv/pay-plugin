@@ -43,7 +43,7 @@
 
 <?php else: ?>
 
-    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p class="flash-message static error"><?= e(trans($this->fatalError)) ?></p>
     <p><a href="<?= Backend::url('responsiv/pay/invoicestemplates') ?>" class="btn btn-default">Return to invoicestemplates list</a></p>
 
 <?php endif ?>

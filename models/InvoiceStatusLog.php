@@ -1,8 +1,8 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Event;
-use Model;
 use Carbon\Carbon;
+use October\Rain\Database\Model;
 
 /**
  * Invoice Status Log Model
