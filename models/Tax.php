@@ -35,21 +35,21 @@ class Tax extends Model
      */
     protected static $cache = [];
 
-    public function getRatesAutocompleteValues($field, $value, $data)
+    public function getDataTableOptions($attribute, $field, $data)
     {
-        if ($field == 'country')
-            return $this->getCountryList($value);
+        if ($field == 'country') {
+            return $this->getCountryList(array_get($data, $field));
+        }
 
         if ($field == 'state') {
-            $countryCode = isset($data['country']) ? $data['country'] : null;
-            return $this->getStateList($countryCode, $value);
+            return $this->getStateList(array_get($data, 'country'), array_get($data, $field));
         }
     }
 
     protected function getCountryList($term)
     {
-        $countries = Country::searchWhere($term, ['name', 'code'])->limit(10)->lists('name', 'code');
         $result = ['*' => '* - Any country'];
+        $countries = Country::searchWhere($term, ['name', 'code'])->limit(10)->lists('name', 'code');
 
         foreach ($countries as $code => $name) {
             $result[$code] = $code .' - ' . $name;
@@ -60,6 +60,11 @@ class Tax extends Model
 
     protected function getStateList($countryCode, $term)
     {
+        $result = ['*' => '* - Any state'];
+
+        if (!$countryCode || $countryCode == '*')
+            return $result;
+
         $states = State::searchWhere($term, ['name', 'code']);
 
         if ($countryCode) {
@@ -69,8 +74,6 @@ class Tax extends Model
         }
 
         $states = $states->limit(10)->lists('name', 'code');
-
-        $result = ['*' => '* - Any state'];
 
         foreach ($states as $code => $name) {
             $result[$code] = $code .' - ' . $name;
