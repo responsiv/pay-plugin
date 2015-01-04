@@ -49,7 +49,12 @@ class Tax extends Model
     protected function getCountryList($term)
     {
         $result = ['*' => '* - Any country'];
-        $countries = Country::searchWhere($term, ['name', 'code'])->limit(10)->lists('name', 'code');
+
+        // The search term functionality is disabled as it's not supported
+        // by the Table widget's drop-down processor -ab 2015-01-03
+        //$countries = Country::searchWhere($term, ['name', 'code'])
+
+        $countries = Country::limit(10)->lists('name', 'code');
 
         foreach ($countries as $code => $name) {
             $result[$code] = $code .' - ' . $name;
@@ -65,10 +70,12 @@ class Tax extends Model
         if (!$countryCode || $countryCode == '*')
             return $result;
 
-        $states = State::searchWhere($term, ['name', 'code']);
+        // The search term functionality is disabled as it's not supported
+        // by the Table widget's drop-down processor -ab 2015-01-03
+        // $states = State::searchWhere($term, ['name', 'code']);
 
         if ($countryCode) {
-            $states->whereHas('country', function($query) use ($countryCode) {
+            $states = State::whereHas('country', function($query) use ($countryCode) {
                 $query->where('code', $countryCode);
             });
         }
