@@ -3,7 +3,7 @@
 # ===================================
 
 # Model List Column configuration
-list: @/plugins/responsiv/pay/models/invoice/columns.yaml
+list: ~/plugins/responsiv/pay/models/invoice/columns.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\Invoice

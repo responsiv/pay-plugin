@@ -3,7 +3,7 @@
 # ===================================
 
 # Model List Column configuration
-list: @/plugins/responsiv/pay/models/paymentmethod/columns.yaml
+list: ~/plugins/responsiv/pay/models/paymentmethod/columns.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\PaymentMethod

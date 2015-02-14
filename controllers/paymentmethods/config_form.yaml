@@ -6,7 +6,7 @@
 name: Payment Type
 
 # Model Form Field configuration
-form: @/plugins/responsiv/pay/models/paymentmethod/fields.yaml
+form: ~/plugins/responsiv/pay/models/paymentmethod/fields.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\PaymentMethod

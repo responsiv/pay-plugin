@@ -2,7 +2,7 @@
 
 use Model;
 use Request;
-use DB as Db;
+use Db;
 use Carbon\Carbon;
 use RainLab\User\Models\Settings as UserSettings;
 use Responsiv\Pay\Models\Settings as InvoiceSettings;

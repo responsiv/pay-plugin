@@ -6,7 +6,7 @@
 name: Tax
 
 # Model Form Field configuration
-form: @/plugins/responsiv/pay/models/tax/fields.yaml
+form: ~/plugins/responsiv/pay/models/tax/fields.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\Tax

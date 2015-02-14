@@ -3,7 +3,7 @@
 # ===================================
 
 # Model List Column configuration
-list: @/plugins/responsiv/pay/models/tax/columns.yaml
+list: ~/plugins/responsiv/pay/models/tax/columns.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\Tax

@@ -20,7 +20,7 @@ tabs:
         user:
             label: User
             type: recordfinder
-            list: @/plugins/rainlab/user/models/user/columns.yaml
+            list: ~/plugins/rainlab/user/models/user/columns.yaml
             prompt: Click the %s button to find a user
             nameFrom: name
             descriptionFrom: email
@@ -46,7 +46,7 @@ tabs:
             label: First name
             tab: Customer Details
             span: left
-            depends: user
+            dependsOn: user
 
         last_name:
             label: Surname
@@ -56,43 +56,43 @@ tabs:
         email:
             label: Email
             tab: Customer Details
-            depends: user
+            dependsOn: user
 
         company:
             label: Company
             tab: Customer Details
             span: left
-            depends: user
+            dependsOn: user
 
         phone:
             label: Phone
             tab: Customer Details
             span: right
-            depends: user
+            dependsOn: user
 
         city:
             label: City
             tab: Billing Address
             span: left
-            depends: user
+            dependsOn: user
 
         zip:
             label: Zip
             tab: Billing Address
             span: right
-            depends: user
+            dependsOn: user
 
         street_addr:
             label: Street Address
             tab: Billing Address
-            depends: user
+            dependsOn: user
 
         country:
             label: Country
             type: dropdown
             tab: Billing Address
             span: left
-            depends: user
+            dependsOn: user
             placeholder: -- select country --
 
         state:
@@ -100,6 +100,6 @@ tabs:
             type: dropdown
             tab: Billing Address
             span: right
-            depends: [country, user]
+            dependsOn: [country, user]
             placeholder: -- select state --
 

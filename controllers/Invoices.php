@@ -61,12 +61,12 @@ class Invoices extends Controller
         $data = $widget->getSaveData();
         InvoiceStatusLog::createRecord($data['status'], $invoice, $data['comment']);
         Flash::success('Invoice status updated successfully');
-        return Redirect::to(Backend::url(sprintf('responsiv/pay/invoices/preview/%s', $invoice->id)));
+        return Backend::redirect(sprintf('responsiv/pay/invoices/preview/%s', $invoice->id));
     }
 
     protected function makeStatusFormWidget()
     {
-        $config = $this->makeConfig('@/plugins/responsiv/pay/models/invoicestatuslog/fields.yaml');
+        $config = $this->makeConfig('~/plugins/responsiv/pay/models/invoicestatuslog/fields.yaml');
         $config->model = new InvoiceStatusLog;
         $config->arrayName = 'InvoiceStatusLog';
         $config->alias = 'statusLog';

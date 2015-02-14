@@ -1,7 +1,7 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use October\Rain\Support\ValidationException;
+use ValidationException;
 use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
 
 /**

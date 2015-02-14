@@ -5,7 +5,7 @@ use Redirect;
 use Cms\Classes\Page;
 use October\Rain\Network\Http;
 use Responsiv\Pay\Classes\GatewayBase;
-use System\Classes\ApplicationException;
+use ApplicationException;
 
 class PaypalStandard extends GatewayBase
 {
