@@ -12,6 +12,7 @@ status_log:
     label: History
     emptyMessage: Invoice has no status history
     list: ~/plugins/responsiv/pay/models/invoicestatuslog/columns.yaml
+    form: ~/plugins/responsiv/pay/models/invoicestatuslog/fields.yaml
     readOnly: true
     view:
         showSorting: false
@@ -21,6 +22,7 @@ payment_log:
     label: Payments
     emptyMessage: Invoice has no payment attempts
     list: ~/plugins/responsiv/pay/models/invoicetypelog/columns.yaml
+    form: ~/plugins/responsiv/pay/models/invoicetypelog/fields.yaml
     readOnly: true
     view:
         showSorting: false
