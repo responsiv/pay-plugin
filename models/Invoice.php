@@ -17,8 +17,8 @@ use Exception;
  */
 class Invoice extends Model implements InvoiceInterface
 {
-    use \
-    October\Rain\Database\Traits\Purgeable;
+    use \October\Rain\Database\Traits\Purgeable;
+    
     /**
      * @var string The database table used by the model.
      */
