@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "omnipay/paypal": "~2.0"
+        "omnipay/paypal": "~2.0",
+        "omnipay/stripe": "~2.0"
     },
     "minimum-stability": "dev"
 }

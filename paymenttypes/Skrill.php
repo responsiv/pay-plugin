@@ -20,7 +20,7 @@ class Skrill extends GatewayBase
     {
         return [
             'name'        => 'Skrill',
-            'description' => 'Skrill payment metdhod with payment form hosted on Skrill server'
+            'description' => 'Skrill payment method with payment form hosted on Skrill server'
         ];
     }
 
