@@ -21,10 +21,10 @@ class Invoice extends ComponentBase
     public function defineProperties()
     {
         return [
-            'idParam' => [
-                'title'       => 'ID param name',
+            'id' => [
+                'title'       => 'Invoice ID',
                 'description' => 'The URL route parameter used for looking up the invoice by its identifier.',
-                'default'     => ':id',
+                'default'     => '{{ :id }}',
                 'type'        => 'string'
             ],
             'payPage' => [
@@ -52,7 +52,7 @@ class Invoice extends ComponentBase
         if ($this->invoice !== null)
             return $this->invoice;
 
-        if (!$id = $this->propertyOrParam('idParam'))
+        if (!$id = $this->property('id'))
             return null;
 
         $invoice =  InvoiceModel::where('id', $id)->first();

@@ -6,9 +6,9 @@ use Redirect;
 use Validator;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
-use System\Classes\SystemException;
-use System\Classes\ApplicationException;
-use October\Rain\Support\ValidationException;
+use SystemException;
+use ApplicationException;
+use ValidationException;
 use Exception;
 
 class PaypalPro extends GatewayBase

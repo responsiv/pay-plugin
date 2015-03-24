@@ -1,7 +1,7 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
         <li><a href="<?= Backend::url('responsiv/pay/taxes') ?>">Taxes</a></li>
-        <li><?= e($this->pageTitle) ?></li>
+        <li><?= e(trans($this->pageTitle)) ?></li>
     </ul>
 <?php Block::endPut() ?>
 
@@ -16,8 +16,7 @@
                 <button
                     type="submit"
                     data-request="onSave"
-                    data-hotkey="ctrl+s"
-                    data-hotkey-mac="cmd+s"
+                    data-hotkey="ctrl+s, cmd+s"
                     data-load-indicator="Creating Tax..."
                     class="btn btn-primary">
                     Create
@@ -26,8 +25,7 @@
                     type="button"
                     data-request="onSave"
                     data-request-data="close:1"
-                    data-hotkey="ctrl+enter"
-                    data-hotkey-mac="cmd+enter"
+                    data-hotkey="ctrl+enter, cmd+enter"
                     data-load-indicator="Creating Tax..."
                     class="btn btn-default">
                     Create and Close
@@ -42,7 +40,7 @@
 
 <?php else: ?>
 
-    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p class="flash-message static error"><?= e(trans($this->fatalError)) ?></p>
     <p><a href="<?= Backend::url('responsiv/pay/taxes') ?>" class="btn btn-default">Return to taxes list</a></p>
 
 <?php endif ?>

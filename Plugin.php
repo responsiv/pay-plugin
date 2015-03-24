@@ -52,6 +52,12 @@ class Plugin extends PluginBase
                         'url'         => Backend::url('responsiv/pay/invoices'),
                         'permissions' => ['pay.access_invoices'],
                     ],
+                    'taxes' => [
+                        'label'       => 'Tax tables',
+                        'icon'        => 'icon-table',
+                        'url'         => Backend::url('responsiv/pay/taxes'),
+                        'permissions' => ['pay.access_invoices'],
+                    ],
                 ]
 
             ]
@@ -69,16 +75,8 @@ class Plugin extends PluginBase
                 'category'    => 'Payments',
                 'order'       => 500,
             ],
-            'taxes' => [
-                'label'       => 'Tax Tables',
-                'description' => 'Configure tax rules.',
-                'icon'        => 'icon-table',
-                'url'         => Backend::url('responsiv/pay/taxes'),
-                'category'    => 'Payments',
-                'order'       => 500,
-            ],
             'settings' => [
-                'label'       => 'Payment Settings',
+                'label'       => 'Payment settings',
                 'description' => 'Manage currency configuration.',
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
@@ -86,7 +84,7 @@ class Plugin extends PluginBase
                 'order'       => 500,
             ],
             'invoices' => [
-                'label'       => 'Invoice Template',
+                'label'       => 'Invoice template',
                 'description' => 'Customize the template used for invoices.',
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),

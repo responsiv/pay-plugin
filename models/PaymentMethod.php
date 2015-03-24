@@ -1,8 +1,7 @@
 <?php namespace Responsiv\Pay\Models;
 
-use Str;
 use Model;
-use October\Rain\Support\ValidationException;
+use ValidationException;
 use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
 
 /**
@@ -125,7 +124,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
     {
         $this->beforeRenderPaymentForm($this);
 
-        $paymentMethodFile = strtolower(Str::getRealClass($this->class_name));
+        $paymentMethodFile = strtolower(class_basename($this->class_name));
         $partialName = 'pay/'.$paymentMethodFile;
 
         return $controller->renderPartial($partialName);

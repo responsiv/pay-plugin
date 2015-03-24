@@ -5,7 +5,7 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
-use System\Classes\ApplicationException;
+use ApplicationException;
 
 class Payment extends ComponentBase
 {
@@ -21,10 +21,10 @@ class Payment extends ComponentBase
     public function defineProperties()
     {
         return [
-            'idParam' => [
-                'title'       => 'Hash param name',
+            'hash' => [
+                'title'       => 'Invoice Hash',
                 'description' => 'The URL route parameter used for looking up the invoice by its hash.',
-                'default'     => ':hash',
+                'default'     => '{{ :hash }}',
                 'type'        => 'string'
             ],
             'invoicePage' => [
@@ -57,7 +57,7 @@ class Payment extends ComponentBase
         if ($this->invoice !== null)
             return $this->invoice;
 
-        if (!$hash = $this->propertyOrParam('idParam'))
+        if (!$hash = $this->property('hash'))
             return null;
 
         $invoice = InvoiceModel::whereHash($hash)->first();

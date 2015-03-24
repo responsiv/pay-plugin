@@ -27,13 +27,13 @@ class InvoiceTemplates extends Controller
 
     public function index()
     {
-        return Redirect::to(Backend::url('responsiv/pay/invoicetemplates/update/1'));
+        return Backend::redirect('responsiv/pay/invoicetemplates/update/1');
     }
 
     /**
      * Add dynamic syntax fields
      */
-    protected function formExtendFields($host)
+    public function formExtendFields($host)
     {
         $fields = $host->model->getFormSyntaxFields();
         if (!is_array($fields)) return;

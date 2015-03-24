@@ -1,7 +1,7 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
         <li><a href="<?= Backend::url('responsiv/pay/paymentmethods') ?>">Payment Methods</a></li>
-        <li><?= e($this->pageTitle) ?></li>
+        <li><?= e(trans($this->pageTitle)) ?></li>
     </ul>
 <?php Block::endPut() ?>
 
@@ -26,8 +26,7 @@
                     type="submit"
                     data-request="onSave"
                     data-request-data="redirect:0"
-                    data-hotkey="ctrl+s"
-                    data-hotkey-mac="cmd+s"
+                    data-hotkey="ctrl+s, cmd+s"
                     data-load-indicator="Saving Type..."
                     class="btn btn-primary">
                     <u>S</u>ave
@@ -36,8 +35,7 @@
                     type="button"
                     data-request="onSave"
                     data-request-data="close:1"
-                    data-hotkey="ctrl+enter"
-                    data-hotkey-mac="cmd+enter"
+                    data-hotkey="ctrl+enter, cmd+enter"
                     data-load-indicator="Saving Type..."
                     class="btn btn-default">
                     Save and Close
@@ -59,7 +57,7 @@
 
 <?php else: ?>
 
-    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p class="flash-message static error"><?= e(trans($this->fatalError)) ?></p>
     <p><a href="<?= Backend::url('responsiv/pay/paymentmethods') ?>" class="btn btn-default">Return to types list</a></p>
 
 <?php endif ?>

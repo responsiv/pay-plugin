@@ -35,21 +35,26 @@ class Tax extends Model
      */
     protected static $cache = [];
 
-    public function getRatesAutocompleteValues($field, $value, $data)
+    public function getDataTableOptions($attribute, $field, $data)
     {
-        if ($field == 'country')
-            return $this->getCountryList($value);
+        if ($field == 'country') {
+            return $this->getCountryList(array_get($data, $field));
+        }
 
         if ($field == 'state') {
-            $countryCode = isset($data['country']) ? $data['country'] : null;
-            return $this->getStateList($countryCode, $value);
+            return $this->getStateList(array_get($data, 'country'), array_get($data, $field));
         }
     }
 
     protected function getCountryList($term)
     {
-        $countries = Country::searchWhere($term, ['name', 'code'])->limit(10)->lists('name', 'code');
         $result = ['*' => '* - Any country'];
+
+        // The search term functionality is disabled as it's not supported
+        // by the Table widget's drop-down processor -ab 2015-01-03
+        //$countries = Country::searchWhere($term, ['name', 'code'])
+
+        $countries = Country::limit(10)->lists('name', 'code');
 
         foreach ($countries as $code => $name) {
             $result[$code] = $code .' - ' . $name;
@@ -60,17 +65,22 @@ class Tax extends Model
 
     protected function getStateList($countryCode, $term)
     {
-        $states = State::searchWhere($term, ['name', 'code']);
+        $result = ['*' => '* - Any state'];
+
+        if (!$countryCode || $countryCode == '*')
+            return $result;
+
+        // The search term functionality is disabled as it's not supported
+        // by the Table widget's drop-down processor -ab 2015-01-03
+        // $states = State::searchWhere($term, ['name', 'code']);
 
         if ($countryCode) {
-            $states->whereHas('country', function($query) use ($countryCode) {
+            $states = State::whereHas('country', function($query) use ($countryCode) {
                 $query->where('code', $countryCode);
             });
         }
 
         $states = $states->limit(10)->lists('name', 'code');
-
-        $result = ['*' => '* - Any state'];
 
         foreach ($states as $code => $name) {
             $result[$code] = $code .' - ' . $name;

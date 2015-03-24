@@ -6,7 +6,7 @@
 name: Invoice
 
 # Model Form Field configuration
-form: @/plugins/responsiv/pay/models/invoice/fields.yaml
+form: ~/plugins/responsiv/pay/models/invoice/fields.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\Invoice

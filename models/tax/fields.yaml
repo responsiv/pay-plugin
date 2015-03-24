@@ -24,7 +24,7 @@ tabs:
 
         rates:
             tab: Rates
-            type: datagrid
+            type: datatable
             size: large
             # sortable: true
             # scrollable: true
@@ -34,43 +34,40 @@ tabs:
             columns:
                 country:
                     title: Country Code
-                    type: autocomplete
+                    type: dropdown
                     strict: false
-                    minLength: 0
-                    width: 100
 
                 state:
                     title: State Code
-                    type: autocomplete
+                    type: dropdown
                     strict: false
-                    minLength: 0
-                    width: 100
+                    dependsOn: country
 
                 zip:
                     title: Zip
-                    width: 100
+                    width: 100px
 
                 city:
                     title: City
 
                 rate:
                     title: Rate %
-                    width: 60
+                    width: 80px
                     align: right
-                    type: number
+                    # type: number
 
                 priority:
                     title: Priority
-                    width: 80
+                    width: 80px
                     align: right
-                    type: number
+                    # type: number
 
                 tax_name:
                     title: Tax name
-                    width: 80
+                    width: 100px
 
                 is_compound:
                     title: Compound
-                    width: 100
+                    width: 100px
                     type: checkbox
 
