@@ -17,6 +17,8 @@ use Exception;
  */
 class Invoice extends Model implements InvoiceInterface
 {
+    use \
+    October\Rain\Database\Traits\Purgeable;
     /**
      * @var string The database table used by the model.
      */
@@ -26,6 +28,11 @@ class Invoice extends Model implements InvoiceInterface
      * @var array Guarded fields
      */
     protected $guarded = [];
+
+    /**
+     * @var array Purgeable fields
+     */
+    protected $purgeable = ['url'];
 
     /**
      * @var array List of datetime attributes to convert to an instance of Carbon/DateTime objects.

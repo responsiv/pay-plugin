@@ -7,6 +7,8 @@ items:
     list: ~/plugins/responsiv/pay/models/invoiceitem/columns.yaml
     form: ~/plugins/responsiv/pay/models/invoiceitem/fields.yaml
     emptyMessage: Invoice has no line items
+    view:
+        toolbarButtons: create|delete
 
 status_log:
     label: History
