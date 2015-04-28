@@ -3,14 +3,14 @@
 use App;
 use File;
 use Model;
-use October\Rain\Syntax\Parser;
+use October\Rain\Parse\Syntax\Parser;
 
 /**
  * InvoiceStatus Model
  */
 class InvoiceTemplate extends Model
 {
-    use \October\Rain\Syntax\SyntaxModelTrait;
+    use \October\Rain\Parse\Syntax\SyntaxModelTrait;
 
     /**
      * @var string The database table used by the model.
