@@ -7,7 +7,7 @@
 
 <?php if (!$this->fatalError): ?>
 
-    <?= Form::open(['class'=>'layout-item stretch layout-column']) ?>
+    <?= Form::open(['class' => 'layout']) ?>
 
         <input type="hidden" name="gateway_alias" value="<?= $this->gatewayAlias ?>" />
 
@@ -20,9 +20,11 @@
             </div>
         </div>
 
-        <?= $this->formRender() ?>
+        <div class="layout-row">
+            <?= $this->formRender() ?>
+        </div>
 
-        <div class="form-buttons layout-item fix">
+        <div class="form-buttons">
             <div class="loading-indicator-container">
                 <button
                     type="submit"
