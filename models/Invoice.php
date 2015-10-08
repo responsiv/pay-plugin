@@ -107,7 +107,7 @@ class Invoice extends Model implements InvoiceInterface
     public function calculateTotals($items = null)
     {
         if (!$items)
-            $items = $this->items;
+            $items = $this->items()->withDeferred($this->sessionKey)->get();
 
         /*
          * Discount and subtotal
