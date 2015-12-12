@@ -12,7 +12,7 @@ use ValidationException;
 use Exception;
 use Omnipay\Omnipay;
 
-class PaypalPro extends GatewayBase
+class Stripe extends GatewayBase
 {
 
     /**
@@ -21,8 +21,8 @@ class PaypalPro extends GatewayBase
     public function gatewayDetails()
     {
         return [
-            'name'        => 'PayPal Pro',
-            'description' => 'PayPal Pro payment method with payment form hosted on your server'
+            'name'        => 'Stripe',
+            'description' => 'Stripe payment method with payment form hosted on your server.'
         ];
     }
 
@@ -40,9 +40,8 @@ class PaypalPro extends GatewayBase
     public function defineValidationRules()
     {
         return [
-            'api_signature' => 'required',
-            'api_username' => 'required',
-            'api_password'  => 'required',
+            'secret_key' => 'required',
+            'publishable_key' => 'required',
         ];
     }
 
@@ -51,19 +50,7 @@ class PaypalPro extends GatewayBase
      */
     public function initConfigData($host)
     {
-        $host->test_mode = true;
         $host->invoice_status = $this->createInvoiceStatusModel()->getStatusPaid();
-    }
-
-    /**
-     * Action field options
-     */
-    public function getCardActionOptions($keyValue = -1)
-    {
-        return [
-            'purchase'  => 'Purchase',
-            'authorize' => 'Authorization only'
-        ];
     }
 
     /**
@@ -105,11 +92,10 @@ class PaypalPro extends GatewayBase
         /*
          * Send payment request
          */
-        $gateway = Omnipay::create('PayPal_Pro');
-        $gateway->setSignature($host->api_signature);
-        $gateway->setUsername($host->api_username);
-        $gateway->setPassword($host->api_password);
-        $gateway->setTestMode($host->test_mode);
+        $gateway = Omnipay::create('Stripe');
+        $gateway->initialize(array(
+            'apiKey' => $host->secret_key
+        ));
 
         $formData = [
             'firstName'   => array_get($data, 'first_name'),
@@ -120,10 +106,9 @@ class PaypalPro extends GatewayBase
             'cvv'         => array_get($data, 'CVV'),
         ];
 
-        $cardAction = $host->card_action == 'purchase' ? 'purchase' : 'authorize';
         $totals = (object) $invoice->getTotalDetails();
 
-        $response = $gateway->$cardAction([
+        $response = $gateway->purchase([
             'amount'   => $totals->total,
             'currency' => $totals->currency,
             'card'     => $formData

@@ -120,6 +120,7 @@ class Plugin extends PluginBase
             'Responsiv\Pay\PaymentTypes\PaypalPro'      => 'paypal-pro',
             'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
             'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
+            'Responsiv\Pay\PaymentTypes\Stripe'         => 'stripe',
         ];
     }
 

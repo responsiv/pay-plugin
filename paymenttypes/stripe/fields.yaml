@@ -1,0 +1,25 @@
+# ===================================
+#  Gateway Field Definitions
+# ===================================
+
+fields:
+    secret_key:
+        label: Secret Key
+        comment: You can find your Secret keys on your Stripe dashboard in Account Setting > API Keys section.
+        required: true
+        span: auto
+        tab: Configuration
+
+    publishable_key:
+        label: Publishable Key
+        comment: Specify your Publishable Key.
+        required: true
+        span: auto
+        tab: Configuration
+
+    invoice_status:
+        label: Invoice status
+        comment: Select status to assign the invoice in case of successful payment.
+        tab: Configuration
+        span: auto
+        type: dropdown
