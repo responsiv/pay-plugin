@@ -1,8 +1,8 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use RainLab\User\Models\State;
-use RainLab\User\Models\Country;
+use RainLab\Location\Models\State;
+use RainLab\Location\Models\Country;
 
 /**
  * Tax Model

@@ -48,7 +48,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
      * @var array Relations
      */
     public $belongsToMany = [
-        'countries' => ['RainLab\User\Models\Country', 'table' => 'responsiv_pay_methods_countries']
+        'countries' => ['RainLab\Location\Models\Country', 'table' => 'responsiv_pay_methods_countries']
     ];
 
     /**

@@ -4,12 +4,12 @@ use Model;
 use Request;
 use Db;
 use Carbon\Carbon;
-use RainLab\User\Models\Settings as UserSettings;
+use RainLab\Location\Models\Settings as LocationSettings;
 use Responsiv\Pay\Models\Settings as InvoiceSettings;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
-use RainLab\User\Models\State;
-use RainLab\User\Models\Country;
+use RainLab\Location\Models\State;
+use RainLab\Location\Models\Country;
 use Exception;
 
 /**
@@ -47,8 +47,8 @@ class Invoice extends Model implements InvoiceInterface
         'status'         => ['Responsiv\Pay\Models\InvoiceStatus'],
         'template'       => ['Responsiv\Pay\Models\InvoiceTemplate'],
         'payment_method' => ['Responsiv\Pay\Models\PaymentMethod'],
-        'country'        => ['RainLab\User\Models\Country'],
-        'state'          => ['RainLab\User\Models\State'],
+        'country'        => ['RainLab\Location\Models\Country'],
+        'state'          => ['RainLab\Location\Models\State'],
     ];
 
     public $hasMany = [
@@ -96,14 +96,17 @@ class Invoice extends Model implements InvoiceInterface
 
     public function setDefaults()
     {
-        if (!$this->country_id)
-            $this->country_id = UserSettings::get('default_country', 1);
+        if (!$this->country_id) {
+            $this->country_id = LocationSettings::get('default_country', 1);
+        }
 
-        if (!$this->state_id)
-            $this->state_id = UserSettings::get('default_state', 1);
+        if (!$this->state_id) {
+            $this->state_id = LocationSettings::get('default_state', 1);
+        }
 
-        if (!$this->template_id)
+        if (!$this->template_id) {
             $this->template_id = InvoiceSettings::get('default_invoice_template', 1);
+        }
     }
 
     /**
@@ -169,8 +172,9 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function setSalesTaxes($taxes)
     {
-        if (!is_array($taxes))
+        if (!is_array($taxes)) {
             $taxes = [];
+        }
 
         $taxesToSave = $taxes;
 
@@ -195,8 +199,9 @@ class Invoice extends Model implements InvoiceInterface
         try {
             $taxes = unserialize($this->tax_data);
             foreach ($taxes as $taxName => $taxInfo) {
-                if ($taxInfo->total <= 0)
+                if ($taxInfo->total <= 0) {
                     continue;
+                }
 
                 $result = $this->addTaxItem($result, $taxName, $taxInfo->total, 0, 'Sales tax');
             }
@@ -219,8 +224,9 @@ class Invoice extends Model implements InvoiceInterface
      */
     protected function addTaxItem($list, $name, $amount, $discount, $defaultName = 'Tax')
     {
-        if (!$name)
+        if (!$name) {
             $name = $defaultName;
+        }
 
         if (!array_key_exists($name, $list)) {
             $taxInfo = [
