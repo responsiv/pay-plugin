@@ -1,4 +1,4 @@
-Payment plugins
+Payment plugin
 ==========
 
 Payment system for October
