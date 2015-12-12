@@ -2,6 +2,7 @@
 
 use App;
 use File;
+use Twig;
 use Model;
 use October\Rain\Parse\Syntax\Parser;
 
@@ -57,7 +58,6 @@ class InvoiceTemplate extends Model
 
     public function renderInvoice($invoice)
     {
-        $twig = App::make('twig.string');
         $parser = $this->getSyntaxParser($this->content_html);
         $invoiceData = $this->getSyntaxData();
         $invoiceTemplate = $parser->render($invoiceData);
@@ -67,7 +67,7 @@ class InvoiceTemplate extends Model
             'css' => $this->content_css
         ];
 
-        $twigTemplate = $twig->render($invoiceTemplate, $twigData);
+        $twigTemplate = Twig::parse($invoiceTemplate, $twigData);
         return $twigTemplate;
     }
 
