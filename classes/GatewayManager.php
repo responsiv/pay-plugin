@@ -192,7 +192,6 @@ class GatewayManager
         return Response::make('Access Forbidden', '403');
     }
 
-
     //
     // Partials
     //

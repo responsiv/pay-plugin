@@ -9,7 +9,7 @@ use System\Classes\PluginBase;
 class Plugin extends PluginBase
 {
 
-    public $require = ['RainLab.User', 'RainLab.Location'];
+    public $require = ['RainLab.User', 'RainLab.Location', 'Responsiv.Currency'];
 
     /**
      * Returns information about this plugin.
@@ -90,19 +90,6 @@ class Plugin extends PluginBase
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
                 'category'    => 'Payments',
                 'order'       => 500,
-            ]
-        ];
-    }
-
-    /**
-     * Register new Twig variables
-     * @return array
-     */
-    public function registerMarkupTags()
-    {
-        return [
-            'filters' => [
-                'currency' => ['Responsiv\Pay\Models\Settings', 'formatCurrency'],
             ]
         ];
     }

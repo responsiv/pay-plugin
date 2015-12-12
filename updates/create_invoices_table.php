@@ -68,7 +68,7 @@ class CreateInvoicesTable extends Migration
             $table->integer('quantity')->default(0);
             $table->decimal('price', 15, 2)->default(0);
             $table->decimal('total', 15, 2)->default(0);
-            $table->decimal('discount', 15, 2)->default(0);
+            $table->decimal('discount', 15, 2)->default(0)->nullable();
             $table->decimal('subtotal', 15, 2)->default(0);
             $table->boolean('is_tax_exempt')->default(false);
             $table->decimal('tax', 15, 2)->default(0);

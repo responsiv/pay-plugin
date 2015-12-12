@@ -63,14 +63,17 @@ class PaymentMethod extends Model implements PaymentMethodInterface
      */
     public function applyGatewayClass($class = null)
     {
-        if (!$class)
+        if (!$class) {
             $class = $this->class_name;
+        }
 
-        if (!$class)
+        if (!$class) {
             return false;
+        }
 
-        if (!$this->isClassExtendedWith($class))
+        if (!$this->isClassExtendedWith($class)) {
             $this->extendClassWith($class);
+        }
 
         $this->class_name = $class;
         $this->gateway_name = array_get($this->gatewayDetails(), 'name', 'Unknown');
@@ -86,8 +89,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
     public function beforeValidate()
     {
-        if (!$this->applyGatewayClass())
+        if (!$this->applyGatewayClass()) {
             return;
+        }
     }
 
     public function beforeSave()
@@ -97,8 +101,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         $fields = isset($fieldConfig->fields) ? $fieldConfig->fields : [];
 
         foreach ($fields as $name => $config) {
-            if (!array_key_exists($name, $this->attributes))
+            if (!array_key_exists($name, $this->attributes)) {
                 continue;
+            }
 
             $configData[$name] = $this->attributes[$name];
             unset($this->attributes[$name]);
@@ -132,8 +137,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
     public function makeDefault()
     {
-        if (!$this->is_enabled)
+        if (!$this->is_enabled) {
             throw new ValidationException(['is_enabled' => sprintf('"%s" is disabled and cannot be set as default.', $this->name)]);
+        }
 
         $this->newQuery()->where('id', $this->id)->update(['is_default' => true]);
         $this->newQuery()->where('id', '<>', $this->id)->update(['is_default' => false]);
@@ -147,8 +153,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
      */
     public static function getDefault($countryId = null)
     {
-        if (self::$defaultMethod !== null)
+        if (self::$defaultMethod !== null) {
             return self::$defaultMethod;
+        }
 
         $defaultMethod = self::isEnabled()->where('is_default', true)->first();
 
@@ -157,8 +164,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
          */
         if (!$defaultMethod) {
             $defaultMethod = self::isEnabled()->first();
-            if ($defaultMethod)
+            if ($defaultMethod) {
                 $defaultMethod->makeDefault();
+            }
         }
 
         return self::$defaultMethod = $defaultMethod;

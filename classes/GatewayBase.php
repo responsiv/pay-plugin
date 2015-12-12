@@ -4,7 +4,6 @@ use Str;
 use URL;
 use File;
 use System\Classes\ModelBehavior;
-use Responsiv\Pay\Models\InvoiceLog;
 
 /**
  * Represents the generic payment type.
@@ -168,7 +167,7 @@ class GatewayBase extends ModelBehavior
     public function beforeRenderPaymentForm($host) { }
 
     /**
-     * Creates an instance of the throttle model
+     * Creates an instance of the invoice model
      */
     protected function createInvoiceModel()
     {
@@ -178,7 +177,7 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Creates an instance of the throttle model
+     * Creates an instance of the invoice status model
      */
     protected function createInvoiceStatusModel()
     {
