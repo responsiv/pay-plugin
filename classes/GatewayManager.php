@@ -5,6 +5,7 @@ use Response;
 use Cms\Classes\Theme;
 use Cms\Classes\Partial;
 use System\Classes\PluginManager;
+use October\Rain\Support\Collection;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 
 /**
@@ -111,16 +112,18 @@ class GatewayManager
 
     /**
      * Returns a list of the payment gateway classes.
-     * @param boolean $withObjects With extended information found in the class object.
+     * @param boolean $asObject As a collection with extended information found in the class object.
      * @return array
      */
-    public function listGateways($withObjects = false)
+    public function listGateways($asObject = true)
     {
-        if ($this->gateways === null)
+        if ($this->gateways === null) {
             $this->loadGateways();
+        }
 
-        if (!$withObjects)
+        if (!$asObject) {
             return $this->gateways;
+        }
 
         /*
          * Enrich the collection with gateway objects
@@ -142,7 +145,7 @@ class GatewayManager
             ];
         }
 
-        return $collection;
+        return new Collection($collection);
     }
 
     /**
@@ -152,7 +155,7 @@ class GatewayManager
     public function listGatewayObjects()
     {
         $collection = [];
-        $gateways = $this->listGateways(true);
+        $gateways = $this->listGateways();
         foreach ($gateways as $gateway) {
             $collection[$gateway->alias] = $gateway->object;
         }
@@ -165,7 +168,7 @@ class GatewayManager
      */
     public function findByAlias($alias)
     {
-        $gateways = $this->listGateways();
+        $gateways = $this->listGateways(false);
         if (!isset($gateways[$alias]))
             return false;
 

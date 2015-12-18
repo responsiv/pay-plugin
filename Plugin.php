@@ -56,7 +56,14 @@ class Plugin extends PluginBase
                         'label'       => 'Tax tables',
                         'icon'        => 'icon-table',
                         'url'         => Backend::url('responsiv/pay/taxes'),
-                        'permissions' => ['pay.access_invoices'],
+                        'permissions' => ['pay.manage_taxes'],
+                    ],
+                    'types' => [
+                        'label'       => 'Gateways',
+                        'icon'        => 'icon-money',
+                        'url'         => Backend::url('responsiv/pay/paymentmethods'),
+                        'permissions' => ['pay.manage_gateways'],
+                        'order'       => 500,
                     ],
                 ]
 
@@ -67,23 +74,7 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
-            'types' => [
-                'label'       => 'Gateways',
-                'description' => 'Configure payment methods for taking payments.',
-                'icon'        => 'icon-money',
-                'url'         => Backend::url('responsiv/pay/paymentmethods'),
-                'category'    => 'Payments',
-                'order'       => 500,
-            ],
-            'settings' => [
-                'label'       => 'Payment settings',
-                'description' => 'Manage currency configuration.',
-                'icon'        => 'icon-credit-card',
-                'class'       => 'Responsiv\Pay\Models\Settings',
-                'category'    => 'Payments',
-                'order'       => 500,
-            ],
-            'invoices' => [
+            'invoice_template' => [
                 'label'       => 'Invoice template',
                 'description' => 'Customize the template used for invoices.',
                 'icon'        => 'icon-file-excel-o',

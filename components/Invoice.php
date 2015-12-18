@@ -49,11 +49,13 @@ class Invoice extends ComponentBase
 
     public function getInvoice()
     {
-        if ($this->invoice !== null)
+        if ($this->invoice !== null) {
             return $this->invoice;
+        }
 
-        if (!$id = $this->property('id'))
+        if (!$id = $this->property('id')) {
             return null;
+        }
 
         $invoice =  InvoiceModel::where('id', $id)->first();
 
@@ -61,14 +63,17 @@ class Invoice extends ComponentBase
          * Only users can view their own invoices
          */
         $user = Auth::getUser();
-        if (!$user)
+        if (!$user) {
             $invoice = null;
+        }
 
-        if ($invoice && $invoice->user_id != $user->id)
+        if ($invoice && $invoice->user_id != $user->id) {
             $invoice = null;
+        }
 
-        if ($invoice)
-            $invoice->setUrl($this->payPage, $this->controller);
+        if ($invoice) {
+            $invoice->setUrlPageName($this->payPage);
+        }
 
         return $this->invoice = $invoice;
     }

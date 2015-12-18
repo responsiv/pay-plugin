@@ -4,8 +4,7 @@ use Model;
 use Request;
 use Db;
 use Carbon\Carbon;
-use RainLab\Location\Models\Settings as LocationSettings;
-use Responsiv\Pay\Models\Settings as InvoiceSettings;
+use Responsiv\Currency\Facades\Currency as CurrencyHelper;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\Location\Models\State;
@@ -17,8 +16,9 @@ use Exception;
  */
 class Invoice extends Model implements InvoiceInterface
 {
+    use \Responsiv\Pay\Traits\UrlMaker;
     use \October\Rain\Database\Traits\Purgeable;
-    
+
     /**
      * @var string The database table used by the model.
      */
@@ -57,10 +57,28 @@ class Invoice extends Model implements InvoiceInterface
         'payment_log' => ['Responsiv\Pay\Models\InvoiceLog'],
     ];
 
+    /**
+     * @var string The component to use for generating URLs.
+     */
+    protected $urlComponentName = 'invoice';
+
+    /**
+     * Returns an array of values to use in URL generation.
+     * @return @array
+     */
+    public function getUrlParams()
+    {
+        return [
+            'id' => $this->id,
+            'hash' => $this->hash,
+        ];
+    }
+
     public function afterFetch()
     {
-        if (!$this->payment_method_id)
+        if (!$this->payment_method_id) {
             $this->payment_method = TypeModel::getDefault($this->country_id);
+        }
     }
 
     public function beforeSave()
@@ -73,8 +91,9 @@ class Invoice extends Model implements InvoiceInterface
     {
         $this->generateHash();
 
-        if (!$this->sent_at)
+        if (!$this->sent_at) {
             $this->sent_at = Carbon::now();
+        }
 
         $this->user_ip = Request::getClientIp();
     }
@@ -105,7 +124,7 @@ class Invoice extends Model implements InvoiceInterface
         }
 
         if (!$this->template_id) {
-            $this->template_id = InvoiceSettings::get('default_invoice_template', 1);
+            $this->template_id = InvoiceTemplate::pluck('id');
         }
     }
 
@@ -116,8 +135,9 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function calculateTotals($items = null)
     {
-        if (!$items)
+        if (!$items) {
             $items = $this->items()->withDeferred($this->sessionKey)->get();
+        }
 
         /*
          * Discount and subtotal
@@ -193,8 +213,9 @@ class Invoice extends Model implements InvoiceInterface
     {
         $result = [];
 
-        if (!strlen($this->tax_data))
+        if (!strlen($this->tax_data)) {
             return $result;
+        }
 
         try {
             $taxes = unserialize($this->tax_data);
@@ -306,10 +327,7 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function getReceiptUrl()
     {
-        return InvoiceSettings::getDetaultPaymentPage([
-            'id' => $this->id,
-            'hash' => $this->hash,
-        ]);
+        return $this->payment_method ? $this->payment_method->url : $this->url;
     }
 
     /**
@@ -363,7 +381,7 @@ class Invoice extends Model implements InvoiceInterface
             'total'    => $this->total,
             'subtotal' => $this->subtotal,
             'tax'      => $this->tax,
-            'currency' => InvoiceSettings::get('currency_code', 'USD'),
+            'currency' => CurrencyHelper::primaryCode(),
         ];
 
         return $details;
@@ -374,8 +392,9 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function isPaymentProcessed($force = false)
     {
-        if ($force)
+        if ($force) {
             return $this->where('id', $this->id)->pluck('processed_at');
+        }
 
         return $this->processed_at;
     }
@@ -430,23 +449,9 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function updateInvoiceStatus($statusCode)
     {
-        if ($status = InvoiceStatus::getByCode($statusCode))
+        if ($status = InvoiceStatus::getByCode($statusCode)) {
             InvoiceStatusLog::createRecord($status, $this);
-    }
-
-    /**
-     * Sets the "url" attribute with a URL to this object
-     * @param string $pageName
-     * @param Cms\Classes\Controller $controller
-     */
-    public function setUrl($pageName, $controller)
-    {
-        $params = [
-            'id' => $this->id,
-            'hash' => $this->hash,
-        ];
-
-        return $this->url = $controller->pageUrl($pageName, $params);
+        }
     }
 
 }

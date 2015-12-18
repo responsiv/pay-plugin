@@ -7,10 +7,10 @@ use Validator;
 use Cms\Classes\Page;
 use October\Rain\Network\Http;
 use Responsiv\Pay\Models\Invoice;
-use Responsiv\Pay\Models\Settings;
 use Responsiv\Pay\Classes\GatewayBase;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
+use Responsiv\Currency\Facades\Currency as CurrencyHelper;
 use SystemException;
 use ApplicationException;
 use ValidationException;
@@ -158,7 +158,7 @@ class PaypalPro extends GatewayBase
             $fields['CVV2'] = array_get($data, 'CVV');
             $fields['AMT'] = $invoice->total;
             $fields['ISSUENUMBER'] = array_get($data, 'issue_number');
-            $fields['CURRENCYCODE'] = Settings::get('currency_code', 'USD');
+            $fields['CURRENCYCODE'] = CurrencyHelper::primaryCode();
 
             $fields['FIRSTNAME'] = array_get($data, 'first_name');
             $fields['LASTNAME'] = array_get($data, 'last_name');

@@ -5,6 +5,7 @@ use Backend;
 use Redirect;
 use BackendMenu;
 use Backend\Classes\Controller;
+use Responsiv\Currency\Models\Currency as CurrencyModel;
 use Responsiv\Pay\Models\InvoiceStatusLog;
 
 /**
@@ -32,6 +33,7 @@ class Invoices extends Controller
     public function preview($recordId = null, $context = null)
     {
         $this->bodyClass = 'slim-container';
+        $this->vars['currency'] = CurrencyModel::getPrimary();
         return $this->asExtension('FormController')->preview($recordId, $context);
     }
 

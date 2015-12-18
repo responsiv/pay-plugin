@@ -28,8 +28,7 @@ class PaymentMethods extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('October.System', 'system', 'settings');
-        SettingsManager::setContext('Responsiv.Pay', 'types');
+        BackendMenu::setContext('Responsiv.Pay', 'pay', 'types');
 
         GatewayManager::createPartials();
     }
@@ -37,8 +36,8 @@ class PaymentMethods extends Controller
     protected function index_onLoadAddPopup()
     {
         try {
-            $gateways = GatewayManager::instance()->listGateways(true);
-            usort($gateways, array($this, 'sortPaymentGateways'));
+            $gateways = GatewayManager::instance()->listGateways();
+            $gateways->sortBy('name');
             $this->vars['gateways'] = $gateways;
         }
         catch (Exception $ex) {
@@ -53,8 +52,9 @@ class PaymentMethods extends Controller
      */
     public function listInjectRowClass($record, $definition = null)
     {
-        if (!$record->is_enabled)
+        if (!$record->is_enabled) {
             return 'safe disabled';
+        }
     }
 
     public function create($gatewayAlias)
@@ -100,18 +100,15 @@ class PaymentMethods extends Controller
     {
         $alias = post('gateway_alias', $this->gatewayAlias);
 
-        if ($this->gatewayClass !== null)
+        if ($this->gatewayClass !== null) {
             return $this->gatewayClass;
+        }
 
-        if (!$gateway = GatewayManager::instance()->findByAlias($alias))
+        if (!$gateway = GatewayManager::instance()->findByAlias($alias)) {
             throw new Exception('Unable to find gateway with alias '. $alias);
+        }
 
         return $this->gatewayClass = $gateway->class;
-    }
-
-    private function sortPaymentGateways($a, $b)
-    {
-        return strcasecmp($a->name, $b->name);
     }
 
 }

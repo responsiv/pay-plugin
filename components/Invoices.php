@@ -42,14 +42,15 @@ class Invoices extends ComponentBase
 
     protected function loadInvoices()
     {
-        if (!($user = Auth::getUser()))
+        if (!$user = Auth::getUser()) {
             throw new \Exception('You must be logged in');
+        }
 
         $invoices = InvoiceModel::orderBy('sent_at');
         $invoices = $invoices->where('user_id', $user->id)->get();
 
         $invoices->each(function($invoice){
-            $invoice->setUrl($this->invoicePage, $this->controller);
+            $invoice->setUrlPageName($this->invoicePage);
         });
 
         return $invoices;

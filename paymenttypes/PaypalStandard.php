@@ -80,10 +80,12 @@ class PaypalStandard extends GatewayBase
      */
     public function getFormAction($host)
     {
-        if ($host->test_mode)
+        if ($host->test_mode) {
             return "https://www.sandbox.paypal.com/cgi-bin/webscr";
-        else
+        }
+        else {
             return "https://www.paypal.com/cgi-bin/webscr";
+        }
     }
 
     public function getAutoreturnUrl()
@@ -171,8 +173,7 @@ class PaypalStandard extends GatewayBase
 
     public function processIpn($params)
     {
-        try
-        {
+        try {
             $invoice = null;
 
             sleep(5);
@@ -236,31 +237,36 @@ class PaypalStandard extends GatewayBase
 
     public function processAutoreturn($params)
     {
-        try
-        {
+        try {
             $invoice = null;
             $response = null;
 
             $hash = array_key_exists(0, $params) ? $params[0] : null;
-            if (!$hash)
+            if (!$hash) {
                 throw new ApplicationException('Invoice not found');
+            }
 
             $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
-            if (!$invoice)
+            if (!$invoice) {
                 throw new ApplicationException('Invoice not found');
+            }
 
-            if (!$paymentMethod = $invoice->getPaymentMethod())
+            if (!$paymentMethod = $invoice->getPaymentMethod()) {
                 throw new ApplicationException('Payment method not found');
+            }
 
-            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\PaypalStandard')
+            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\PaypalStandard') {
                 throw new ApplicationException('Invalid payment method');
+            }
+
             /*
              * PDT request
              */
             if (!$invoice->isPaymentProcessed(true)) {
                 $transaction = post('tx');
-                if (!$transaction)
+                if (!$transaction) {
                     throw new ApplicationException('Invalid transaction value');
+                }
 
                 $endpoint = $paymentMethod->test_mode
                     ? "www.sandbox.paypal.com/cgi-bin/webscr"
@@ -280,17 +286,21 @@ class PaypalStandard extends GatewayBase
                 if (strpos($response, 'SUCCESS') !== false) {
                     $matches = [];
 
-                    if (!preg_match('/^invoice=([0-9]*)/m', $response, $matches))
+                    if (!preg_match('/^invoice=([0-9]*)/m', $response, $matches)) {
                         throw new ApplicationException('Invalid response');
+                    }
 
-                    if ($matches[1] != $invoice->getUniqueId())
+                    if ($matches[1] != $invoice->getUniqueId()) {
                         throw new ApplicationException('Invalid invoice number');
+                    }
 
-                    if (!preg_match('/^mc_gross=([0-9\.]+)/m', $response, $matches))
+                    if (!preg_match('/^mc_gross=([0-9\.]+)/m', $response, $matches)) {
                         throw new ApplicationException('Invalid response');
+                    }
 
-                    if ($matches[1] != $this->getPaypalTotal($invoice))
+                    if ($matches[1] != $this->getPaypalTotal($invoice)) {
                         throw new ApplicationException('Invalid invoice total - invoice total received is '.$matches[1]);
+                    }
 
                     if ($invoice->markAsPaymentProcessed()) {
                         $invoice->logPaymentAttempt('Successful payment', 1, [], $_GET, $response);
@@ -300,15 +310,17 @@ class PaypalStandard extends GatewayBase
             }
 
             $googleTrackingCode = 'utm_nooverride=1';
-            if (!$returnPage = $invoice->getReceiptUrl())
+            if (!$returnPage = $invoice->getReceiptUrl()) {
                 throw new ApplicationException('PayPal Standard Receipt page is not found');
+            }
 
             return Redirect::to($returnPage.'?'.$googleTrackingCode);
         }
         catch (Exception $ex)
         {
-            if ($invoice)
+            if ($invoice) {
                 $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_GET, $response);
+            }
 
             throw new ApplicationException($ex->getMessage());
         }

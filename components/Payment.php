@@ -48,22 +48,26 @@ class Payment extends ComponentBase
         $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
         $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
 
-        if (post('submit_payment'))
+        if (post('submit_payment')) {
             $this->onPay();
+        }
     }
 
     public function getInvoice()
     {
-        if ($this->invoice !== null)
+        if ($this->invoice !== null) {
             return $this->invoice;
+        }
 
-        if (!$hash = $this->property('hash'))
+        if (!$hash = $this->property('hash')) {
             return null;
+        }
 
         $invoice = InvoiceModel::whereHash($hash)->first();
 
-        if ($invoice)
-            $invoice->setUrl($this->invoicePage, $this->controller);
+        if ($invoice) {
+            $invoice->setUrlPageName($this->invoicePage);
+        }
 
         return $this->invoice = $invoice;
     }
@@ -78,14 +82,17 @@ class Payment extends ComponentBase
 
     public function onUpdatePaymentType()
     {
-        if (!$invoice = $this->getInvoice())
+        if (!$invoice = $this->getInvoice()) {
             throw new ApplicationException('Invoice not found!');
+        }
 
-        if (!$methodId = post('payment_method'))
+        if (!$methodId = post('payment_method')) {
             throw new ApplicationException('Payment type not specified!');
+        }
 
-        if (!$method = TypeModel::find($methodId))
+        if (!$method = TypeModel::find($methodId)) {
             throw new ApplicationException('Payment type not found!');
+        }
 
         $invoice->payment_method = $method;
         $invoice->save();
@@ -96,18 +103,22 @@ class Payment extends ComponentBase
 
     public function onPay($invoice = null)
     {
-        if (!$invoice = $this->getInvoice())
+        if (!$invoice = $this->getInvoice()) {
             return;
+        }
 
-        if (!$paymentMethod = $invoice->payment_method)
+        if (!$paymentMethod = $invoice->payment_method) {
             return;
+        }
 
         $redirect = $paymentMethod->processPaymentForm(post(), $paymentMethod, $invoice);
-        if ($redirect === false)
+        if ($redirect === false) {
             return;
+        }
 
-        if (!$returnPage = $invoice->getReceiptUrl())
+        if (!$returnPage = $invoice->getReceiptUrl()) {
             return;
+        }
 
         return Redirect::to($returnPage);
     }

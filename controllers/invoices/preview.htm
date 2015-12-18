@@ -1,6 +1,3 @@
-<?php
-use Responsiv\Pay\Models\Settings;
-?>
 <?php Block::put('breadcrumb') ?>
     <ul>
         <li><a href="<?= Backend::url('responsiv/pay/invoices') ?>">Invoices</a></li>
@@ -33,8 +30,8 @@ use Responsiv\Pay\Models\Settings;
             <?php endif ?>
             <div class="scoreboard-item title-value">
                 <h4>Total</h4>
-                <p><?= Settings::formatCurrency($formModel->total) ?></p>
-                <p class="description">Tax: <?= Settings::formatCurrency($formModel->tax) ?></p>
+                <p><?= $currency->formatCurrency($formModel->total) ?></p>
+                <p class="description">Tax: <?= $currency->formatCurrency($formModel->tax) ?></p>
             </div>
         </div>
     </div>

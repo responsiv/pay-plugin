@@ -9,6 +9,7 @@ use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
  */
 class PaymentMethod extends Model implements PaymentMethodInterface
 {
+    use \Responsiv\Pay\Traits\UrlMaker;
     use \October\Rain\Database\Traits\Purgeable;
     use \October\Rain\Database\Traits\Validation;
 
@@ -55,6 +56,23 @@ class PaymentMethod extends Model implements PaymentMethodInterface
      * @var self Default method cache.
      */
     protected static $defaultMethod;
+
+    /**
+     * @var string The component to use for generating URLs.
+     */
+    protected $urlComponentName = 'payment';
+
+    /**
+     * Returns an array of values to use in URL generation.
+     * @return @array
+     */
+    public function getUrlParams()
+    {
+        return [
+            'id' => $this->id,
+            'hash' => $this->hash,
+        ];
+    }
 
     /**
      * Extends this class with the gateway class

@@ -1,14 +1,13 @@
 <?php namespace Responsiv\Pay\PaymentTypes;
 
+use Http;
 use Backend;
 use Cms\Classes\Page;
-use Responsiv\Pay\Models\Settings;
 use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceStatusLog;
 use Responsiv\Pay\Classes\GatewayBase;
 use Cms\Classes\Controller as CmsController;
 use ApplicationException;
-use October\Rain\Network\Http;
 
 class Skrill extends GatewayBase
 {
@@ -175,18 +174,22 @@ class Skrill extends GatewayBase
             sleep(5);
 
             $hash = array_key_exists(0, $params) ? $params[0] : null;
-            if (!$hash)
+            if (!$hash) {
                 throw new ApplicationException('Invoice not found');
+            }
 
             $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
-            if (!$invoice)
+            if (!$invoice) {
                 throw new ApplicationException('Invoice not found');
+            }
 
-            if (!$paymentMethod = $invoice->getPaymentMethod())
+            if (!$paymentMethod = $invoice->getPaymentMethod()) {
                 throw new ApplicationException('Payment method not found');
+            }
 
-            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\Skrill')
+            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\Skrill') {
                 throw new ApplicationException('Invalid payment method');
+            }
 
             /*
              * Validate the Skrill signature
@@ -234,29 +237,35 @@ class Skrill extends GatewayBase
             $response = null;
 
             $hash = array_key_exists(0, $params) ? $params[0] : null;
-            if (!$hash)
+            if (!$hash) {
                 throw new ApplicationException('Invoice not found');
+            }
 
             $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
-            if (!$invoice)
+            if (!$invoice) {
                 throw new ApplicationException('Invoice not found');
+            }
 
-            if (!$paymentMethod = $invoice->getPaymentMethod())
+            if (!$paymentMethod = $invoice->getPaymentMethod()) {
                 throw new ApplicationException('Payment method not found');
+            }
 
-            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\Skrill')
+            if ($paymentMethod->getGatewayClass() != 'Responsiv\Pay\PaymentTypes\Skrill') {
                 throw new ApplicationException('Invalid payment method');
+            }
 
             $googleTrackingCode = 'utm_nooverride=1';
-            if (!$returnPage = $invoice->getReceiptUrl())
+            if (!$returnPage = $invoice->getReceiptUrl()) {
                 throw new ApplicationException('Skrill Standard Receipt page is not found');
+            }
 
             return Redirect::to($returnPage.'?'.$googleTrackingCode);
         }
         catch (Exception $ex)
         {
-            if ($invoice)
+            if ($invoice) {
                 $invoice->logPaymentAttempt($ex->getMessage(), 0, [], $_GET, $response);
+            }
 
             throw new ApplicationException($ex->getMessage());
         }
