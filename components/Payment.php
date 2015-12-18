@@ -33,6 +33,13 @@ class Payment extends ComponentBase
                 'type'        => 'dropdown',
                 'default'     => 'pay/pay'
             ],
+            'isPrimary' => [
+                'title'       => 'Primary page',
+                'description' => 'Link to this page when sending mail notifications.',
+                'type'        => 'checkbox',
+                'default'     => true,
+                'showExternalParam' => false
+            ],
         ];
     }
 
