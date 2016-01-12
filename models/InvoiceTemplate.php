@@ -33,8 +33,6 @@ class InvoiceTemplate extends Model
      */
     protected $jsonable = ['syntax_data', 'syntax_fields'];
 
-    public $timestamps = false;
-
     public function getContentCssAttribute($content)
     {
         if (!$this->exists || !strlen($content))
