@@ -77,12 +77,14 @@ class Invoices extends Controller
 
     public function formExtendRefreshData($host, $data)
     {
-        if (empty($data['user']))
+        if (empty($data['user'])) {
             return;
+        }
 
         $host->model->user = $data['user'];
-        if (!$user = $host->model->user)
+        if (!$user = $host->model->user) {
             return;
+        }
 
         $data['first_name'] = $user->name;
         $data['email'] = $user->email;

@@ -52,8 +52,11 @@ class Payment extends ComponentBase
     {
         $this->prepareVars();
         $this->page['invoice'] = $invoice = $this->getInvoice();
-        $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
-        $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
+
+        if ($invoice) {
+            $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
+            $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
+        }
 
         if (post('submit_payment')) {
             $this->onPay();

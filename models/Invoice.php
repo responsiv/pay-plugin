@@ -57,6 +57,10 @@ class Invoice extends Model implements InvoiceInterface
         'payment_log' => ['Responsiv\Pay\Models\InvoiceLog'],
     ];
 
+    public $morphTo = [
+        'related' => []
+    ];
+
     /**
      * @var string The component to use for generating URLs.
      */
@@ -116,11 +120,11 @@ class Invoice extends Model implements InvoiceInterface
     public function setDefaults()
     {
         if (!$this->country_id) {
-            $this->country_id = LocationSettings::get('default_country', 1);
+            $this->country = Country::first();
         }
 
         if (!$this->state_id) {
-            $this->state_id = LocationSettings::get('default_state', 1);
+            $this->state = State::first();
         }
 
         if (!$this->template_id) {
@@ -452,6 +456,18 @@ class Invoice extends Model implements InvoiceInterface
         if ($status = InvoiceStatus::getByCode($statusCode)) {
             InvoiceStatusLog::createRecord($status, $this);
         }
+    }
+
+    //
+    // Scopes
+    //
+
+    public function scopeApplyRelated($query, $object)
+    {
+        return $query
+            ->where('related_type', get_class($object))
+            ->where('related_id', $object->getKey())
+        ;
     }
 
 }

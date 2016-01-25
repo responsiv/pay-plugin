@@ -40,6 +40,8 @@ class CreateInvoicesTable extends Migration
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('due_at')->nullable();
             $table->string('hash', 40)->nullable()->index();
+            $table->string('related_id')->index()->nullable();
+            $table->string('related_type')->index()->nullable();
             $table->timestamps();
         });
 
