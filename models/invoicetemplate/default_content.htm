@@ -21,7 +21,7 @@
 
             <table class="invoice-table invoice-details">
                 <tr>
-                    <td>
+                    <td class="invoice-client-row">
                         <div class="invoice-client-label">Customer</div>
                         <div class="invoice-client-details">
                             {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
@@ -34,7 +34,7 @@
                             {text name="company_registration" label="Company Registration Number" span="left"}ABN: 45 123 456 789{/text}
                         </div>
                     </td>
-                    <td>
+                    <td class="invoice-company-row">
                         <div class="invoice-company">
                             <div class="invoice-company-name">
                                 {text name="company_name" label="Company Name" span="left"}Acme Incorporated{/text}
@@ -102,12 +102,17 @@ Australia
                         <div class="invoice-thanks">Thank you for your business.</div>
                     </td>
                     <td>
-                        <div class="invoice-payment-label">Payment advice</div>
-                        <div class="invoice-payment-advice">
-                            {textarea name="payment_advice" label="Payment advice" size="small"}
-                                Please send full amount to via any of our accepted Payment methods
-                            {/textarea}
-                        </div>
+                        {% if invoice.isPaymentProcessed %}
+                            <div class="invoice-payment-label">Amount due: {{ 0|currency }}</div>
+                            <div class="invoice-payment-advice">This invoice has been paid</div>
+                        {% else %}
+                            <div class="invoice-payment-label">Amount due: {{ invoice.total|currency }}</div>
+                            <div class="invoice-payment-advice">
+                                {textarea name="payment_advice" label="Payment advice" size="small"}
+                                    Please send full amount to via any of our accepted Payment methods
+                                {/textarea}
+                            </div>
+                        {% endif %}
                     </td>
                 </tr>
             </table>

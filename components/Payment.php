@@ -10,6 +10,8 @@ use ApplicationException;
 class Payment extends ComponentBase
 {
 
+    public $invoicePage;
+
     public function componentDetails()
     {
         return [
@@ -30,15 +32,7 @@ class Payment extends ComponentBase
             'invoicePage' => [
                 'title'       => 'Invoice page',
                 'description' => 'Name of the invoice page file for the invoice links.',
-                'type'        => 'dropdown',
-                'default'     => 'pay/pay'
-            ],
-            'isPrimary' => [
-                'title'       => 'Primary page',
-                'description' => 'Link to this page when sending mail notifications.',
-                'type'        => 'checkbox',
-                'default'     => true,
-                'showExternalParam' => false
+                'type'        => 'dropdown'
             ],
         ];
     }

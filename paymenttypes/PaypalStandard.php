@@ -210,8 +210,8 @@ class PaypalStandard extends GatewayBase
             $response = $this->postData($endpoint, $fields);
 
             if (!$invoice->isPaymentProcessed(true)) {
-                if (post('mc_gross') != $this->getPaypalTotal($invoice)) {
-                    $invoice->logPaymentAttempt('Invalid invoice total received via IPN: '.post('mc_gross'), 0, [], $_POST, $response);
+                if (input('mc_gross') != $this->getPaypalTotal($invoice)) {
+                    $invoice->logPaymentAttempt('Invalid invoice total received via IPN: '.input('mc_gross'), 0, [], $_POST, $response);
                 }
                 else {
 
@@ -263,7 +263,7 @@ class PaypalStandard extends GatewayBase
              * PDT request
              */
             if (!$invoice->isPaymentProcessed(true)) {
-                $transaction = post('tx');
+                $transaction = input('tx');
                 if (!$transaction) {
                     throw new ApplicationException('Invalid transaction value');
                 }

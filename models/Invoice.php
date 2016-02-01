@@ -1,9 +1,10 @@
 <?php namespace Responsiv\Pay\Models;
 
+use Db;
 use Model;
 use Request;
-use Db;
 use Carbon\Carbon;
+use Cms\Classes\Controller;
 use Responsiv\Currency\Facades\Currency as CurrencyHelper;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
@@ -331,7 +332,12 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function getReceiptUrl()
     {
-        return $this->payment_method ? $this->payment_method->url : $this->url;
+        if ($this->return_page) {
+            $controller = Controller::getController() ?: new Controller;
+            return $controller->pageUrl($this->return_page, $this->getUrlParams());
+        }
+
+        return $this->getUrlAttribute();
     }
 
     /**

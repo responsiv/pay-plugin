@@ -87,6 +87,7 @@ class Invoices extends Controller
         }
 
         $data['first_name'] = $user->name;
+        $data['last_name'] = $user->surname;
         $data['email'] = $user->email;
         $data['phone'] = $user->phone;
         $data['company'] = $user->company;

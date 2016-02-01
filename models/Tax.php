@@ -35,6 +35,11 @@ class Tax extends Model
      */
     protected static $cache = [];
 
+    /**
+     * @var self Default tax class cache.
+     */
+    protected static $defaultCache;
+
     public function getDataTableOptions($attribute, $field, $data)
     {
         if ($field == 'country') {
@@ -87,6 +92,19 @@ class Tax extends Model
         }
 
         return $result;
+    }
+
+    /**
+     * Returns the default locale defined.
+     * @return self
+     */
+    public static function getDefault()
+    {
+        if (self::$defaultCache !== null) {
+            return self::$defaultCache;
+        }
+
+        return self::$defaultCache = self::where('is_default', true)->first();
     }
 
     /**

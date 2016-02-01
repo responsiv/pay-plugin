@@ -9,6 +9,7 @@ use Responsiv\Pay\Models\Invoice as InvoiceModel;
 
 class Invoice extends ComponentBase
 {
+    public $payPage;
 
     public function componentDetails()
     {
@@ -30,8 +31,7 @@ class Invoice extends ComponentBase
             'payPage' => [
                 'title'       => 'Payment page',
                 'description' => 'Name of the payment page file for the "Pay this invoice" links.',
-                'type'        => 'dropdown',
-                'default'     => 'pay/pay'
+                'type'        => 'dropdown'
             ],
             'isPrimary' => [
                 'title'       => 'Primary page',

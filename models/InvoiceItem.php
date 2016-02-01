@@ -30,6 +30,13 @@ class InvoiceItem extends Model
         'tax_class' => ['Responsiv\Pay\Models\Tax'],
     ];
 
+    public function beforeCreate()
+    {
+        if (!$this->tax_class_id) {
+            $this->tax_class = Tax::getDefault();
+        }
+    }
+
     public function beforeSave()
     {
         $this->calculateTotals();
