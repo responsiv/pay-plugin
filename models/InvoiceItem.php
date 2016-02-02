@@ -7,6 +7,8 @@ use Model;
  */
 class InvoiceItem extends Model
 {
+    use \October\Rain\Database\Traits\Sortable;
+
     /**
      * @var string The database table used by the model.
      */
@@ -30,15 +32,12 @@ class InvoiceItem extends Model
         'tax_class' => ['Responsiv\Pay\Models\Tax'],
     ];
 
-    public function beforeCreate()
+    public function beforeSave()
     {
         if (!$this->tax_class_id) {
             $this->tax_class = Tax::getDefault();
         }
-    }
 
-    public function beforeSave()
-    {
         $this->calculateTotals();
     }
 

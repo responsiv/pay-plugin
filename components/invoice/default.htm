@@ -6,7 +6,7 @@
 
             <h4>Bill to</h4>
             <p>
-                {% if invoice.company %}<strong>{{ invoice.company }}</strong>{% endif %}<br />
+                {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
                 Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
                 {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
                 {% if invoice.city or invoice.zip %}{{ invoice.city }} {{ invoice.zip }}<br />{% endif %}

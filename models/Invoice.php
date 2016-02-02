@@ -207,7 +207,7 @@ class Invoice extends Model implements InvoiceInterface
             $taxInfo->total = round($taxInfo->total, 2);
         }
 
-        $this->tax_data = serialize($taxesToSave);
+        $this->tax_data = json_encode($taxesToSave);
     }
 
     /**
@@ -223,7 +223,7 @@ class Invoice extends Model implements InvoiceInterface
         }
 
         try {
-            $taxes = unserialize($this->tax_data);
+            $taxes = json_decode($this->tax_data);
             foreach ($taxes as $taxName => $taxInfo) {
                 if ($taxInfo->total <= 0) {
                     continue;
@@ -418,7 +418,9 @@ class Invoice extends Model implements InvoiceInterface
             $now = $this->processed_at = Carbon::now();
 
             // Instant update here in case a simultaneous request causes invalid data
-            $this->where('id', $this->id)->update(['processed_at' => $now]);
+            $this->newQuery()->where('id', $this->id)->update(['processed_at' => $now]);
+
+            Event::fire('responsiv.pay.invoicePaid', [$this]);
 
             $this->save();
         }
