@@ -19,7 +19,7 @@ The invoices page is used to list all the invoices owned by the logged in user. 
 The invoice page is used to display a single invoice. It displays a table containing a breakdown of the invoice items, along with a total and any tax applied. If the invoice is unpaid, it will link to the payment page.
 
     title = "Viewing Invoice"
-    meta_title = "Viewing Invoice #{{ invoice.id }}"
+    meta_title = "Viewing Invoice %s"
     url = "/account/invoice/:id"
 
     [invoice]

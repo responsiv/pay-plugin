@@ -52,6 +52,12 @@ class Invoice extends ComponentBase
     {
         $this->payPage = $this->page['payPage'] = $this->property('payPage');
         $this->page['invoice'] = $invoice = $this->getInvoice();
+
+        if ($invoice) {
+            $this->page->meta_title = $this->page->meta_title
+                ? str_replace('%s', $invoice->id, $this->page->meta_title)
+                : 'Invoice #'.$invoice->id;
+        }
     }
 
     public function getInvoice()

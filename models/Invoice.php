@@ -2,6 +2,7 @@
 
 use Db;
 use Model;
+use Event;
 use Request;
 use Carbon\Carbon;
 use Cms\Classes\Controller;
