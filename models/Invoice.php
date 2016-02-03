@@ -54,9 +54,9 @@ class Invoice extends Model implements InvoiceInterface
     ];
 
     public $hasMany = [
-        'items'       => ['Responsiv\Pay\Models\InvoiceItem'],
-        'status_log'  => ['Responsiv\Pay\Models\InvoiceStatusLog'],
-        'payment_log' => ['Responsiv\Pay\Models\InvoiceLog'],
+        'items'       => ['Responsiv\Pay\Models\InvoiceItem', 'delete' => true],
+        'status_log'  => ['Responsiv\Pay\Models\InvoiceStatusLog', 'delete' => true],
+        'payment_log' => ['Responsiv\Pay\Models\InvoiceLog', 'delete' => true],
     ];
 
     public $morphTo = [

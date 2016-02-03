@@ -29,9 +29,7 @@
                             {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
                             {% if invoice.city %}{{ invoice.city }}, {% endif %}
                             {{ invoice.state.name }} {{ invoice.zip }}<br />
-                            {{ invoice.country.name }}<br />
-                            <br />
-                            {text name="company_registration" label="Company Registration Number" span="left"}ABN: 45 123 456 789{/text}
+                            {{ invoice.country.name }}
                         </div>
                     </td>
                     <td class="invoice-company-row">
@@ -46,6 +44,8 @@ Sweet Darling Station
 Pitt Bottom, NSW 2022
 Australia
                                 {/textarea}
+                                <br /><br />
+                                {text name="company_registration" label="Company Registration Number" span="left"}ABN: 45 123 456 789{/text}
                             </div>
                         </div>
                     </td>

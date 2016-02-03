@@ -4,6 +4,7 @@ use Auth;
 use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
+use ApplicationException;
 
 class Invoices extends ComponentBase
 {
@@ -43,7 +44,7 @@ class Invoices extends ComponentBase
     protected function loadInvoices()
     {
         if (!$user = Auth::getUser()) {
-            throw new \Exception('You must be logged in');
+            throw new ApplicationException('You must be logged in');
         }
 
         $invoices = InvoiceModel::orderBy('sent_at');
