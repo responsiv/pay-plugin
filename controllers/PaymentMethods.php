@@ -68,10 +68,12 @@ class PaymentMethods extends Controller
         }
     }
 
-    public function formCreateModelObject()
+    public function formExtendModel($model)
     {
-        $model = new TypeModel;
-        $model->applyGatewayClass($this->getGatewayClass());
+        if (!$model->exists) {
+            $model->applyGatewayClass($this->getGatewayClass());
+        }
+
         return $model;
     }
 

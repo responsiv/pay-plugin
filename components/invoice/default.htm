@@ -16,7 +16,7 @@
             </p>
         </div>
         <div class="col-md-6 text-right">
-            <h2>Invoice {{ invoice.id }}</h2>
+            <h2>Invoice {{ invoice.getUniqueId }}</h2>
             <p>Date: {{ invoice.sent_at ? invoice.sent_at.toFormattedDateString }}</p>
             {% if invoice.template %}
                 <p><a href="javascript:printInvoice()">Print this invoice</a></p>

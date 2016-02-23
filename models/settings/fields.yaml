@@ -1,0 +1,13 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+tabs:
+    fields:
+
+        invoice_prefix:
+            label: Invoice prefix
+            tab: Invoices
+            type: text
+            span: left
+            comment: Enter a value to prefix all invoice numbers.

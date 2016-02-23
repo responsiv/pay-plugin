@@ -12,7 +12,7 @@
         <tbody>
             {% for invoice in invoices %}
                 <tr class="invoice-status-{{ invoice.status.code }}">
-                    <td><a href="{{ invoice.url }}">{{ invoice.id }}</a></td>
+                    <td><a href="{{ invoice.url }}">{{ invoice.getUniqueId }}</a></td>
                     <td><a href="{{ invoice.url }}">{{ invoice.sent_at }}</a></td>
                     <td><a href="{{ invoice.url }}"><strong>{{ invoice.status.name }}</strong> since {{ invoice.status_updated_at }}</a></td>
                     <td class="total text-right"><a href="{{ invoice.url }}">{{ invoice.total|currency }}</a></td>

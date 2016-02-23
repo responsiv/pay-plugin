@@ -55,8 +55,8 @@ class Invoice extends ComponentBase
 
         if ($invoice) {
             $this->page->meta_title = $this->page->meta_title
-                ? str_replace('%s', $invoice->id, $this->page->meta_title)
-                : 'Invoice #'.$invoice->id;
+                ? str_replace('%s', $invoice->getUniqueId(), $this->page->meta_title)
+                : 'Invoice #'.$invoice->getUniqueId();
         }
     }
 

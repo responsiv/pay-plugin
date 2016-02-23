@@ -6,7 +6,7 @@
             This invoice has been paid. Thank-you!
         </h4>
         <p>
-            View <a href="{{ invoice.url }}">invoice {{ invoice.id }}</a>
+            View <a href="{{ invoice.url }}">invoice {{ invoice.getUniqueId }}</a>
         </p>
 
     {% else %}
@@ -26,7 +26,7 @@
                 </p>
             </div>
             <div class="col-md-6 text-right">
-                <h2>Invoice {{ invoice.id }}</h2>
+                <h2>Invoice {{ invoice.getUniqueId }}</h2>
                 <p>Date: {{ invoice.sent_at ? invoice.sent_at.toFormattedDateString }}</p>
             </div>
         </div>
@@ -36,26 +36,29 @@
             {% partial '@invoice_table' %}
         </div>
 
-        <!-- Payment method -->
-        <h5>Please choose a payment method</h5>
-
         {% if paymentMethods|length %}
-            {{ form_open() }}
-                {% for type in paymentMethods %}
-                    <label for="type{{ type.id }}" class="radio">
-                        <input
-                            id="type{{ type.id }}"
-                            name="payment_method"
-                            value="{{ type.id }}"
-                            type="radio"
-                            {{ type.id == invoice.payment_method_id ? 'checked' }}
-                            data-request="onUpdatePaymentType"
-                            data-request-update="'@payment_form': '#partialPaymentForm'"
-                            />
-                        {{ type.name }}
-                    </label>
-                {% endfor %}
-            {{ form_close() }}
+
+            <!-- Payment method -->
+            {% if paymentMethods|length > 1 %}
+                <h5>Please choose a payment method</h5>
+
+                    {{ form_open() }}
+                        {% for type in paymentMethods %}
+                            <label for="type{{ type.id }}" class="radio">
+                                <input
+                                    id="type{{ type.id }}"
+                                    name="payment_method"
+                                    value="{{ type.id }}"
+                                    type="radio"
+                                    {{ type.id == invoice.payment_method_id ? 'checked' }}
+                                    data-request="onUpdatePaymentType"
+                                    data-request-update="'@payment_form': '#partialPaymentForm'"
+                                    />
+                                {{ type.name }}
+                            </label>
+                        {% endfor %}
+                    {{ form_close() }}
+            {% endif %}
 
             <!-- Payment form -->
             <div id="partialPaymentForm">{% partial '@payment_form' %}</div>

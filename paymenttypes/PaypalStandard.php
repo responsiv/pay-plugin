@@ -286,15 +286,15 @@ class PaypalStandard extends GatewayBase
                 if (strpos($response, 'SUCCESS') !== false) {
                     $matches = [];
 
-                    if (!preg_match('/^invoice=([0-9]*)/m', $response, $matches)) {
+                    if (!preg_match('/^invoice=(.*)$/m', $response, $matches)) {
                         throw new ApplicationException('Invalid response');
                     }
 
-                    if ($matches[1] != $invoice->getUniqueId()) {
+                    if (trim($matches[1]) != $invoice->getUniqueId()) {
                         throw new ApplicationException('Invalid invoice number');
                     }
 
-                    if (!preg_match('/^mc_gross=([0-9\.]+)/m', $response, $matches)) {
+                    if (!preg_match('/^mc_gross=([0-9\.]+)$/m', $response, $matches)) {
                         throw new ApplicationException('Invalid response');
                     }
 

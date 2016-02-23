@@ -13,7 +13,7 @@
                         <img src="{fileupload name="company_logo" label="Company Logo" span="right"}http://octobercms.com/themes/website/assets/images/logo.png{/fileupload}" alt="" />
                     </td>
                     <td>
-                        <div class="invoice-header-number">Invoice #{{ invoice.id }}</div>
+                        <div class="invoice-header-number">Invoice #{{ invoice.getUniqueId }}</div>
                         <div class="invoice-header-date">{{ invoice.created_at.toFormattedDateString }}</div>
                     </td>
                 </tr>

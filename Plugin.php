@@ -74,6 +74,14 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
+            'settings' => [
+                'label'       => 'Payment settings',
+                'description' => 'Manage payment configuration.',
+                'icon'        => 'icon-credit-card',
+                'class'       => 'Responsiv\Pay\Models\Settings',
+                'category'    => 'Payments',
+                'order'       => 500,
+            ],
             'invoice_template' => [
                 'label'       => 'Invoice template',
                 'description' => 'Customize the template used for invoices.',

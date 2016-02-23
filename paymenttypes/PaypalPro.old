@@ -193,7 +193,7 @@ class PaypalPro extends GatewayBase
                 $itemIndex++;
             }
 
-            $fields['INVNUM'] = $invoice->id;
+            $fields['INVNUM'] = $invoice->getUniqueId();
             $fields['ButtonSource'] = 'Responsiv_Pay_DP';
 
             /*

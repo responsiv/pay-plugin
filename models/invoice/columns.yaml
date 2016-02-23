@@ -3,8 +3,18 @@
 # ===================================
 
 columns:
+    status:
+        label: Status
+        relation: status
+        select: name
+        sortable: false
+
     id:
         label: ID
+        type: partial
+        path: column_id
+        searchable: true
+        width: 100px
 
     user_ip:
         label: IP Address
@@ -12,13 +22,16 @@ columns:
 
     email:
         label: Email
+        searchable: true
 
     first_name:
         label: First name
+        searchable: true
         invisible: true
 
     last_name:
         label: Last name
+        searchable: true
         invisible: true
 
     processed_at:
@@ -41,6 +54,7 @@ columns:
 
     total:
         label: Total
+        searchable: true
 
     subtotal:
         label: Subtotal
@@ -83,13 +97,6 @@ columns:
     payment_method:
         label: Gateway
         relation: payment_method
-        select: name
-        sortable: false
-        invisible: true
-
-    status:
-        label: Invoice Status
-        relation: status
         select: name
         sortable: false
         invisible: true

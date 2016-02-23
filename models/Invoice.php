@@ -135,6 +135,19 @@ class Invoice extends Model implements InvoiceInterface
     }
 
     /**
+     * Useful to recalculate the total for this invoice and items.
+     * @return void
+     */
+    public function touchTotals()
+    {
+        $this->touch();
+
+        $this->items->each(function($item) {
+            $item->touch();
+        });
+    }
+
+    /**
      * Calculate totals from invoice items
      * @param  Model $items
      * @return float
@@ -301,7 +314,7 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function getUniqueId()
     {
-        return $this->id;
+        return Settings::get('invoice_prefix') . $this->id;
     }
 
     /**
