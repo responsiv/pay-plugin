@@ -237,7 +237,7 @@ class GatewayManager
         if (!File::exists($filePath))
             return;
 
-        $partial = new Partial($themeCode);
+        $partial = Partial::inTheme($themeCode);
         $partial->fill([
             'fileName' => $name,
             'markup' => File::get($filePath)

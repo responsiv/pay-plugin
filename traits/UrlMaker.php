@@ -74,10 +74,7 @@ trait UrlMaker
             return static::$urlPageName = array_get($cached, 'fileName');
         }
 
-        $page = Page::useCache()
-            ->whereComponent($this->urlComponentName, 'isPrimary', '1')
-            ->first()
-        ;
+        $page = Page::whereComponent($this->urlComponentName, 'isPrimary', '1')->first();
 
         if (!$page) {
             throw new ApplicationException(sprintf(
@@ -88,7 +85,7 @@ trait UrlMaker
         }
 
         $baseFileName = $page->getBaseFileName();
-        $filePath = $page->getFullPath();
+        $filePath = $page->getFilePath();
 
         $cached = [
             'path'     => $filePath,
