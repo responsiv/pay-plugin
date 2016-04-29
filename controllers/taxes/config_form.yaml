@@ -3,7 +3,7 @@
 # ===================================
 
 # Record name
-name: Tax
+name: Tax Table
 
 # Model Form Field configuration
 form: ~/plugins/responsiv/pay/models/tax/fields.yaml

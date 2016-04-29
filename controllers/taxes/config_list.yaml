@@ -9,7 +9,7 @@ list: ~/plugins/responsiv/pay/models/tax/columns.yaml
 modelClass: Responsiv\Pay\Models\Tax
 
 # List Title
-title: Manage Taxes
+title: Manage Tax Tables
 
 # Link URL for each record
 recordUrl: responsiv/pay/taxes/update/:id

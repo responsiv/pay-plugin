@@ -42,6 +42,7 @@ class Plugin extends PluginBase
                 'label'       => 'Payments',
                 'url'         => Backend::url('responsiv/pay/invoices'),
                 'icon'        => 'icon-credit-card',
+                'iconSvg'     => 'plugins/responsiv/pay/assets/images/pay-icon.svg',
                 'permissions' => ['pay.*'],
                 'order'       => 500,
 
