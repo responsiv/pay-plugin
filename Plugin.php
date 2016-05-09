@@ -8,7 +8,6 @@ use System\Classes\PluginBase;
  */
 class Plugin extends PluginBase
 {
-
     public $require = ['RainLab.User', 'RainLab.Location', 'Responsiv.Currency'];
 
     /**
@@ -22,7 +21,8 @@ class Plugin extends PluginBase
             'name'        => 'Pay',
             'description' => 'Invoicing and Accounting',
             'author'      => 'Responsiv Internet',
-            'icon'        => 'icon-credit-card'
+            'icon'        => 'icon-credit-card',
+            'homepage'    => 'https://github.com/responsiv/pay-plugin'
         ];
     }
 
@@ -67,7 +67,6 @@ class Plugin extends PluginBase
                         'order'       => 500,
                     ],
                 ]
-
             ]
         ];
     }
@@ -110,5 +109,4 @@ class Plugin extends PluginBase
             'Responsiv\Pay\PaymentTypes\Stripe'         => 'stripe',
         ];
     }
-
 }
