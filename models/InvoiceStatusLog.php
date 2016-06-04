@@ -58,10 +58,10 @@ class InvoiceStatusLog extends Model
         /*
          * Extensibility
          */
-        if (Event::fire('responsiv.pay:beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
             return false;
 
-        if ($record->fireEvent('pay:beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
             return false;
 
         $record->save();
