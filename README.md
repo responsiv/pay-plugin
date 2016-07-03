@@ -1,7 +1,6 @@
-Payment plugin
-==========
+# Payment plugin
 
-Payment system for October. **Note**: this is a work in progress (not suitable for consumption by anyone yet, really).
+Payment system for October. Allows the generation of invoices and use of payment gateways, supplied by this plugin or others.
 
 ### Invoices page
 
