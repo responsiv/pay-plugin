@@ -2,6 +2,10 @@
 
 Payment system for October. Allows the generation of invoices and use of payment gateways, supplied by this plugin or others.
 
+This theme requires the following plugins:
+
+- [Responsiv.Currency](http://octobercms.com/plugin/responsiv-currency)
+
 ### Invoices page
 
 The invoices page is used to list all the invoices owned by the logged in user. It displays a table with each invoice and provides a link to the invoice page.
