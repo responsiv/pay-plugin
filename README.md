@@ -2,7 +2,7 @@
 
 Payment system for October. Allows the generation of invoices and use of payment gateways, supplied by this plugin or others.
 
-This theme requires the following plugins:
+This plugin requires the following plugins:
 
 - [Responsiv.Currency](http://octobercms.com/plugin/responsiv-currency)
 - [RainLab.User](http://octobercms.com/plugin/rainlab-user)
