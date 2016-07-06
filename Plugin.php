@@ -2,6 +2,7 @@
 
 use Backend;
 use System\Classes\PluginBase;
+use Lang;
 
 /**
  * Pay Plugin Information File
@@ -18,8 +19,8 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'Pay',
-            'description' => 'Invoicing and Accounting',
+            'name'        => Lang::get('responsiv.pay::lang.name'),
+            'description' => Lang::get('responsiv.pay::lang.description'),
             'author'      => 'Responsiv Internet',
             'icon'        => 'icon-credit-card',
             'homepage'    => 'https://github.com/responsiv/pay-plugin'
@@ -39,7 +40,7 @@ class Plugin extends PluginBase
     {
         return [
             'pay' => [
-                'label'       => 'Payments',
+                'label'       => Lang::get('responsiv.pay::lang.menu.payments'),
                 'url'         => Backend::url('responsiv/pay/invoices'),
                 'icon'        => 'icon-credit-card',
                 'iconSvg'     => 'plugins/responsiv/pay/assets/images/pay-icon.svg',
@@ -48,19 +49,19 @@ class Plugin extends PluginBase
 
                 'sideMenu' => [
                     'invoices' => [
-                        'label'       => 'Invoices',
+                        'label'       => Lang::get('responsiv.pay::lang.menu.invoices'),
                         'icon'        => 'icon-file-text-o',
                         'url'         => Backend::url('responsiv/pay/invoices'),
                         'permissions' => ['pay.access_invoices'],
                     ],
                     'taxes' => [
-                        'label'       => 'Tax tables',
+                        'label'       => Lang::get('responsiv.pay::lang.menu.tax'),
                         'icon'        => 'icon-table',
                         'url'         => Backend::url('responsiv/pay/taxes'),
                         'permissions' => ['pay.manage_taxes'],
                     ],
                     'types' => [
-                        'label'       => 'Gateways',
+                        'label'       => Lang::get('responsiv.pay::lang.menu.gateways'),
                         'icon'        => 'icon-money',
                         'url'         => Backend::url('responsiv/pay/paymentmethods'),
                         'permissions' => ['pay.manage_gateways'],
@@ -75,19 +76,19 @@ class Plugin extends PluginBase
     {
         return [
             'settings' => [
-                'label'       => 'Payment settings',
-                'description' => 'Manage payment configuration.',
+                'label'       => Lang::get('responsiv.pay::lang.settings.name'),
+                'description' => Lang::get('responsiv.pay::lang.settings.description'),
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
-                'category'    => 'Payments',
+                'category'    => Lang::get('responsiv.pay::lang.name'),
                 'order'       => 500,
             ],
             'invoice_template' => [
-                'label'       => 'Invoice template',
-                'description' => 'Customize the template used for invoices.',
+                'label'       => Lang::get('responsiv.pay::lang.invoice_template.name'),
+                'description' => Lang::get('responsiv.pay::lang.invoice_template.description'),
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
-                'category'    => 'Payments',
+                'category'    => Lang::get('responsiv.pay::lang.name'),
                 'order'       => 500,
             ]
         ];
