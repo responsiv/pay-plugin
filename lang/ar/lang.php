@@ -2,7 +2,7 @@
 
 return [
     'name' => 'الدفع',
-    'description' => 'فواتير ومحاسبة,
+    'description' => 'فواتير ومحاسبة',
     'add_payment_method' => 'أضف طريقة الدفع',
     'menu' => [
         'payments' => 'المدفوعات',
