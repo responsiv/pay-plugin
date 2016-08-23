@@ -7,7 +7,12 @@ tabs:
 
         invoice_prefix:
             label: Invoice prefix
-            tab: Invoices
-            type: text
-            span: left
             comment: Enter a value to prefix all invoice numbers.
+            tab: Invoices
+            span: auto
+
+        new_invoice_number:
+            label: New invoice number
+            comment: Use this to set the next invoice number, must be more than the current invoice number.
+            tab: Invoices
+            span: auto
