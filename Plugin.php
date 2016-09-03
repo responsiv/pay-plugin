@@ -59,13 +59,14 @@ class Plugin extends PluginBase
                         'icon'        => 'icon-table',
                         'url'         => Backend::url('responsiv/pay/taxes'),
                         'permissions' => ['pay.manage_taxes'],
+                        'order'       => 500,
                     ],
                     'types' => [
                         'label'       => Lang::get('responsiv.pay::lang.menu.gateways'),
                         'icon'        => 'icon-money',
                         'url'         => Backend::url('responsiv/pay/paymentmethods'),
                         'permissions' => ['pay.manage_gateways'],
-                        'order'       => 500,
+                        'order'       => 510,
                     ],
                 ]
             ]

@@ -115,7 +115,7 @@ class Payment extends ComponentBase
             return;
         }
 
-        $redirect = $paymentMethod->processPaymentForm(post(), $paymentMethod, $invoice);
+        $redirect = $paymentMethod->processPaymentForm(post(), $invoice);
         if ($redirect === false) {
             return;
         }

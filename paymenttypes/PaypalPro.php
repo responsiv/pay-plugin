@@ -77,8 +77,10 @@ class PaypalPro extends GatewayBase
     /**
      * {@inheritDoc}
      */
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
+        $host = $this->model;
+
         $rules = [
             'first_name'              => 'required',
             'last_name'               => 'required',

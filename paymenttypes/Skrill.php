@@ -158,7 +158,7 @@ class Skrill extends GatewayBase
         return $result;
     }
 
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
         /*
          * We do not need any code here since payments are processed on Skrill server.

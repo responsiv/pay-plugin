@@ -7,7 +7,7 @@ return [
     'menu' => [
         'payments' => 'Payments',
         'invoices' => 'Invoices',
-        'tax' => 'Tax tables',
+        'tax' => 'Tax Rules',
         'gateways' => 'Gateways',
     ],
     'settings' => [

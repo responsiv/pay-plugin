@@ -51,7 +51,13 @@ class InvoiceItem extends Model
         $this->subtotal = ($this->price - $discountAmount) * $this->quantity;
 
         if ($this->invoice && !$this->is_tax_exempt) {
-            $this->tax = Tax::getTotalTax($this->tax_class_id, $this->subtotal, $this->invoice->getLocationInfo());
+            if ($taxClass = Tax::findById($this->tax_class_id)) {
+                $taxClass->setLocationInfo($this->invoice->getLocationInfo());
+                $this->tax = $taxClass->getTotalTax($this->subtotal);
+            }
+            else {
+                $this->tax = 0;
+            }
         }
 
         $this->total = $this->subtotal + $this->tax;

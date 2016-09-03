@@ -1,9 +1,10 @@
 <?php namespace Responsiv\Pay\Classes;
 
 use Str;
-use URL;
+use Url;
 use File;
 use System\Classes\ModelBehavior;
+use SystemException;
 
 /**
  * Represents the generic payment type.
@@ -54,8 +55,9 @@ class GatewayBase extends ModelBehavior
         $this->configPath = $this->guessConfigPathFrom($this);
         $this->fieldConfig = $this->makeConfig($this->defineFormFields());
 
-        if (!$model)
+        if (!$model) {
             return;
+        }
 
         $this->boot($model);
     }
@@ -68,8 +70,9 @@ class GatewayBase extends ModelBehavior
     public function boot($host)
     {
         // Set default data
-        if (!$host->exists)
+        if (!$host->exists) {
             $this->initConfigData($host);
+        }
 
         // Apply validation rules
         $host->rules = array_merge($host->rules, $this->defineValidationRules());
@@ -111,9 +114,9 @@ class GatewayBase extends ModelBehavior
      * Registers a hidden page with specific URL. Use this method for cases when you
      * need to have a hidden landing page for a specific payment gateway. For example,
      * PayPal needs a landing page for the auto-return feature.
-     * Important! Payment module access point names should have a prefix.
+     * Important! Payment gateway access point names should have a prefix.
      * @return array Returns an array containing page URLs and methods to call for each URL:
-     * return array('paypal_autoreturn'=>'processPaypalAutoreturn'). The processing methods must be declared
+     * return ['paypal_autoreturn' => 'processPaypalAutoreturn']. The processing methods must be declared
      * in the payment type class. Processing methods must accept one parameter - an array of URL segments
      * following the access point. For example, if URL is /paypal_autoreturn/1234 an array with single
      * value '1234' will be passed to processPaypalAutoreturn method.
@@ -138,16 +141,15 @@ class GatewayBase extends ModelBehavior
      */
     public function makeAccessPointLink($code)
     {
-        return URL::to('api_responsiv_pay/'.$code);
+        return Url::to('api_responsiv_pay/'.$code);
     }
 
     /**
      * Returns true if the payment type is applicable for a specified invoice amount
      * @param float $amount Specifies an invoice amount
-     * @param $host Model object to add fields to
      * @return true
      */
-    public function isApplicable($amount, $host)
+    public function isApplicable($amount)
     {
         return true;
     }
@@ -155,16 +157,61 @@ class GatewayBase extends ModelBehavior
     /**
      * Processes payment using passed data.
      * @param array $data Posted payment form data.
-     * @param Model $host Type model object containing configuration fields values.
      * @param Model $invoice Invoice model object.
      */
-    public function processPaymentForm($data, $host, $invoice) { }
+    public function processPaymentForm($data, $invoice) { }
 
     /**
      * This method is called before the payment form is rendered
-     * @param $host Model object containing configuration fields values
      */
-    public function beforeRenderPaymentForm($host) { }
+    public function beforeRenderPaymentForm() { }
+
+    //
+    // Payment Profiles
+    //
+
+    /**
+     * This method should return TRUE if the gateway supports user payment profiles.
+     * The payment gateway must implement the updateUserProfile(), deleteUserProfile() and payFromProfile() methods if this method returns true..
+     */
+    public function supportsPaymentProfiles()
+    {
+        return false;
+    }
+
+    /**
+     * Creates a user profile on the payment gateway. If the profile already exists the method should update it.
+     * @param \RainLab\User\Models\User $user User object to create a profile for
+     * @param array $data Posted payment form data
+     * @return \RainLab\Pay\Models\UserProfile Returns the user profile object
+     */
+    public function updateUserProfile($user, $data)
+    {
+        throw new SystemException('The updateUserProfile() method is not supported by the payment gateway.');
+    }
+
+    /**
+     * Deletes a user profile from the payment gateway.
+     * @param \RainLab\User\Models\User $user User object
+     * @param \RainLab\Pay\Models\UserProfile $profile User profile object
+     */
+    public function deleteUserProfile($user, $profile)
+    {
+        throw new SystemException('The deleteUserProfile() method is not supported by the payment gateway.');
+    }
+
+    /**
+     * Creates a payment transaction from an existing payment profile.
+     * @param \RainLab\Pay\Models\Invoice $invoice An order object to pay
+     */
+    public function payFromProfile($invoice)
+    {
+        throw new SystemException('The payFromProfile() method is not supported by the payment gateway.');
+    }
+
+    //
+    // Abstract
+    //
 
     /**
      * Creates an instance of the invoice model

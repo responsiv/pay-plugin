@@ -11,6 +11,7 @@ use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
+use Responsiv\Pay\Classes\TaxLocation;
 use Exception;
 
 /**
@@ -193,15 +194,15 @@ class Invoice extends Model implements InvoiceInterface
     public function getLocationInfo()
     {
         $this->setDefaults();
-        $location = [
-            'street_addr' => $this->street_addr,
-            'city'        => $this->city,
-            'zip'         => $this->zip,
-            'state_id'    => $this->state_id,
-            'country_id'  => $this->country_id,
-        ];
 
-        return (object) $location;
+        $location = new TaxLocation;
+        $location->streetAddr = $this->street_addr;
+        $location->city = $this->city;
+        $location->zip = $this->zip;
+        $location->stateId = $this->state_id;
+        $location->countryId = $this->country_id;
+
+        return $location;
     }
 
     /**

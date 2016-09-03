@@ -1,8 +1,9 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use ValidationException;
 use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
+use ApplicationException;
+use ValidationException;
 
 /**
  * Payment Method Model
@@ -80,6 +81,20 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         return true;
     }
 
+    /**
+     * Returns the gateway class extension object.
+     * @param  string $class Class name
+     * @return \Responsiv\Pay\Classes\GatewayBase
+     */
+    public function getGatewayObject($class = null)
+    {
+        if (!$class) {
+            $class = $this->class_name;
+        }
+
+        return $this->asExtension($class);
+    }
+
     public function afterFetch()
     {
         $this->applyGatewayClass();
@@ -127,7 +142,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
     public function renderPaymentForm($controller)
     {
-        $this->beforeRenderPaymentForm($this);
+        $this->beforeRenderPaymentForm();
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
         $partialName = 'pay/'.$paymentMethodFile;
@@ -178,6 +193,71 @@ class PaymentMethod extends Model implements PaymentMethodInterface
     public function getGatewayClass()
     {
         return $this->class_name;
+    }
+
+    //
+    // Payment Profiles
+    //
+
+    /**
+     * Finds and returns a user payment profile for this payment method.
+     * @param \RainLab\User\Models\User $user Specifies user to find a profile for.
+     * @return \RainLab\Pay\Models\UserProfile Returns the user profile object. Returns NULL if the payment profile doesn't exist.
+     */
+    public function findUserProfile($user)
+    {
+        if (!$user) {
+            return null;
+        }
+
+        return UserProfile::where('user_id', $user->id)
+            ->where('payment_method_id', $this->id)
+            ->first()
+        ;
+    }
+    
+    /**
+     * Initializes a new empty user payment profile. 
+     * This method should be used by payment methods internally. 
+     * @param \RainLab\User\Models\User Specifies a user object to initialize a profile for.
+     * @return \RainLab\Pay\Models\UserProfile Returns the user payment profile object.
+     */
+    public function initUserProfile($user)
+    {
+        $obj = new UserProfile;
+        $obj->user_id = $user->id;
+        $obj->payment_method_id = $this->id;
+        return $obj;
+    }
+
+    /**
+     * Checks whether a user profile for this payment method and a given user exists.
+     * @param \RainLab\User\Models\User $user A user object to find a profile for.
+     * @return boolean Returns TRUE if a profile exists. Returns FALSE otherwise.
+     */
+    public function profileExists($user)
+    {
+        return !!$this->findUserProfile($user);
+    }
+
+    /**
+     * Deletes a user payment profile.
+     * The method deletes the payment profile from the database and from the payment gateway.
+     * @param \RainLab\User\Models\User $user Specifies a user object to delete a profile for.
+     */
+    public function deleteUserProfile($user)
+    {
+        $gatewayObj = $this->getGatewayObject();
+
+        $profile = $this->findUserProfile($user);
+
+        if (!$profile) {
+            throw new ApplicationException('User payment profile not found!');
+        }
+
+        $gatewayObj->deleteUserProfile($user, $profile);
+
+        $profile->delete();
     }
 
 }
