@@ -7,11 +7,11 @@ use Request;
 use Carbon\Carbon;
 use Cms\Classes\Controller;
 use Responsiv\Currency\Facades\Currency as CurrencyHelper;
+use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
-use Responsiv\Pay\Classes\TaxLocation;
 use Exception;
 
 /**
@@ -172,7 +172,7 @@ class Invoice extends Model implements InvoiceInterface
         /*
          * Calculate tax
          */
-        $taxInfo = Tax::calculateTaxes($items, $this->getLocationInfo());
+        $taxInfo = Tax::calculateInvoiceTaxes($this, $items);
         $this->setSalesTaxes($taxInfo->taxes);
         $tax = $taxInfo->tax_total;
 
@@ -195,14 +195,7 @@ class Invoice extends Model implements InvoiceInterface
     {
         $this->setDefaults();
 
-        $location = new TaxLocation;
-        $location->streetAddr = $this->street_addr;
-        $location->city = $this->city;
-        $location->zip = $this->zip;
-        $location->stateId = $this->state_id;
-        $location->countryId = $this->country_id;
-
-        return $location;
+        return TaxLocation::makeFromObject($this);
     }
 
     /**

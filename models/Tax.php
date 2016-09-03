@@ -10,7 +10,6 @@ use Responsiv\Pay\Classes\TaxLocation;
  */
 class Tax extends Model
 {
-
     /**
      * @var string The database table used by the model.
      */
@@ -66,8 +65,9 @@ class Tax extends Model
      */
     public static function findById($id)
     {
-        if (isset(self::$cache[$id]))
+        if (isset(self::$cache[$id])) {
             return self::$cache[$id];
+        }
 
         return self::$cache[$id] = self::find($id);
     }
@@ -80,88 +80,6 @@ class Tax extends Model
     public function setLocationInfo(TaxLocation $locationInfo)
     {
         $this->locationInfo = $locationInfo;
-    }
-
-    /**
-     * Calculates taxes for invoice line items based on location information.
-     * @param  array $items
-     * @param  TaxLocation $locationInfo
-     * @return array
-     */
-    public static function calculateTaxes($items, TaxLocation $locationInfo)
-    {
-        $result = (object)[
-            'tax_total'  => 0,
-            'taxes'      => [],
-            'item_taxes' => []
-        ];
-
-        $taxes = [];
-        $itemTaxes = [];
-        $taxTotal = 0;
-
-        foreach ($items as $itemIndex => $item) {
-            $taxClass = static::findById($item->tax_class_id);
-            if (!$taxClass) {
-                continue;
-            }
-
-            $taxClass->setLocationInfo($locationInfo);
-
-            $itemDiscount = $item->price * $item->discount;
-            $itemPrice = $item->price - $itemDiscount;
-            $itemTaxes[$itemIndex] = $_itemTaxes = $taxClass->getTaxRates($itemPrice);
-
-            foreach ($_itemTaxes as $tax) {
-
-                $key = $tax->name.'.'.$taxClass->id;
-                if (!array_key_exists($key, $taxes)) {
-
-                    $effectiveRate = $tax->tax_rate;
-
-                    if ($tax->compound_tax) {
-                        $addedTax = self::findAddedTax($_itemTaxes);
-                        if ($addedTax) {
-                            $effectiveRate = $tax->tax_rate * (1 + $addedTax->tax_rate);
-                        }
-                    }
-
-                    $taxes[$key] = [
-                        'total'          => 0,
-                        'rate'           => $tax->rate,
-                        'effective_rate' => $effectiveRate,
-                        'name'           => $tax->name,
-                    ];
-                }
-
-                $itemTaxValue = $itemPrice * $item->quantity;
-                $taxes[$key]['total'] += $itemTaxValue;
-            }
-        }
-
-        $compoundTaxes = [];
-
-        foreach ($taxes as $taxTotalInfo) {
-            if (!array_key_exists($taxTotalInfo['name'], $compoundTaxes)) {
-                $taxData = ['name' => $taxTotalInfo['name'], 'total' => 0];
-                $compoundTaxes[$taxTotalInfo['name']] = (object) $taxData;
-            }
-
-            $taxValue = $taxTotalInfo['total'] * $taxTotalInfo['effective_rate'];
-            $compoundTaxes[$taxTotalInfo['name']]->total += $taxValue;
-
-            $taxTotal += $taxValue;
-        }
-
-        foreach ($compoundTaxes as $name => &$taxData) {
-            $taxData->total = round($taxData->total, 2);
-        }
-
-        $result->tax_total = round($taxTotal, 2);
-        $result->taxes = $compoundTaxes;
-        $result->item_taxes = $itemTaxes;
-
-        return $result;
     }
 
     /**
@@ -250,9 +168,7 @@ class Tax extends Model
      */
     protected function getRate($ignoredPriorities = [])
     {
-        if (!$location = $this->locationInfo) {
-            throw new Exception('Missing location information, use setLocationInfo() first!');
-        }
+        $location = $this->locationInfo ?: TaxLocation::makeDefault();
 
         if (!$country = $location->getCountryModel()) {
             return null;
@@ -321,6 +237,108 @@ class Tax extends Model
     }
 
     //
+    // Invoice specific
+    //
+
+    /**
+     * Calculates taxes for invoice line items based on location information.
+     * @param  Invoice $invoice
+     * @param  array $items
+     * @return array
+     */
+    public static function calculateInvoiceTaxes($invoice, $items)
+    {
+        $result = (object)[
+            'tax_total'  => 0,
+            'taxes'      => [],
+            'item_taxes' => []
+        ];
+
+        $taxes = [];
+        $itemTaxes = [];
+        $taxTotal = 0;
+
+        foreach ($items as $itemIndex => $item) {
+            $taxClass = static::findById($item->tax_class_id);
+            if (!$taxClass) {
+                continue;
+            }
+
+            $taxClass->setLocationInfo($invoice->getLocationInfo());
+
+            $itemDiscount = $item->price * $item->discount;
+            $itemPrice = $item->price - $itemDiscount;
+            $itemTaxes[$itemIndex] = $_itemTaxes = $taxClass->getTaxRates($itemPrice);
+
+            foreach ($_itemTaxes as $tax) {
+
+                $key = $tax->name.'.'.$taxClass->id;
+                if (!array_key_exists($key, $taxes)) {
+
+                    $effectiveRate = $tax->tax_rate;
+
+                    if ($tax->compound_tax) {
+                        $addedTax = self::findAddedTax($_itemTaxes);
+                        if ($addedTax) {
+                            $effectiveRate = $tax->tax_rate * (1 + $addedTax->tax_rate);
+                        }
+                    }
+
+                    $taxes[$key] = [
+                        'total'          => 0,
+                        'rate'           => $tax->rate,
+                        'effective_rate' => $effectiveRate,
+                        'name'           => $tax->name,
+                    ];
+                }
+
+                $itemTaxValue = $itemPrice * $item->quantity;
+                $taxes[$key]['total'] += $itemTaxValue;
+            }
+        }
+
+        $compoundTaxes = [];
+
+        foreach ($taxes as $taxTotalInfo) {
+            if (!array_key_exists($taxTotalInfo['name'], $compoundTaxes)) {
+                $taxData = ['name' => $taxTotalInfo['name'], 'total' => 0];
+                $compoundTaxes[$taxTotalInfo['name']] = (object) $taxData;
+            }
+
+            $taxValue = $taxTotalInfo['total'] * $taxTotalInfo['effective_rate'];
+            $compoundTaxes[$taxTotalInfo['name']]->total += $taxValue;
+
+            $taxTotal += $taxValue;
+        }
+
+        foreach ($compoundTaxes as $name => &$taxData) {
+            $taxData->total = round($taxData->total, 2);
+        }
+
+        $result->tax_total = round($taxTotal, 2);
+        $result->taxes = $compoundTaxes;
+        $result->item_taxes = $itemTaxes;
+
+        return $result;
+    }
+
+    /**
+     * Internal helper, find the nearest added tax item in the collection.
+     * @param  array $taxList
+     * @return mixed
+     */
+    protected static function findAddedTax($taxList)
+    {
+        foreach ($taxList as $tax) {
+            if ($tax->added_tax) {
+                return $tax;
+            }
+        }
+
+        return null;
+    }
+
+    //
     // Options
     //
 
@@ -356,8 +374,9 @@ class Tax extends Model
     {
         $result = ['*' => '* - Any state'];
 
-        if (!$countryCode || $countryCode == '*')
+        if (!$countryCode || $countryCode == '*') {
             return $result;
+        }
 
         // The search term functionality is disabled as it's not supported
         // by the Table widget's drop-down processor -ab 2015-01-03
@@ -377,25 +396,4 @@ class Tax extends Model
 
         return $result;
     }
-
-    //
-    // Helpers
-    //
-
-    /**
-     * Internal helper, find the nearest added tax item in the collection.
-     * @param  array $taxList
-     * @return mixed
-     */
-    protected static function findAddedTax($taxList)
-    {
-        foreach ($taxList as $tax) {
-            if ($tax->added_tax) {
-                return $tax;
-            }
-        }
-
-        return null;
-    }
-
 }
