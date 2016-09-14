@@ -123,11 +123,8 @@ class Invoice extends Model implements InvoiceInterface
     public function setDefaults()
     {
         if (!$this->country_id) {
-            $this->country = Country::first();
-        }
-
-        if (!$this->state_id) {
-            $this->state = State::first();
+            $this->country = Country::getDefault();
+            $this->state = State::getDefault();
         }
 
         if (!$this->template_id) {

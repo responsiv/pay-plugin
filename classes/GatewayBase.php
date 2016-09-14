@@ -172,7 +172,7 @@ class GatewayBase extends ModelBehavior
 
     /**
      * This method should return TRUE if the gateway supports user payment profiles.
-     * The payment gateway must implement the updateUserProfile(), deleteUserProfile() and payFromProfile() methods if this method returns true..
+     * The payment gateway must implement the updateUserProfile(), deleteUserProfile() and payFromProfile() methods if this method returns true.
      */
     public function supportsPaymentProfiles()
     {

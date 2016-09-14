@@ -137,7 +137,18 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
     public static function listApplicable($countryId = null)
     {
-        return self::isEnabled()->get();
+        $query = self::isEnabled();
+
+        if ($countryId) {
+            $query->where(function($q) use ($countryId) {
+                $q->has('countries', '=', 0);
+                $q->orWhereHas('countries', function($q) use ($countryId) {
+                    $q->where('id', $countryId);
+                });
+            });
+        }
+
+        return $query->get();
     }
 
     public function renderPaymentForm($controller)
