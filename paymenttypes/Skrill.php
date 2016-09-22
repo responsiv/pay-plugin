@@ -46,7 +46,6 @@ class Skrill extends GatewayBase
      */
     public function initConfigData($host)
     {
-        $host->test_mode = true;
     }
 
     /**
