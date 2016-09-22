@@ -5,3 +5,4 @@
     - create_taxes_table.php
     - seed_all_tables.php
 1.0.2: Payment settings can now push the invoice number forward.
+1.0.3: Fixes bug in Skrill payment method when saving.
