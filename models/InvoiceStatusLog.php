@@ -69,7 +69,7 @@ class InvoiceStatusLog extends Model
         /*
          * Update invoice status
          */
-        $invoice->newQuery()->where('id', $invoice->id)->update([
+        $invoice->update([
             'status_id' => $statusId,
             'status_updated_at' => Carbon::now()
         ]);
