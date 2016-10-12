@@ -32,6 +32,10 @@ class InvoiceItem extends Model
         'tax_class' => ['Responsiv\Pay\Models\Tax'],
     ];
 
+    public $morphTo = [
+        'related' => []
+    ];
+
     public function beforeSave()
     {
         if (!$this->tax_class_id) {
@@ -57,4 +61,15 @@ class InvoiceItem extends Model
         $this->total = $this->subtotal + $this->tax;
     }
 
+    //
+    // Scopes
+    //
+
+    public function scopeApplyRelated($query, $object)
+    {
+        return $query
+            ->where('related_type', get_class($object))
+            ->where('related_id', $object->getKey())
+        ;
+    }
 }
