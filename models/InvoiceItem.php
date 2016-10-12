@@ -1,7 +1,6 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use Responsiv\Pay\Models\Tax as TaxModel;
 
 /**
  * InvoiceItem Model
@@ -30,16 +29,19 @@ class InvoiceItem extends Model
      */
     public $belongsTo = [
         'invoice' => ['Responsiv\Pay\Models\Invoice', 'push' => false],
-        'tax_class' => 'Responsiv\Pay\Models\Tax',
+        'tax_class' => ['Responsiv\Pay\Models\Tax'],
     ];
 
-    public function getTaxClass()
-    {
-        return $this->tax_class ?: TaxModel::getDefault();
-    }
+    public $morphTo = [
+        'related' => []
+    ];
 
     public function beforeSave()
     {
+        if (!$this->tax_class_id) {
+            $this->tax_class = Tax::getDefault();
+        }
+
         $this->calculateTotals();
     }
 
@@ -53,20 +55,21 @@ class InvoiceItem extends Model
         $this->subtotal = ($this->price - $discountAmount) * $this->quantity;
 
         if ($this->invoice && !$this->is_tax_exempt) {
-
-            $taxClass = $this->tax_class_id
-                ? TaxModel::findById($this->tax_class_id)
-                : TaxModel::getDefault();
-
-            if ($taxClass) {
-                $taxClass->setLocationInfo($this->invoice->getLocationInfo());
-                $this->tax = $taxClass->getTotalTax($this->subtotal);
-            }
-            else {
-                $this->tax = 0;
-            }
+            $this->tax = Tax::getTotalTax($this->tax_class_id, $this->subtotal, $this->invoice->getLocationInfo());
         }
 
         $this->total = $this->subtotal + $this->tax;
+    }
+
+    //
+    // Scopes
+    //
+
+    public function scopeApplyRelated($query, $object)
+    {
+        return $query
+            ->where('related_type', get_class($object))
+            ->where('related_id', $object->getKey())
+        ;
     }
 }
