@@ -39,11 +39,13 @@ class InvoiceStatusLog extends Model
 
     public static function createRecord($statusId, $invoice, $comment = null)
     {
-        if ($statusId instanceof Model)
+        if ($statusId instanceof Model) {
             $statusId = $statusId->getKey();
+        }
 
-        if ($invoice->status_id == $statusId)
+        if ($invoice->status_id == $statusId) {
             return false;
+        }
 
         $previousStatus = $invoice->status_id;
 
@@ -58,11 +60,13 @@ class InvoiceStatusLog extends Model
         /*
          * Extensibility
          */
-        if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
             return false;
+        }
 
-        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
             return false;
+        }
 
         $record->save();
 
@@ -76,8 +80,9 @@ class InvoiceStatusLog extends Model
 
         $statusPaid = InvoiceStatus::getStatusPaid();
 
-        if (!$statusPaid)
+        if (!$statusPaid) {
             return traceLog('Unable to find payment status with paid code');
+        }
 
         // @todo Send email notifications
 
