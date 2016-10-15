@@ -81,6 +81,10 @@ class Invoice extends Model implements InvoiceInterface
         ];
     }
 
+    //
+    // Events
+    //
+
     public function afterFetch()
     {
         if (!$this->payment_method_id) {
@@ -110,6 +114,10 @@ class Invoice extends Model implements InvoiceInterface
         InvoiceStatusLog::createRecord(InvoiceStatus::getStatusDraft(), $this);
     }
 
+    //
+    // Options
+    //
+
     public function getCountryOptions()
     {
         return Country::getNameList();
@@ -119,6 +127,19 @@ class Invoice extends Model implements InvoiceInterface
     {
         return State::getNameList($this->country_id);
     }
+
+    //
+    // Accessors
+    //
+
+    public function getStatusCodeAttribute()
+    {
+        return $this->status ? $this->status->code : null;
+    }
+
+    //
+    // Utils
+    //
 
     public function setDefaults()
     {
@@ -359,10 +380,10 @@ class Invoice extends Model implements InvoiceInterface
             'street_addr' => $this->street_addr,
             'city'        => $this->city,
             'zip'         => $this->zip,
-            'state_id'    => $this->state->code,
-            'state'       => $this->state->name,
-            'country_id'  => $this->country->code,
-            'country'     => $this->country->name
+            'state_id'    => $this->state ? $this->state->code : null,
+            'state'       => $this->state ? $this->state->name : null,
+            'country_id'  => $this->country ? $this->country->code : null,
+            'country'     => $this->country ? $this->country->name : null
         ];
 
         return $details;
