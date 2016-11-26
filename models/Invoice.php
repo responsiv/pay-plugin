@@ -82,6 +82,23 @@ class Invoice extends Model implements InvoiceInterface
     }
 
     //
+    // Constructors
+    //
+
+    public static function makeForUser($user)
+    {
+        $invoice = new static;
+
+        $invoice->user = $user;
+        $invoice->first_name = $user->name;
+        $invoice->last_name = $user->surname;
+        $invoice->email = $user->email;
+        $invoice->phone = $user->phone;
+
+        return $invoice;
+    }
+
+    //
     // Events
     //
 
@@ -112,6 +129,35 @@ class Invoice extends Model implements InvoiceInterface
     public function afterCreate()
     {
         InvoiceStatusLog::createRecord(InvoiceStatus::getStatusDraft(), $this);
+
+        Event::fire('responsiv.pay.invoiceNew', [$this]);
+    }
+
+    //
+    // Scopes
+    //
+
+    public function scopeApplyRelated($query, $object)
+    {
+        return $query
+            ->where('related_type', get_class($object))
+            ->where('related_id', $object->getKey())
+        ;
+    }
+
+    public function scopeApplyUser($query, $user)
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    public function scopeApplyThrowaway($query)
+    {
+        return $query->where('is_throwaway', 1);
+    }
+
+    public function scopeApplyUnpaid($query)
+    {
+        return $query->whereNull('processed_at');
     }
 
     //
@@ -132,6 +178,11 @@ class Invoice extends Model implements InvoiceInterface
     // Accessors
     //
 
+    public function isPaid()
+    {
+        return $this->isPaymentProcessed();
+    }
+
     public function getStatusCodeAttribute()
     {
         return $this->status ? $this->status->code : null;
@@ -140,6 +191,19 @@ class Invoice extends Model implements InvoiceInterface
     //
     // Utils
     //
+
+    public function submitManualPayment($comment = null)
+    {
+        if ($comment) {
+            $this->logPaymentAttempt($comment, 1, null, null, null);
+        }
+
+        if ($this->payment_method && $this->payment_method->invoice_status) {
+            $this->updateInvoiceStatus($invoice->payment_method->invoice_status);
+        }
+
+        $this->markAsPaymentProcessed();
+    }
 
     public function setDefaults()
     {
@@ -491,17 +555,4 @@ class Invoice extends Model implements InvoiceInterface
             InvoiceStatusLog::createRecord($status, $this);
         }
     }
-
-    //
-    // Scopes
-    //
-
-    public function scopeApplyRelated($query, $object)
-    {
-        return $query
-            ->where('related_type', get_class($object))
-            ->where('related_id', $object->getKey())
-        ;
-    }
-
 }

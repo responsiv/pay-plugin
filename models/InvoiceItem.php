@@ -91,4 +91,9 @@ class InvoiceItem extends Model
             ->where('related_id', $object->getKey())
         ;
     }
+
+    public function scopeApplyInvoice($query, $invoice)
+    {
+        return $query->where('invoice_id', $invoice->id);
+    }
 }

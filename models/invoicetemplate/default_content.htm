@@ -102,7 +102,7 @@ Australia
                         <div class="invoice-thanks">Thank you for your business.</div>
                     </td>
                     <td>
-                        {% if invoice.isPaymentProcessed %}
+                        {% if invoice.isPaid %}
                             <div class="invoice-payment-label">Amount due: {{ 0|currency }}</div>
                             <div class="invoice-payment-advice">This invoice has been paid</div>
                         {% else %}

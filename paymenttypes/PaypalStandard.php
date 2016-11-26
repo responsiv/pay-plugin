@@ -70,7 +70,7 @@ class PaypalStandard extends GatewayBase
     /**
      * Cancel page field options
      */
-    public function getCancelPageOptions($keyValue = -1)
+    public function getCancelPageOptions()
     {
         return Page::getNameList();
     }

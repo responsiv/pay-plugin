@@ -58,7 +58,7 @@ class PaypalPro extends GatewayBase
     /**
      * Action field options
      */
-    public function getCardActionOptions($keyValue = -1)
+    public function getCardActionOptions()
     {
         return [
             'purchase'  => 'Purchase',
