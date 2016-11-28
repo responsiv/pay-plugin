@@ -9,6 +9,15 @@ use October\Rain\Database\Model;
  */
 class InvoiceStatusLog extends Model
 {
+    use \October\Rain\Database\Traits\Validation;
+
+    /**
+     * @var array The rules to be applied to the data.
+     */
+    public $rules = [
+        'status' => 'required'
+    ];
+
     /**
      * @var string The database table used by the model.
      */
@@ -31,6 +40,22 @@ class InvoiceStatusLog extends Model
         'status'  => ['Responsiv\Pay\Models\InvoiceStatus'],
         'invoice' => ['Responsiv\Pay\Models\Invoice', 'push' => false],
     ];
+
+    public function filterFields($fields, $context = null)
+    {
+        if (isset($fields->status) && $this->invoice) {
+            $fields->status->value = $this->invoice->status_id;
+        }
+
+        if (
+            isset($fields->mark_paid) &&
+            $this->invoice &&
+            $this->invoice->isPaymentProcessed()
+        ) {
+            $fields->mark_paid->disabled = true;
+            $fields->mark_paid->value = true;
+        }
+    }
 
     public function getStatusOptions()
     {

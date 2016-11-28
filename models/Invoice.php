@@ -195,7 +195,7 @@ class Invoice extends Model implements InvoiceInterface
     public function submitManualPayment($comment = null)
     {
         if ($comment) {
-            $this->logPaymentAttempt($comment, 1, null, null, null);
+            InvoiceLog::createManualPayment($this, $comment);
         }
 
         if ($this->payment_method && $this->payment_method->invoice_status) {
@@ -529,21 +529,30 @@ class Invoice extends Model implements InvoiceInterface
     /**
      * {@inheritDoc}
      */
-    public function logPaymentAttempt($message, $isSuccess, $requestArray, $responseArray, $responseText)
-    {
-        $info = $this->getPaymentMethod()->gatewayDetails();
+    public function logPaymentAttempt(
+        $message,
+        $isSuccess,
+        $requestArray,
+        $responseArray,
+        $responseText
+    ) {
+        if ($payMethod = $this->getPaymentMethod()) {
+            $info = $payMethod->gatewayDetails();
+            $methodName = $info['name'];
+        }
+        else {
+            $methodName = 'Unspecified';
+        }
 
-        $record = new InvoiceLog;
-        $record->message = $message;
-        $record->invoice_id = $this->id;
-        $record->payment_method_name = $info['name'];
-        $record->is_success = $isSuccess;
+        $options = [
+            'isSuccess' => $isSuccess,
+            'methodName' => $methodName,
+            'requestArray' => $requestArray,
+            'responseArray' => $responseArray,
+            'responseText' => $responseText
+        ];
 
-        $record->raw_response = $responseText;
-        $record->request_data = $requestArray;
-        $record->response_data = $responseArray;
-
-        $record->save();
+        InvoiceLog::createRecord($this, $message, $options);
     }
 
     /**
