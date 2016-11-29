@@ -67,7 +67,13 @@ class Invoices extends Controller
         $markPaid = array_get($data, 'mark_paid') && !$invoice->isPaymentProcessed();
 
         if ($markPaid) {
-            $invoice->submitManualPayment($data['comment']);
+            $paymentComment = sprintf(
+                'Payment taken by %s (#%s)',
+                $this->user->full_name,
+                $this->user->id
+            );
+
+            $invoice->submitManualPayment($paymentComment);
         }
 
         InvoiceStatusLog::createRecord($data['status'], $invoice, $data['comment']);

@@ -51,7 +51,7 @@ class InvoiceLog extends Model
     {
         $record = new self;
         $record->message = $message;
-        $record->invoice_id = $this->id;
+        $record->invoice_id = $invoice->id;
         $record->payment_method_name = 'Manual payment';
         $record->is_success = true;
         $record->save();
