@@ -52,6 +52,7 @@ tabs:
             label: Surname
             tab: Customer Details
             span: right
+            dependsOn: user
 
         email:
             label: Email
