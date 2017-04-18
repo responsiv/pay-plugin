@@ -60,12 +60,14 @@ class GatewayManager
         $plugins = $this->pluginManager->getPlugins();
 
         foreach ($plugins as $id => $plugin) {
-            if (!method_exists($plugin, 'registerPaymentGateways'))
+            if (!method_exists($plugin, 'registerPaymentGateways')) {
                 continue;
+            }
 
             $gateways = $plugin->registerPaymentGateways();
-            if (!is_array($gateways))
+            if (!is_array($gateways)) {
                 continue;
+            }
 
             $this->registerGateways($id, $gateways);
         }
@@ -96,8 +98,9 @@ class GatewayManager
      */
     public function registerGateways($owner, array $classes)
     {
-        if (!$this->gateways)
+        if (!$this->gateways) {
             $this->gateways = [];
+        }
 
         foreach ($classes as $class => $alias) {
             $gateway = (object)[
@@ -130,8 +133,9 @@ class GatewayManager
          */
         $collection = [];
         foreach ($this->gateways as $gateway) {
-            if (!class_exists($gateway->class))
+            if (!class_exists($gateway->class)) {
                 continue;
+            }
 
             $gatewayObj = new $gateway->class;
             $gatewayDetails = $gatewayObj->gatewayDetails();
@@ -156,6 +160,7 @@ class GatewayManager
     {
         $collection = [];
         $gateways = $this->listGateways();
+
         foreach ($gateways as $gateway) {
             $collection[$gateway->alias] = $gateway->object;
         }
@@ -169,8 +174,10 @@ class GatewayManager
     public function findByAlias($alias)
     {
         $gateways = $this->listGateways(false);
-        if (!isset($gateways[$alias]))
+
+        if (!isset($gateways[$alias])) {
             return false;
+        }
 
         return $gateways[$alias];
     }
@@ -188,8 +195,9 @@ class GatewayManager
         foreach ($gateways as $gateway) {
             $points = $gateway->registerAccessPoints();
 
-            if (isset($points[$code]))
+            if (isset($points[$code])) {
                 return $gateway->{$points[$code]}($params);
+            }
         }
 
         return Response::make('Access Forbidden', '403');
@@ -212,15 +220,24 @@ class GatewayManager
         foreach ($paymentMethods as $paymentMethod) {
             $class = $paymentMethod->class_name;
 
-            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase')
+            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase') {
                 continue;
+            }
 
-            $partialName = 'pay/'.strtolower(class_basename($class));
-            $partialExists = array_key_exists($partialName, $partials);
+            $paymentCode = strtolower(class_basename($class));
 
-            if (!$partialExists) {
-                $filePath = dirname(File::fromClass($class)).'/'.strtolower(class_basename($class)).'/payment_form.htm';
-                self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
+            $partialNames = [
+                'payment_form.htm' => 'pay/'.$paymentCode,
+                'profile_form.htm' => 'pay/'.$paymentCode.'-profile'
+            ];
+
+            foreach ($partialNames as $sourceFile => $partialName) {
+                $partialExists = array_key_exists($partialName, $partials);
+                $filePath = dirname(File::fromClass($class)).'/'.$paymentCode.'/'.$sourceFile;
+
+                if (!$partialExists && File::exists($filePath)) {
+                    self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
+                }
             }
         }
     }
@@ -234,15 +251,13 @@ class GatewayManager
      */
     protected static function createPartialFromFile($name, $filePath, $themeCode)
     {
-        if (!File::exists($filePath))
-            return;
-
         $partial = Partial::inTheme($themeCode);
+
         $partial->fill([
             'fileName' => $name,
             'markup' => File::get($filePath)
         ]);
+
         $partial->save();
     }
-
 }

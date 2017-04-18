@@ -3,11 +3,16 @@
 use Model;
 
 /**
- * User Paymeny Profile Model
+ * User Payment Profile Model
  */
 class UserProfile extends Model
 {
-    use October\Rain\Database\Traits\Encryptable;
+    use \October\Rain\Database\Traits\Encryptable;
+
+    /**
+     * @var string The database table used by the model.
+     */
+    public $table = 'responsiv_pay_user_profiles';
 
     /**
      * @var array List of attribute names which should be encrypted
@@ -22,7 +27,7 @@ class UserProfile extends Model
     /**
      * @var array List of attribute names which are json encoded and decoded from the database.
      */
-    protected $jsonable = ['profile_data'];
+    protected $jsonable = [];
 
     public function beforeSave()
     {
@@ -41,7 +46,7 @@ class UserProfile extends Model
         $this->card_last_four = $cardDigits;
         $this->save();
     }
-    
+
     /**
      * Sets the 4 last digits of the credit card number (PAN)
      * and saves the profile to the database

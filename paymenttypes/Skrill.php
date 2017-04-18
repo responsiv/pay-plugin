@@ -193,12 +193,12 @@ class Skrill extends GatewayBase
             /*
              * Validate the Skrill signature
              */
-            $fieldString = $_POST['merchant_id']
-                . $_POST['transaction_id']
-                . strtoupper(md5($paymentMethod->secret_word))
-                . $_POST['mb_amount']
-                . $_POST['mb_currency']
-                . $_POST['status'];
+            $fieldString = $_POST['merchant_id'] .
+                $_POST['transaction_id'] .
+                strtoupper(md5($paymentMethod->secret_word)) .
+                $_POST['mb_amount'] .
+                $_POST['mb_currency'] .
+                $_POST['status'];
 
             /*
              * Ensure the signature is valid, the status code == 2,

@@ -8,6 +8,7 @@ use ApplicationException;
 
 class Invoices extends ComponentBase
 {
+    public $invoicePage;
 
     public $invoices;
 
@@ -50,11 +51,10 @@ class Invoices extends ComponentBase
         $invoices = InvoiceModel::orderBy('sent_at');
         $invoices = $invoices->where('user_id', $user->id)->get();
 
-        $invoices->each(function($invoice){
+        $invoices->each(function($invoice) {
             $invoice->setUrlPageName($this->invoicePage);
         });
 
         return $invoices;
     }
-
 }

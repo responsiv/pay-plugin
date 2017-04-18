@@ -1,0 +1,22 @@
+{% if paymentMethod %}
+
+    {% if profile %}
+        {{ form_ajax('onDeletePaymentProfile') }}
+            <p>
+                Stored credit card: {{ 'xxxx' ~ profile.card_last_four }}
+                <button type="submit" class="btn">
+                    Delete card
+                </button>
+            </p>
+
+            <input type="hidden" name="redirect" value="{{ returnPage|page }}" />
+         {{ form_close() }}
+    {% endif %}
+
+    {{ paymentMethod.renderPaymentProfileForm(this.controller)|raw }}
+
+{% else %}
+
+    <p>Payment method not found.</p>
+
+{% endif %}

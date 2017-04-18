@@ -80,16 +80,18 @@ class Stripe extends GatewayBase
         $validation = Validator::make($data, $rules);
 
         try {
-            if ($validation->fails())
+            if ($validation->fails()) {
                 throw new ValidationException($validation);
+            }
         }
         catch (Exception $ex) {
             $invoice->logPaymentAttempt($ex->getMessage(), 0, [], [], null);
             throw $ex;
         }
 
-        if (!$paymentMethod = $invoice->getPaymentMethod())
+        if (!$paymentMethod = $invoice->getPaymentMethod()) {
             throw new ApplicationException('Payment method not found');
+        }
 
         /*
          * Send payment request
@@ -132,5 +134,15 @@ class Stripe extends GatewayBase
 
     }
 
+    //
+    // Payment Profiles
+    //
 
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsPaymentProfiles()
+    {
+        return true;
+    }
 }

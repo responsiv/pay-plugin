@@ -135,17 +135,22 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         ;
     }
 
+    public function scopeApplyCountry($query, $countryId = null)
+    {
+        return $query->where(function($q) use ($countryId) {
+            $q->has('countries', '=', 0);
+            $q->orWhereHas('countries', function($q) use ($countryId) {
+                $q->where('id', $countryId);
+            });
+        });
+    }
+
     public static function listApplicable($countryId = null)
     {
         $query = self::isEnabled();
 
         if ($countryId) {
-            $query->where(function($q) use ($countryId) {
-                $q->has('countries', '=', 0);
-                $q->orWhereHas('countries', function($q) use ($countryId) {
-                    $q->where('id', $countryId);
-                });
-            });
+            $query = $query->applyCountry($countryId);
         }
 
         return $query->get();
@@ -157,6 +162,16 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
         $partialName = 'pay/'.$paymentMethodFile;
+
+        return $controller->renderPartial($partialName);
+    }
+
+    public function renderPaymentProfileForm($controller)
+    {
+        $this->beforeRenderPaymentProfileForm();
+
+        $paymentMethodFile = strtolower(class_basename($this->class_name));
+        $partialName = 'pay/'.$paymentMethodFile.'-profile';
 
         return $controller->renderPartial($partialName);
     }
@@ -270,5 +285,4 @@ class PaymentMethod extends Model implements PaymentMethodInterface
 
         $profile->delete();
     }
-
 }

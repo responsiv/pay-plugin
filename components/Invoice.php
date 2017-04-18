@@ -11,6 +11,8 @@ class Invoice extends ComponentBase
 {
     public $payPage;
 
+    public $invoice;
+
     public function componentDetails()
     {
         return [
@@ -51,7 +53,7 @@ class Invoice extends ComponentBase
     public function onRun()
     {
         $this->payPage = $this->page['payPage'] = $this->property('payPage');
-        $this->page['invoice'] = $invoice = $this->getInvoice();
+        $this->page['invoice'] = $this->invoice = $invoice = $this->loadInvoice();
 
         if ($invoice) {
             $this->page->meta_title = $this->page->meta_title
@@ -60,12 +62,8 @@ class Invoice extends ComponentBase
         }
     }
 
-    public function getInvoice()
+    protected function loadInvoice()
     {
-        if ($this->invoice !== null) {
-            return $this->invoice;
-        }
-
         if (!$id = $this->property('id')) {
             return null;
         }
@@ -88,7 +86,14 @@ class Invoice extends ComponentBase
             $invoice->setUrlPageName($this->payPage);
         }
 
-        return $this->invoice = $invoice;
+        return $invoice;
     }
 
+    /**
+     * @deprecated Use $this->invoice
+     */
+    public function getInvoice()
+    {
+        return $this->invoice;
+    }
 }

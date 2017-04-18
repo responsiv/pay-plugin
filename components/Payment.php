@@ -9,7 +9,6 @@ use ApplicationException;
 
 class Payment extends ComponentBase
 {
-
     public $invoicePage;
 
     public function componentDetails()
@@ -126,5 +125,4 @@ class Payment extends ComponentBase
 
         return Redirect::to($returnPage);
     }
-
 }

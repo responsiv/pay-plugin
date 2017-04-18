@@ -166,6 +166,11 @@ class GatewayBase extends ModelBehavior
      */
     public function beforeRenderPaymentForm() { }
 
+    /**
+     * This method is called before the payment profile form is rendered
+     */
+    public function beforeRenderPaymentProfileForm() { }
+
     //
     // Payment Profiles
     //

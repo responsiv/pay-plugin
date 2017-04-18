@@ -33,6 +33,8 @@ class Plugin extends PluginBase
             'Responsiv\Pay\Components\Payment'  => 'payment',
             'Responsiv\Pay\Components\Invoice'  => 'invoice',
             'Responsiv\Pay\Components\Invoices' => 'invoices',
+            'Responsiv\Pay\Components\Profile'  => 'payProfile',
+            'Responsiv\Pay\Components\Profiles' => 'payProfiles',
         ];
     }
 
