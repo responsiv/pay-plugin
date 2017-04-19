@@ -66,7 +66,7 @@ class Profiles extends ComponentBase
             return [];
         }
 
-        $methods = TypeModel::listApplicable();
+        $methods = TypeModel::listApplicable($user->country_id);
 
         $methods = $methods->filter(function($method) {
             return $method->supportsPaymentProfiles();

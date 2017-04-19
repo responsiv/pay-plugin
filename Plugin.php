@@ -9,7 +9,7 @@ use Lang;
  */
 class Plugin extends PluginBase
 {
-    public $require = ['RainLab.User', 'RainLab.Location', 'Responsiv.Currency'];
+    public $require = ['RainLab.User', 'RainLab.UserPlus', 'RainLab.Location', 'Responsiv.Currency'];
 
     /**
      * Returns information about this plugin.
