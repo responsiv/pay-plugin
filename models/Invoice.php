@@ -181,7 +181,7 @@ class Invoice extends Model implements InvoiceInterface
         $this->discount = $discount;
         $this->subtotal = $subtotal;
         $this->tax = $tax;
-        $this->total = ($subtotal - $discount) + $tax;
+        $this->total = $subtotal + $tax;
 
         return $this->total;
     }
