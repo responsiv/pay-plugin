@@ -10,10 +10,6 @@ use ApplicationException;
 
 class Profiles extends ComponentBase
 {
-    public $profilePage;
-
-    public $paymentMethods;
-
     public function componentDetails()
     {
         return [
@@ -48,8 +44,8 @@ class Profiles extends ComponentBase
     public function onRun()
     {
         $this->page['user'] = $this->user();
-        $this->profilePage = $this->page['profilePage'] = $this->property('profilePage');
-        $this->paymentMethods = $methods = $this->page['paymentMethods'] = $this->loadPaymentMethods();
+        $this->page['profilePage'] = $this->profilePage();
+        $this->page['paymentMethods'] = $methods = $this->paymentMethods();
 
         if (
             $this->property('autoRedirect') &&
@@ -60,13 +56,13 @@ class Profiles extends ComponentBase
         }
     }
 
-    protected function loadPaymentMethods()
+    protected function paymentMethods()
     {
-        if (!$user = $this->user()) {
-            return [];
-        }
+        $countryId = ($user = $this->user()) ? $user->country_id : null;
 
-        $methods = TypeModel::listApplicable($user->country_id);
+        $countryId = post('country', $countryId);
+
+        $methods = TypeModel::listApplicable($countryId);
 
         $methods = $methods->filter(function($method) {
             return $method->supportsPaymentProfiles();
@@ -90,10 +86,19 @@ class Profiles extends ComponentBase
     }
 
     /**
+     * Returns the profile page name as per configuration.
+     * @return string
+     */
+    protected function profilePage()
+    {
+        return $this->property('profilePage');
+    }
+
+    /**
      * Returns a profile page URL for a payment method
      */
     public function profilePageUrl($method)
     {
-        return $this->pageUrl($this->profilePage, ['id' => $method->id]);
+        return $this->pageUrl($this->profilePage(), ['id' => $method->id]);
     }
 }

@@ -12,10 +12,6 @@ use ApplicationException;
 
 class Profile extends ComponentBase
 {
-    public $returnPage;
-
-    public $profile;
-
     public function componentDetails()
     {
         return [
@@ -55,9 +51,9 @@ class Profile extends ComponentBase
 
     public function onRun()
     {
-        $this->returnPage = $this->page['returnPage'] = $this->property('returnPage');
-        $this->paymentMethod = $method = $this->page['paymentMethod'] = $this->loadPaymentMethod();
-        $this->profile = $this->page['profile'] = $profile = $this->loadProfile();
+        $this->page['returnPage'] = $this->returnPage();
+        $this->page['paymentMethod'] = $method = $this->paymentMethod();
+        $this->page['profile'] = $profile = $this->profile();
 
         if ($profile) {
             $this->page->meta_title = $this->page->meta_title
@@ -66,20 +62,20 @@ class Profile extends ComponentBase
         }
     }
 
-    protected function loadProfile()
+    protected function profile()
     {
         if (!$user = $this->user()) {
             return null;
         }
 
-        if (!$this->paymentMethod) {
+        if (!$method = $this->paymentMethod()) {
             return null;
         }
 
-        return $this->paymentMethod->findUserProfile($user);
+        return $method->findUserProfile($user);
     }
 
-    protected function loadPaymentMethod()
+    protected function paymentMethod()
     {
         if (!$id = $this->property('id')) {
             return null;
@@ -141,6 +137,15 @@ class Profile extends ComponentBase
     }
 
     /**
+     * Returns the return page name as per configuration.
+     * @return string
+     */
+    protected function returnPage()
+    {
+        return $this->property('returnPage');
+    }
+
+    /**
      * Returns a profile page URL for a payment method
      */
     public function returnPageUrl($method)
@@ -149,6 +154,6 @@ class Profile extends ComponentBase
             return $redirect;
         }
 
-        return $this->pageUrl($this->returnPage);
+        return $this->pageUrl($this->returnPage());
     }
 }
