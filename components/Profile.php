@@ -104,7 +104,7 @@ class Profile extends ComponentBase
             throw new ApplicationException('Please log in to manage payment profiles.');
         }
 
-        if (!$paymentMethod = $this->loadPaymentMethod()) {
+        if (!$paymentMethod = $this->paymentMethod()) {
             throw new ApplicationException('Payment method not found.');
         }
 
@@ -123,7 +123,7 @@ class Profile extends ComponentBase
             throw new ApplicationException('Please log in to manage payment profiles.');
         }
 
-        if (!$paymentMethod = $this->loadPaymentMethod()) {
+        if (!$paymentMethod = $this->paymentMethod()) {
             throw new ApplicationException('Payment method not found.');
         }
 

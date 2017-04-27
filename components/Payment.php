@@ -9,7 +9,10 @@ use ApplicationException;
 
 class Payment extends ComponentBase
 {
-    public $invoicePage;
+    /**
+     * @var Responsiv\Pay\Models\Invoice Cached object
+     */
+    protected $invoice;
 
     public function componentDetails()
     {
@@ -43,20 +46,17 @@ class Payment extends ComponentBase
 
     public function onRun()
     {
-        $this->prepareVars();
-        $this->page['invoice'] = $invoice = $this->getInvoice();
-
-        if ($invoice) {
-            $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
-            $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
-        }
+        $this->page['invoice'] = $this->invoice();
+        $this->page['invoicePage'] = $this->invoicePage();
+        $this->page['paymentMethods'] = $this->paymentMethods();
+        $this->page['paymentMethod'] = $this->paymentMethod();
 
         if (post('submit_payment')) {
             $this->onPay();
         }
     }
 
-    public function getInvoice()
+    public function invoice()
     {
         if ($this->invoice !== null) {
             return $this->invoice;
@@ -69,23 +69,36 @@ class Payment extends ComponentBase
         $invoice = InvoiceModel::whereHash($hash)->first();
 
         if ($invoice) {
-            $invoice->setUrlPageName($this->invoicePage);
+            $invoice->setUrlPageName($this->invoicePage());
         }
 
         return $this->invoice = $invoice;
     }
 
-    protected function prepareVars()
+    public function invoicePage()
     {
-        /*
-         * Page links
-         */
-        $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
+        return $this->property('invoicePage');
     }
+
+    public function paymentMethod()
+    {
+        return ($invoice = $this->invoice()) ? $invoice->payment_method : null;
+    }
+
+    public function paymentMethods()
+    {
+        $countryId = ($invoice = $this->invoice()) ? $invoice->country_id : null;
+
+        return TypeModel::listApplicable($countryId);
+    }
+
+    //
+    // AJAX
+    //
 
     public function onUpdatePaymentType()
     {
-        if (!$invoice = $this->getInvoice()) {
+        if (!$invoice = $this->invoice()) {
             throw new ApplicationException('Invoice not found!');
         }
 
@@ -106,7 +119,7 @@ class Payment extends ComponentBase
 
     public function onPay($invoice = null)
     {
-        if (!$invoice = $this->getInvoice()) {
+        if (!$invoice = $this->invoice()) {
             return;
         }
 
@@ -124,5 +137,13 @@ class Payment extends ComponentBase
         }
 
         return Redirect::to($returnPage);
+    }
+
+    /**
+     * @deprecated Use $this->invoice()
+     */
+    public function getInvoice()
+    {
+        return $this->invoice();
     }
 }
