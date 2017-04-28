@@ -92,7 +92,7 @@ class Profile extends ComponentBase
         return $user;
     }
 
-    public function onUpdateProfile()
+    public function onUpdatePaymentProfile()
     {
         if (!$user = $this->user()) {
             throw new ApplicationException('Please log in to manage payment profiles.');
@@ -111,7 +111,7 @@ class Profile extends ComponentBase
         return Redirect::to($this->returnPageUrl());
     }
 
-    public function onDeleteProfile()
+    public function onDeletePaymentProfile()
     {
         if (!$user = $this->user()) {
             throw new ApplicationException('Please log in to manage payment profiles.');

@@ -7,8 +7,8 @@
 
                  {% if profile %}
                     <p>
-                        Stored credit card: {{ 'xxxx' ~ profile.card_last_four }}
-                        - <a href="{{ profilePage|page({ id: method.id }) }}">Update or delete</a>
+                        Stored credit card: {{ '************' ~ profile.card_last_four }}
+                        &mdash; <a href="{{ profilePage|page({ id: method.id }) }}">Update or delete</a>
                     </p>
                  {% else %}
                     <p>

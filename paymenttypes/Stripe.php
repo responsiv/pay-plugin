@@ -128,6 +128,12 @@ class Stripe extends GatewayBase
         return true;
     }
 
+    /**
+     * Creates a user profile on the payment gateway. If the profile already exists the method should update it.
+     * @param \RainLab\User\Models\User $user User object to create a profile for
+     * @param array $data Posted payment form data
+     * @return \RainLab\Pay\Models\UserProfile Returns the user profile object
+     */
     public function updateUserProfile($user, $data)
     {
         $host = $this->model;
@@ -225,6 +231,39 @@ class Stripe extends GatewayBase
         ], array_get($formData, 'number'));
 
         return $profile;
+    }
+
+    /**
+     * Deletes a user profile from the payment gateway.
+     * @param \RainLab\User\Models\User $user User object
+     * @param \RainLab\Pay\Models\UserProfile $profile User profile object
+     */
+    public function deleteUserProfile($user, $profile)
+    {
+        if (!isset($profile->profile_data['customer_id'])) {
+            return;
+        }
+
+        $gateway = $this->makeSdk();
+
+        $customerId = $profile->profile_data['customer_id'];
+
+        $response = $gateway->deleteCustomer([
+            'customerReference' => $customerId
+        ])->send();
+
+        if (!$response->isSuccessful()) {
+            throw new ApplicationException('Gateway deleteCustomer failed');
+        }
+    }
+
+    /**
+     * Creates a payment transaction from an existing payment profile.
+     * @param \RainLab\Pay\Models\Invoice $invoice An order object to pay
+     */
+    public function payFromProfile($invoice)
+    {
+        throw new SystemException('The payFromProfile() method is not supported by the payment gateway.');
     }
 
     //
