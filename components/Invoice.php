@@ -88,7 +88,7 @@ class Invoice extends ComponentBase
         }
 
         if ($invoice) {
-            $invoice->setUrlPageName($this->payPage);
+            $invoice->setUrlPageName($this->payPage());
         }
 
         return $this->invoice = $invoice;

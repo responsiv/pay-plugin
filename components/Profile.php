@@ -54,12 +54,6 @@ class Profile extends ComponentBase
         $this->page['returnPage'] = $this->returnPage();
         $this->page['paymentMethod'] = $method = $this->paymentMethod();
         $this->page['profile'] = $profile = $this->profile();
-
-        if ($profile) {
-            $this->page->meta_title = $this->page->meta_title
-                ? str_replace('%s', $profile->getUniqueId(), $this->page->meta_title)
-                : 'Invoice #'.$profile->getUniqueId();
-        }
     }
 
     protected function profile()
@@ -148,7 +142,7 @@ class Profile extends ComponentBase
     /**
      * Returns a profile page URL for a payment method
      */
-    public function returnPageUrl($method)
+    public function returnPageUrl()
     {
         if ($redirect = post('redirect')) {
             return $redirect;
