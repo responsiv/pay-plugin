@@ -15,7 +15,6 @@ use Exception;
 
 class Stripe extends GatewayBase
 {
-
     /**
      * {@inheritDoc}
      */
@@ -81,10 +80,6 @@ class Stripe extends GatewayBase
             throw $ex;
         }
 
-        if (!$paymentMethod = $invoice->getPaymentMethod()) {
-            throw new ApplicationException('Payment method not found');
-        }
-
         /*
          * Send payment request
          */
@@ -105,7 +100,7 @@ class Stripe extends GatewayBase
         if ($response->isSuccessful()) {
             $invoice->logPaymentAttempt('Successful payment', 1, $formData, null, null);
             $invoice->markAsPaymentProcessed();
-            $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
+            $invoice->updateInvoiceStatus($host->invoice_status);
         }
         else {
             $errorMessage = $response->getMessage();
@@ -262,10 +257,6 @@ class Stripe extends GatewayBase
      */
     public function payFromProfile($invoice)
     {
-        if (!$paymentMethod = $invoice->getPaymentMethod()) {
-            throw new ApplicationException('Payment method not found');
-        }
-
         $host = $this->model;
         $gateway = $this->makeSdk();
         $profile = $host->findUserProfile($invoice->user);
@@ -296,7 +287,7 @@ class Stripe extends GatewayBase
         if ($response->isSuccessful()) {
             $invoice->logPaymentAttempt('Successful payment', 1, $profileData, null, null);
             $invoice->markAsPaymentProcessed();
-            $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
+            $invoice->updateInvoiceStatus($host->invoice_status);
         }
         else {
             $errorMessage = $response->getMessage();
