@@ -155,6 +155,14 @@ class Invoice extends Model implements InvoiceInterface
         return $query->where('is_throwaway', 1);
     }
 
+    public function scopeApplyNotThrowaway($query)
+    {
+        return $query->where(function($q) {
+            $q->where('is_throwaway', 0);
+            $q->orWhereNull('is_throwaway');
+        });
+    }
+
     public function scopeApplyUnpaid($query)
     {
         return $query->whereNull('processed_at');
@@ -514,6 +522,9 @@ class Invoice extends Model implements InvoiceInterface
             $this->newQuery()->where('id', $this->id)->update(['processed_at' => $now]);
 
             Event::fire('responsiv.pay.invoicePaid', [$this]);
+
+            // Never allow a paid invoice to be thrown away
+            $this->is_throwaway = false;
 
             $this->save();
         }

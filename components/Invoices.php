@@ -53,8 +53,11 @@ class Invoices extends ComponentBase
             throw new ApplicationException('You must be logged in');
         }
 
-        $invoices = InvoiceModel::orderBy('sent_at');
-        $invoices = $invoices->where('user_id', $user->id)->get();
+        $invoices = InvoiceModel::orderBy('sent_at')
+            ->applyUser($user)
+            ->applyNotThrowaway()
+            ->get()
+        ;
 
         $invoices->each(function($invoice) {
             $invoice->setUrlPageName($this->invoicePage);
