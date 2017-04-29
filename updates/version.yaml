@@ -12,3 +12,6 @@
 1.1.0:
     - Add support for payment profiles.
     - create_user_profiles_table.php
+1.1.1:
+    - Added a throwaway flag to invoices.
+    - add_invoice_throwaway_flag.php
