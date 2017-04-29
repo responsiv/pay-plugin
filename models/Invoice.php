@@ -128,7 +128,7 @@ class Invoice extends Model implements InvoiceInterface
 
     public function afterCreate()
     {
-        InvoiceStatusLog::createRecord(InvoiceStatus::getStatusDraft(), $this);
+        InvoiceStatusLog::createRecord(InvoiceStatus::STATUS_DRAFT, $this);
 
         Event::fire('responsiv.pay.invoiceNew', [$this]);
     }
@@ -574,8 +574,6 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function updateInvoiceStatus($statusCode)
     {
-        if ($status = InvoiceStatus::getFromCode($statusCode)) {
-            InvoiceStatusLog::createRecord($status, $this);
-        }
+        InvoiceStatusLog::createRecord($statusCode, $this);
     }
 }

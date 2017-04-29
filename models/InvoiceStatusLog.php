@@ -64,11 +64,15 @@ class InvoiceStatusLog extends Model
 
     public static function createRecord($statusId, $invoice, $comment = null)
     {
+        if (is_string($statusId) && !is_numeric($statusId)) {
+            $statusId = InvoiceStatus::getFromCode($statusId);
+        }
+
         if ($statusId instanceof Model) {
             $statusId = $statusId->getKey();
         }
 
-        if ($invoice->status_id == $statusId) {
+        if (!$statusId || $invoice->status_id == $statusId) {
             return false;
         }
 
@@ -103,7 +107,7 @@ class InvoiceStatusLog extends Model
             'status_updated_at' => Carbon::now()
         ]);
 
-        $statusPaid = InvoiceStatus::getStatusPaid();
+        $statusPaid = InvoiceStatus::getFromCode(InvoiceStatus::STATUS_PAID);
 
         if (!$statusPaid) {
             return traceLog('Unable to find payment status with paid code');
