@@ -105,7 +105,7 @@ class Profile extends ComponentBase
         $paymentMethod->updateUserProfile($user, post());
 
         if (!post('no_flash')) {
-            Flash::success(post('message', 'The payment profile has been successfully updated.'));
+            Flash::success(post('message', 'Payment profile updated.'));
         }
 
         return Redirect::to($this->returnPageUrl());
@@ -124,7 +124,7 @@ class Profile extends ComponentBase
         $paymentMethod->deleteUserProfile($user);
 
         if (!post('no_flash')) {
-            Flash::success(post('message', 'The payment profile has been successfully deleted.'));
+            Flash::success(post('message', 'Payment profile deleted.'));
         }
 
         return Redirect::to($this->returnPageUrl());

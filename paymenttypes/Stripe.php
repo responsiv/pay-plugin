@@ -89,15 +89,14 @@ class Stripe extends GatewayBase
          * Send payment request
          */
         $gateway = $this->makeSdk();
-
         $formData = $this->makeCardData($data);
-
         $totals = (object) $invoice->getTotalDetails();
 
         $response = $gateway->purchase([
-            'amount'   => $totals->total,
-            'currency' => $totals->currency,
-            'card'     => $formData
+            'amount'      => $totals->total,
+            'currency'    => $totals->currency,
+            'description' => 'Invoice '.$invoice->getUniqueId(),
+            'card'        => $formData
         ])->send();
 
         // Clean the credit card number
@@ -263,7 +262,47 @@ class Stripe extends GatewayBase
      */
     public function payFromProfile($invoice)
     {
-        throw new SystemException('The payFromProfile() method is not supported by the payment gateway.');
+        if (!$paymentMethod = $invoice->getPaymentMethod()) {
+            throw new ApplicationException('Payment method not found');
+        }
+
+        $host = $this->model;
+        $gateway = $this->makeSdk();
+        $profile = $host->findUserProfile($invoice->user);
+
+        if (
+            !$profile ||
+            !isset($profile->profile_data['card_id']) ||
+            !isset($profile->profile_data['customer_id'])
+        ) {
+            throw new ApplicationException('Payment profile not found');
+        }
+
+        $cardId = $profile->profile_data['card_id'];
+        $customerId = $profile->profile_data['customer_id'];
+        $totals = (object) $invoice->getTotalDetails();
+
+        $profileData = [
+            'cardReference'     => $cardId,
+            'customerReference' => $customerId,
+        ];
+
+        $response = $gateway->purchase($profileData + [
+            'amount'            => $totals->total,
+            'currency'          => $totals->currency,
+            'description'       => 'Invoice '.$invoice->getUniqueId(),
+        ])->send();
+
+        if ($response->isSuccessful()) {
+            $invoice->logPaymentAttempt('Successful payment', 1, $profileData, null, null);
+            $invoice->markAsPaymentProcessed();
+            $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
+        }
+        else {
+            $errorMessage = $response->getMessage();
+            $invoice->logPaymentAttempt($errorMessage, 0, $profileData, null, null);
+            throw new ApplicationException($errorMessage);
+        }
     }
 
     //

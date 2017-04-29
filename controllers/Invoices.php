@@ -78,7 +78,7 @@ class Invoices extends Controller
 
         InvoiceStatusLog::createRecord($data['status'], $invoice, $data['comment']);
 
-        Flash::success('Invoice status updated successfully');
+        Flash::success('Invoice status updated.');
 
         return Backend::redirect(sprintf('responsiv/pay/invoices/preview/%s', $invoice->id));
     }
