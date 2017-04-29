@@ -56,7 +56,7 @@ class PaypalPro extends GatewayBase
     public function initConfigData($host)
     {
         $host->test_mode = true;
-        $host->invoice_status = $this->createInvoiceStatusModel()->getStatusPaid();
+        $host->invoice_status = $this->createInvoiceStatusModel()->getPaidStatus();
     }
 
     /**

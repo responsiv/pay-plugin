@@ -51,7 +51,7 @@ class Stripe extends GatewayBase
      */
     public function initConfigData($host)
     {
-        $host->invoice_status = $this->createInvoiceStatusModel()->getStatusPaid();
+        $host->invoice_status = $this->createInvoiceStatusModel()->getPaidStatus();
     }
 
     /**
