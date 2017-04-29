@@ -8,9 +8,10 @@ use ApplicationException;
 
 class Invoices extends ComponentBase
 {
-    public $invoicePage;
-
-    public $invoices;
+    /**
+     * @var Responsiv\Pay\Models\Invoice Cached object
+     */
+    protected $invoices;
 
     public function componentDetails()
     {
@@ -38,12 +39,16 @@ class Invoices extends ComponentBase
 
     public function onRun()
     {
-        $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
-        $this->invoices = $this->page['invoices'] = $this->loadInvoices();
+        $this->page['invoicePage'] = $this->invoicePage();
+        $this->page['invoices'] = $this->invoices();
     }
 
-    protected function loadInvoices()
+    protected function invoices()
     {
+        if ($this->invoices !== null) {
+            return $this->invoices;
+        }
+
         if (!$user = Auth::getUser()) {
             throw new ApplicationException('You must be logged in');
         }
@@ -55,6 +60,11 @@ class Invoices extends ComponentBase
             $invoice->setUrlPageName($this->invoicePage);
         });
 
-        return $invoices;
+        return $this->invoices = $invoices;
+    }
+
+    protected function invoicePage()
+    {
+        return $this->property('invoicePage');
     }
 }
