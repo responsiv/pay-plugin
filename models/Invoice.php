@@ -574,7 +574,7 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function updateInvoiceStatus($statusCode)
     {
-        if ($status = InvoiceStatus::getByCode($statusCode)) {
+        if ($status = InvoiceStatus::getFromCode($statusCode)) {
             InvoiceStatusLog::createRecord($status, $this);
         }
     }

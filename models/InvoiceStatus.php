@@ -47,25 +47,25 @@ class InvoiceStatus extends Model implements InvoiceStatusInterface
 
     public static function getStatusDraft()
     {
-        return static::getByCode(static::STATUS_DRAFT);
+        return static::getFromCode(static::STATUS_DRAFT);
     }
 
     public static function getStatusApproved()
     {
-        return static::getByCode(static::STATUS_APPROVED);
+        return static::getFromCode(static::STATUS_APPROVED);
     }
 
     public static function getStatusPaid()
     {
-        return static::getByCode(static::STATUS_PAID);
+        return static::getFromCode(static::STATUS_PAID);
     }
 
     public static function getStatusVoid()
     {
-        return static::getByCode(static::STATUS_VOID);
+        return static::getFromCode(static::STATUS_VOID);
     }
 
-    public static function getByCode($code)
+    public static function getFromCode($code)
     {
         if (array_key_exists($code, static::$codeCache)) {
             return static::$codeCache[$code];
