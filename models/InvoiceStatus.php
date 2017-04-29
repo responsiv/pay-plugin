@@ -48,7 +48,7 @@ class InvoiceStatus extends Model implements InvoiceStatusInterface
     /**
      * Returns a code, cached.
      */
-    public static function getFromCode($code)
+    public static function findByCode($code)
     {
         if (array_key_exists($code, static::$codeCache)) {
             return static::$codeCache[$code];

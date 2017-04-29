@@ -4,7 +4,7 @@
 
 There are some housekeeping items that have been addressed in this version.
 
-The `InvoiceStatus::getByCode` method has been renamed to `InvoiceStatus::getFromCode`.
+The `InvoiceStatus::getByCode` method has been renamed to `InvoiceStatus::findByCode`.
 
 These methods have been removed from the `InvoiceStatus` model:
 
@@ -13,6 +13,6 @@ These methods have been removed from the `InvoiceStatus` model:
 - getStatusPaid
 - getStatusVoid
 
-Use the `getFromCode` method instead, eg:
+Use the `findByCode` method instead, eg:
 
-    InvoiceStatus::getFromCode(InvoiceStatus::STATUS_DRAFT)
+    InvoiceStatus::findByCode(InvoiceStatus::STATUS_DRAFT)
