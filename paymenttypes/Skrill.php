@@ -78,7 +78,7 @@ class Skrill extends GatewayBase
     /**
      * Get the URL to Skrill's servers
      */
-    public function getFormAction($host)
+    public function getFormAction()
     {
         return "https://www.skrill.com/app/payment.pl";
     }
@@ -93,8 +93,9 @@ class Skrill extends GatewayBase
         return $this->makeAccessPointLink('skrill_status_url');
     }
 
-    public function getHiddenFields($host, $invoice)
+    public function getHiddenFields($invoice)
     {
+        $host = $this->getHostObject();
         $result = [];
 
         /*

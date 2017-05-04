@@ -66,7 +66,7 @@ class Stripe extends GatewayBase
      */
     public function processPaymentForm($data, $invoice)
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
 
         $validation = $this->makeValidationObject($data);
 
@@ -130,7 +130,7 @@ class Stripe extends GatewayBase
      */
     public function updateUserProfile($user, $data)
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
         $validation = $this->makeValidationObject($data);
 
         if ($validation->fails()) {
@@ -257,7 +257,7 @@ class Stripe extends GatewayBase
      */
     public function payFromProfile($invoice)
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
         $gateway = $this->makeSdk();
         $profile = $host->findUserProfile($invoice->user);
 
@@ -328,7 +328,7 @@ class Stripe extends GatewayBase
 
     protected function makeSdk()
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
 
         $gateway = Omnipay::create('Stripe');
 

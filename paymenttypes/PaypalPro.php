@@ -6,9 +6,9 @@ use Redirect;
 use Validator;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
-use SystemException;
 use ApplicationException;
 use ValidationException;
+use SystemException;
 use Exception;
 use Omnipay\Omnipay;
 
@@ -78,7 +78,7 @@ class PaypalPro extends GatewayBase
      */
     public function processPaymentForm($data, $invoice)
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
 
         $rules = [
             'first_name'              => 'required',

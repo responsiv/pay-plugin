@@ -93,7 +93,7 @@ class PaypalPro extends GatewayBase
      */
     public function processPaymentForm($data, $invoice)
     {
-        $host = $this->model;
+        $host = $this->getHostObject();
 
         $rules = [
             'card_type'               => 'required',

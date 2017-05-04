@@ -79,6 +79,15 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
+     * Returns the host object with configuration.
+     * @return Responsiv\Pay\Models\PaymentMethod
+     */
+    public function getHostObject()
+    {
+        return $this->model;
+    }
+
+    /**
      * Extra field configuration for the payment type.
      */
     public function defineFormFields()
@@ -156,8 +165,15 @@ class GatewayBase extends ModelBehavior
 
     /**
      * Processes payment using passed data.
+     *
+     * Supported return values:
+     * - Redirect object
+     * - false: Prevent a redirect
+     * - null: Standard redirect
+     *
      * @param array $data Posted payment form data.
      * @param Model $invoice Invoice model object.
+     * @return mixed
      */
     public function processPaymentForm($data, $invoice) { }
 

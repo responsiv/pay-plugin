@@ -8,6 +8,7 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\UserProfile as UserProfileModel;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
 class Profile extends ComponentBase
@@ -102,8 +103,21 @@ class Profile extends ComponentBase
             throw new ApplicationException('Payment method not found.');
         }
 
-        $paymentMethod->updateUserProfile($user, post());
+        $result = $paymentMethod->updateUserProfile($user, post());
 
+        /*
+         * Custom response
+         */
+        if ($result instanceof RedirectResponse) {
+            return $result;
+        }
+        elseif ($redirect === false) {
+            return;
+        }
+
+        /*
+         * Standard response
+         */
         if (!post('no_flash')) {
             Flash::success(post('message', 'Payment profile updated.'));
         }

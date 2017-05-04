@@ -1,7 +1,7 @@
-{% set hiddenFields = paymentMethod.getHiddenFields(paymentMethod, invoice) %}
+{% set hiddenFields = paymentMethod.getHiddenFields(invoice) %}
 
 <p>Click the button below to pay using Skrill</p>
-<form action="{{ paymentMethod.getFormAction(paymentMethod) }}" method="post">
+<form action="{{ paymentMethod.getFormAction() }}" method="post">
     {% for name, value in hiddenFields %}
         <input type="hidden" name="{{ name }}" value="{{ value }}"/>
     {% endfor %}

@@ -78,8 +78,10 @@ class PaypalStandard extends GatewayBase
     /**
      * Get the URL to Paypal's servers
      */
-    public function getFormAction($host)
+    public function getFormAction()
     {
+        $host = $this->getHostObject();
+
         if ($host->test_mode) {
             return "https://www.sandbox.paypal.com/cgi-bin/webscr";
         }
@@ -98,8 +100,9 @@ class PaypalStandard extends GatewayBase
         return $this->makeAccessPointLink('paypal_standard_ipn');
     }
 
-    public function getHiddenFields($host, $invoice)
+    public function getHiddenFields($invoice)
     {
+        $host = $this->getHostObject();
         $result = [];
 
         /*

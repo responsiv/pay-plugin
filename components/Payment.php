@@ -5,6 +5,7 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
 class Payment extends ComponentBase
@@ -127,16 +128,58 @@ class Payment extends ComponentBase
             return;
         }
 
-        $redirect = $paymentMethod->processPaymentForm(post(), $invoice);
-        if ($redirect === false) {
+        /*
+         * Pay from profile
+         */
+        if (post('pay_from_profile') && post('pay_from_profile') == 1) {
+            $redirect = true;
+
+            if (!$user = $this->user()) {
+                throw new ApplicationException('Please log in to pay using the stored details');
+            }
+
+            if ($invoice->user_id != $user->id) {
+                throw new ApplicationException('The invoice does not belong to your account');
+            }
+
+            $paymentMethod->payFromProfile($invoice);
+        }
+        else {
+            $redirect = $paymentMethod->processPaymentForm(post(), $invoice);
+        }
+
+        /*
+         * Custom response
+         */
+        if ($result instanceof RedirectResponse) {
+            return $result;
+        }
+        elseif ($redirect === false) {
             return;
         }
 
+        /*
+         * Standard response
+         */
         if (!$returnPage = $invoice->getReceiptUrl()) {
             return;
         }
 
         return Redirect::to($returnPage);
+    }
+
+    /**
+     * Returns the logged in user, if available, and touches
+     * the last seen timestamp.
+     * @return RainLab\User\Models\User
+     */
+    public function user()
+    {
+        if (!$user = Auth::getUser()) {
+            return null;
+        }
+
+        return $user;
     }
 
     /**
