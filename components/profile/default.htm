@@ -3,9 +3,9 @@
     {% if profile %}
         {{ form_ajax('onDeletePaymentProfile') }}
             <p>
-                Stored credit card: {{ '************' ~ profile.card_last_four }}
+                Stored payment profile: {{ '************' ~ profile.card_last_four }}
                 <button type="submit" class="btn">
-                    Delete card
+                    Delete
                 </button>
             </p>
 

@@ -9,7 +9,12 @@ use Lang;
  */
 class Plugin extends PluginBase
 {
-    public $require = ['RainLab.User', 'RainLab.UserPlus', 'RainLab.Location', 'Responsiv.Currency'];
+    public $require = [
+        'RainLab.User',
+        'RainLab.UserPlus',
+        'RainLab.Location',
+        'Responsiv.Currency'
+    ];
 
     /**
      * Returns information about this plugin.
@@ -107,6 +112,7 @@ class Plugin extends PluginBase
     {
         return [
             'Responsiv\Pay\PaymentTypes\PaypalStandard' => 'paypal-standard',
+            'Responsiv\Pay\PaymentTypes\PaypalAdaptive' => 'paypal-adaptive',
             'Responsiv\Pay\PaymentTypes\PaypalPro'      => 'paypal-pro',
             'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
             'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
