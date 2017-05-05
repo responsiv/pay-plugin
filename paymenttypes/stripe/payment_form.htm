@@ -57,6 +57,15 @@
         </div>
     </div>
 
+    <!-- Uncomment this code if you want to support customer payment profiles
+    {% if paymentMethod.supportsPaymentProfiles() and this.user %}
+        <div class="form-group">
+            <input type="checkbox" value="1" name="create_customer_profile" />
+            <label for="create_customer_profile">Save my credit card</label>
+        </div>
+    {% endif %}
+    -->
+
     <button class="btn">
         Submit payment
     </button>

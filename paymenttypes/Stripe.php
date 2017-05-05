@@ -81,6 +81,17 @@ class Stripe extends GatewayBase
         }
 
         /*
+         * Customer profile
+         */
+        if (
+            isset($data['create_customer_profile']) &&
+            $data['create_customer_profile'] &&
+            $invoice->user
+        ) {
+            $this->updateUserProfile($invoice->user, $data);
+        }
+
+        /*
          * Send payment request
          */
         $gateway = $this->makeSdk();
@@ -279,9 +290,9 @@ class Stripe extends GatewayBase
         ];
 
         $response = $gateway->purchase($profileData + [
-            'amount'            => $totals->total,
-            'currency'          => $totals->currency,
-            'description'       => 'Invoice '.$invoice->getUniqueId(),
+            'amount'      => $totals->total,
+            'currency'    => $totals->currency,
+            'description' => 'Invoice '.$invoice->getUniqueId(),
         ])->send();
 
         if ($response->isSuccessful()) {
