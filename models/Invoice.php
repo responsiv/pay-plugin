@@ -191,6 +191,15 @@ class Invoice extends Model implements InvoiceInterface
         return $this->isPaymentProcessed();
     }
 
+    public function isPastDueDate()
+    {
+        if (!$this->due_at) {
+            return true;
+        }
+
+        return $this->due_at->isPast() || $this->due_at->isToday();
+    }
+
     public function getStatusCodeAttribute()
     {
         return $this->status ? $this->status->code : null;
