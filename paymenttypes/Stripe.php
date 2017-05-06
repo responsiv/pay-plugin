@@ -85,7 +85,7 @@ class Stripe extends GatewayBase
          */
         if (
             isset($data['create_customer_profile']) &&
-            $data['create_customer_profile'] &&
+            $data['create_customer_profile'] == 1 &&
             $invoice->user
         ) {
             $this->updateUserProfile($invoice->user, $data);

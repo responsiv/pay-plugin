@@ -22,4 +22,7 @@ return [
         'change_status_title' => 'Change Invoice Status',
         'current_status_name' => 'Current status: :name',
     ],
+    'profile' => [
+        'unset_default' => '":profile" is already default and cannot be unset as default.',
+    ],
 ];
