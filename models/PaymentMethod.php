@@ -161,7 +161,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         $this->beforeRenderPaymentForm();
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
-        $partialName = 'pay/'.$paymentMethodFile;
+        $partialName = 'pay-gateway/'.$paymentMethodFile;
 
         return $controller->renderPartial($partialName);
     }
@@ -171,7 +171,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         $this->beforeRenderPaymentProfileForm();
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
-        $partialName = 'pay/'.$paymentMethodFile.'-profile';
+        $partialName = 'pay-gateway/'.$paymentMethodFile.'-profile';
 
         return $controller->renderPartial($partialName);
     }

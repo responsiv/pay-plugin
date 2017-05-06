@@ -4,6 +4,8 @@
 
 There are some housekeeping items that have been addressed in this version.
 
+The payment gateway partials folder has been renamed from `pay` to `pay-gateway`.
+
 The `InvoiceStatus::getByCode` method has been renamed to `InvoiceStatus::findByCode`.
 
 These methods have been removed from the `InvoiceStatus` model:
@@ -22,7 +24,7 @@ Use the `findByCode` method instead, eg:
 The `getFormAction`, `getHiddenFields` and `getPaymentInstructions` methods no longer take the host as the first name as this argument is redundant. Perform these replacements in your theme:
 
     // Replace
-    paymentMethod.getFormAction(paymentMethod) 
+    paymentMethod.getFormAction(paymentMethod)
 
     // With
     paymentMethod.getFormAction()
