@@ -513,7 +513,7 @@ class Invoice extends Model implements InvoiceInterface
     public function isPaymentProcessed($force = false)
     {
         if ($force) {
-            return $this->where('id', $this->id)->pluck('processed_at');
+            return $this->where('id', $this->id)->value('processed_at');
         }
 
         return $this->processed_at;
