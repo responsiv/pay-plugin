@@ -151,8 +151,8 @@ class Payment extends ComponentBase
         /*
          * Custom response
          */
-        if ($result instanceof RedirectResponse) {
-            return $result;
+        if ($redirect instanceof RedirectResponse) {
+            return $redirect;
         }
         elseif ($redirect === false) {
             return;

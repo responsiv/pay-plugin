@@ -111,7 +111,7 @@ class Profile extends ComponentBase
         if ($result instanceof RedirectResponse) {
             return $result;
         }
-        elseif ($redirect === false) {
+        elseif ($result === false) {
             return;
         }
 
