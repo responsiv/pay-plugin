@@ -46,18 +46,18 @@ class Invoice extends Model implements InvoiceInterface
      * @var array Relations
      */
     public $belongsTo = [
-        'user'           => ['RainLab\User\Models\User'],
-        'status'         => ['Responsiv\Pay\Models\InvoiceStatus'],
-        'template'       => ['Responsiv\Pay\Models\InvoiceTemplate'],
-        'payment_method' => ['Responsiv\Pay\Models\PaymentMethod'],
-        'country'        => ['RainLab\Location\Models\Country'],
-        'state'          => ['RainLab\Location\Models\State'],
+        'user'           => \RainLab\User\Models\User::class,
+        'status'         => InvoiceStatus::class,
+        'template'       => InvoiceTemplate::class,
+        'payment_method' => PaymentMethod::class,
+        'country'        => \RainLab\Location\Models\Country::class,
+        'state'          => \RainLab\Location\Models\State::class,
     ];
 
     public $hasMany = [
-        'items'       => ['Responsiv\Pay\Models\InvoiceItem', 'delete' => true],
-        'status_log'  => ['Responsiv\Pay\Models\InvoiceStatusLog', 'delete' => true],
-        'payment_log' => ['Responsiv\Pay\Models\InvoiceLog', 'delete' => true],
+        'items'       => [InvoiceItem::class, 'delete' => true],
+        'status_log'  => [InvoiceStatusLog::class, 'delete' => true],
+        'payment_log' => [InvoiceLog::class, 'delete' => true],
     ];
 
     public $morphTo = [
@@ -233,7 +233,7 @@ class Invoice extends Model implements InvoiceInterface
         }
 
         if (!$this->template_id) {
-            $this->template_id = InvoiceTemplate::pluck('id');
+            $this->template_id = InvoiceTemplate::value('id');
         }
     }
 
