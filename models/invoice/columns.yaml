@@ -12,7 +12,7 @@ columns:
     id:
         label: ID
         type: partial
-        path: column_id
+        path: $/responsiv/pay/controllers/invoices/_column_id.htm
         searchable: true
         width: 100px
 
