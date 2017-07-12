@@ -12,7 +12,14 @@ tabs:
         name:
             label: Name
             tab: General
+            span: auto
             comment: The name to display this payment type on the front-end.
+            
+        code:
+            label: Code
+            span: auto
+            tab: General
+            comment: The unique code as an identifier of this payment type.
 
         description:
             label: Description
