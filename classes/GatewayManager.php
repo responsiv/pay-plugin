@@ -21,12 +21,12 @@ class GatewayManager
     /**
      * @var array Cache of registration callbacks.
      */
-    private $callbacks = [];
+    protected $callbacks = [];
 
     /**
      * @var array List of registered gateways.
      */
-    private $gateways;
+    protected $gateways;
 
     /**
      * @var System\Classes\PluginManager
@@ -78,12 +78,13 @@ class GatewayManager
      * The callback function should register gateways by calling the manager's
      * registerGateways() function. The manager instance is passed to the
      * callback function as an argument. Usage:
-     * <pre>
-     *   GatewayManager::registerCallback(function($manager){
-     *       $manager->registerGateways([...]);
-     *   });
-     * </pre>
+     *
+     *     GatewayManager::registerCallback(function($manager) {
+     *         $manager->registerGateways([...]);
+     *     });
+     *
      * @param callable $callback A callable function.
+     * @return void
      */
     public function registerCallback(callable $callback)
     {
@@ -95,6 +96,7 @@ class GatewayManager
      * The argument is an array of the gateway classes.
      * @param string $owner Specifies the menu items owner plugin or module in the format Author.Plugin.
      * @param array $classes An array of the payment gateway classes.
+     * @return void
      */
     public function registerGateways($owner, array $classes)
     {
@@ -103,7 +105,7 @@ class GatewayManager
         }
 
         foreach ($classes as $class => $alias) {
-            $gateway = (object)[
+            $gateway = (object) [
                 'owner' => $owner,
                 'class' => $class,
                 'alias' => $alias,
@@ -139,7 +141,7 @@ class GatewayManager
 
             $gatewayObj = new $gateway->class;
             $gatewayDetails = $gatewayObj->gatewayDetails();
-            $collection[$gateway->alias] = (object)[
+            $collection[$gateway->alias] = (object) [
                 'owner'       => $gateway->owner,
                 'class'       => $gateway->class,
                 'alias'       => $gateway->alias,

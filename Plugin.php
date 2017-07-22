@@ -52,7 +52,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-credit-card',
                 'iconSvg'     => 'plugins/responsiv/pay/assets/images/pay-icon.svg',
                 'permissions' => ['pay.*'],
-                'order'       => 500,
+                'order'       => 520,
 
                 'sideMenu' => [
                     'invoices' => [
@@ -89,7 +89,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
                 'category'    => Lang::get('responsiv.pay::lang.name'),
-                'order'       => 500,
+                'order'       => 520,
             ],
             'invoice_template' => [
                 'label'       => Lang::get('responsiv.pay::lang.invoice_template.name'),
@@ -97,7 +97,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
                 'category'    => Lang::get('responsiv.pay::lang.name'),
-                'order'       => 500,
+                'order'       => 520,
             ]
         ];
     }

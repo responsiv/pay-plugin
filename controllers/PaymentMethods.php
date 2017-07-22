@@ -6,6 +6,7 @@ use Backend\Classes\Controller;
 use System\Classes\SettingsManager;
 use Responsiv\Pay\Classes\GatewayManager;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use ApplicationException;
 use Exception;
 
 /**
@@ -57,9 +58,13 @@ class PaymentMethods extends Controller
         }
     }
 
-    public function create($gatewayAlias)
+    public function create($gatewayAlias = null)
     {
         try {
+            if (!$gatewayAlias) {
+                throw new ApplicationException('Missing a gateway code');
+            }
+
             $this->gatewayAlias = $gatewayAlias;
             $this->asExtension('FormController')->create();
         }
@@ -107,10 +112,9 @@ class PaymentMethods extends Controller
         }
 
         if (!$gateway = GatewayManager::instance()->findByAlias($alias)) {
-            throw new Exception('Unable to find gateway with alias '. $alias);
+            throw new ApplicationException('Unable to find gateway: '. $alias);
         }
 
         return $this->gatewayClass = $gateway->class;
     }
-
 }

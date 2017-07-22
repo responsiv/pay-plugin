@@ -5,7 +5,6 @@ use October\Rain\Database\Updates\Migration;
 
 class CreateTypesTable extends Migration
 {
-
     public function up()
     {
         Schema::create('responsiv_pay_methods', function($table)
@@ -13,8 +12,8 @@ class CreateTypesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->nullable();
-            $table->string('code', 100)->index()->nullable();
-            $table->string('class_name', 100)->nullable();
+            $table->string('code')->index()->nullable();
+            $table->string('class_name')->nullable();
             $table->text('description')->nullable();
             $table->text('config_data')->nullable();
             $table->boolean('is_enabled')->default(false);
@@ -36,5 +35,4 @@ class CreateTypesTable extends Migration
         Schema::dropIfExists('responsiv_pay_methods');
         Schema::dropIfExists('responsiv_pay_methods_countries');
     }
-
 }
