@@ -35,11 +35,29 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            'Responsiv\Pay\Components\Payment'  => 'payment',
-            'Responsiv\Pay\Components\Invoice'  => 'invoice',
-            'Responsiv\Pay\Components\Invoices' => 'invoices',
-            'Responsiv\Pay\Components\Profile'  => 'payProfile',
-            'Responsiv\Pay\Components\Profiles' => 'payProfiles',
+            \Responsiv\Pay\Components\Payment::class  => 'payment',
+            \Responsiv\Pay\Components\Invoice::class  => 'invoice',
+            \Responsiv\Pay\Components\Invoices::class => 'invoices',
+            \Responsiv\Pay\Components\Profile::class  => 'payProfile',
+            \Responsiv\Pay\Components\Profiles::class => 'payProfiles',
+        ];
+    }
+
+    /**
+     * Registers any payment gateways implemented in this plugin.
+     * The gateways must be returned in the following format:
+     * ['className1' => 'alias'],
+     * ['className2' => 'anotherAlias']
+     */
+    public function registerPaymentGateways()
+    {
+        return [
+            \Responsiv\Pay\PaymentTypes\PaypalStandard::class => 'paypal-standard',
+            \Responsiv\Pay\PaymentTypes\PaypalAdaptive::class => 'paypal-adaptive',
+            \Responsiv\Pay\PaymentTypes\PaypalPro::class      => 'paypal-pro',
+            \Responsiv\Pay\PaymentTypes\Offline::class        => 'offline',
+            \Responsiv\Pay\PaymentTypes\Skrill::class         => 'skrill',
+            \Responsiv\Pay\PaymentTypes\Stripe::class         => 'stripe',
         ];
     }
 
@@ -99,24 +117,6 @@ class Plugin extends PluginBase
                 'category'    => Lang::get('responsiv.pay::lang.name'),
                 'order'       => 520,
             ]
-        ];
-    }
-
-    /**
-     * Registers any payment gateways implemented in this plugin.
-     * The gateways must be returned in the following format:
-     * ['className1' => 'alias'],
-     * ['className2' => 'anotherAlias']
-     */
-    public function registerPaymentGateways()
-    {
-        return [
-            'Responsiv\Pay\PaymentTypes\PaypalStandard' => 'paypal-standard',
-            'Responsiv\Pay\PaymentTypes\PaypalAdaptive' => 'paypal-adaptive',
-            'Responsiv\Pay\PaymentTypes\PaypalPro'      => 'paypal-pro',
-            'Responsiv\Pay\PaymentTypes\Offline'        => 'offline',
-            'Responsiv\Pay\PaymentTypes\Skrill'         => 'skrill',
-            'Responsiv\Pay\PaymentTypes\Stripe'         => 'stripe',
         ];
     }
 }
