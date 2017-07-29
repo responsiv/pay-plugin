@@ -22,4 +22,40 @@ class InvoiceLog extends Model
      */
     protected $jsonable = ['request_data', 'response_data'];
 
+    public static function createRecord($invoice, $message = null, $options = [])
+    {
+        extract(array_merge([
+            'isSuccess' => null,
+            'methodName' => 'Unspecified',
+            'requestArray' => null,
+            'responseArray' => null,
+            'responseText' => null,
+        ], $options));
+
+        $record = new self;
+        $record->message = $message;
+        $record->invoice_id = $invoice->id;
+        $record->payment_method_name = $methodName;
+        $record->is_success = $isSuccess;
+
+        $record->raw_response = $responseText;
+        $record->request_data = $requestArray;
+        $record->response_data = $responseArray;
+
+        $record->save();
+
+        return $record;
+    }
+
+    public static function createManualPayment($invoice, $message = null)
+    {
+        $record = new self;
+        $record->message = $message;
+        $record->invoice_id = $invoice->id;
+        $record->payment_method_name = 'Manual payment';
+        $record->is_success = true;
+        $record->save();
+
+        return $record;
+    }
 }

@@ -70,7 +70,7 @@ class Skrill extends GatewayBase
     /**
      * Cancel page field options
      */
-    public function getCancelPageOptions($keyValue = -1)
+    public function getCancelPageOptions()
     {
         return Page::getNameList();
     }
@@ -78,7 +78,7 @@ class Skrill extends GatewayBase
     /**
      * Get the URL to Skrill's servers
      */
-    public function getFormAction($host)
+    public function getFormAction()
     {
         return "https://www.skrill.com/app/payment.pl";
     }
@@ -93,8 +93,9 @@ class Skrill extends GatewayBase
         return $this->makeAccessPointLink('skrill_status_url');
     }
 
-    public function getHiddenFields($host, $invoice)
+    public function getHiddenFields($invoice)
     {
+        $host = $this->getHostObject();
         $result = [];
 
         /*
@@ -157,7 +158,7 @@ class Skrill extends GatewayBase
         return $result;
     }
 
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
         /*
          * We do not need any code here since payments are processed on Skrill server.
@@ -193,12 +194,12 @@ class Skrill extends GatewayBase
             /*
              * Validate the Skrill signature
              */
-            $fieldString = $_POST['merchant_id']
-                . $_POST['transaction_id']
-                . strtoupper(md5($paymentMethod->secret_word))
-                . $_POST['mb_amount']
-                . $_POST['mb_currency']
-                . $_POST['status'];
+            $fieldString = $_POST['merchant_id'] .
+                $_POST['transaction_id'] .
+                strtoupper(md5($paymentMethod->secret_word)) .
+                $_POST['mb_amount'] .
+                $_POST['mb_currency'] .
+                $_POST['status'];
 
             /*
              * Ensure the signature is valid, the status code == 2,

@@ -5,7 +5,6 @@ use Responsiv\Pay\Classes\GatewayBase;
 
 class Offline extends GatewayBase
 {
-
     /**
      * {@inheritDoc}
      */
@@ -19,13 +18,13 @@ class Offline extends GatewayBase
 
     /**
      * Returns the payment instructions for offline payment
-     * @param  Model $host
      * @param  Model $invoice
      * @return string
      */
-    public function getPaymentInstructions($host, $invoice)
+    public function getPaymentInstructions($invoice)
     {
+        $host = $this->getHostObject();
+
         return $host->payment_instructions;
     }
-
 }

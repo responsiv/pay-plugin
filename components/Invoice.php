@@ -9,7 +9,10 @@ use Responsiv\Pay\Models\Invoice as InvoiceModel;
 
 class Invoice extends ComponentBase
 {
-    public $payPage;
+    /**
+     * @var Responsiv\Pay\Models\Invoice Cached object
+     */
+    protected $invoice;
 
     public function componentDetails()
     {
@@ -50,8 +53,8 @@ class Invoice extends ComponentBase
 
     public function onRun()
     {
-        $this->payPage = $this->page['payPage'] = $this->property('payPage');
-        $this->page['invoice'] = $invoice = $this->getInvoice();
+        $this->page['payPage'] = $this->payPage();
+        $this->page['invoice'] = $invoice = $this->invoice();
 
         if ($invoice) {
             $this->page->meta_title = $this->page->meta_title
@@ -60,7 +63,7 @@ class Invoice extends ComponentBase
         }
     }
 
-    public function getInvoice()
+    protected function invoice()
     {
         if ($this->invoice !== null) {
             return $this->invoice;
@@ -85,10 +88,22 @@ class Invoice extends ComponentBase
         }
 
         if ($invoice) {
-            $invoice->setUrlPageName($this->payPage);
+            $invoice->setUrlPageName($this->payPage());
         }
 
         return $this->invoice = $invoice;
     }
 
+    protected function payPage()
+    {
+        return $this->property('payPage');
+    }
+
+    /**
+     * @deprecated Use $this->invoice()
+     */
+    public function getInvoice()
+    {
+        return $this->invoice();
+    }
 }

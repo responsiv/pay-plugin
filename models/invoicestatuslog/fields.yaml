@@ -12,3 +12,9 @@ fields:
         label: Comment
         type: textarea
         size: small
+
+    mark_paid:
+        label: Mark as payment received
+        comment: Use this if a manual payment has been received from the customer.
+        type: checkbox
+        context: create

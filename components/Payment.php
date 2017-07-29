@@ -5,12 +5,15 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
 class Payment extends ComponentBase
 {
-
-    public $invoicePage;
+    /**
+     * @var Responsiv\Pay\Models\Invoice Cached object
+     */
+    protected $invoice;
 
     public function componentDetails()
     {
@@ -44,20 +47,17 @@ class Payment extends ComponentBase
 
     public function onRun()
     {
-        $this->prepareVars();
-        $this->page['invoice'] = $invoice = $this->getInvoice();
-
-        if ($invoice) {
-            $this->page['paymentMethods'] = TypeModel::listApplicable($invoice->country_id);
-            $this->page['paymentMethod'] = $invoice ? $invoice->payment_method : null;
-        }
+        $this->page['invoice'] = $this->invoice();
+        $this->page['invoicePage'] = $this->invoicePage();
+        $this->page['paymentMethods'] = $this->paymentMethods();
+        $this->page['paymentMethod'] = $this->paymentMethod();
 
         if (post('submit_payment')) {
             $this->onPay();
         }
     }
 
-    public function getInvoice()
+    public function invoice()
     {
         if ($this->invoice !== null) {
             return $this->invoice;
@@ -70,23 +70,36 @@ class Payment extends ComponentBase
         $invoice = InvoiceModel::whereHash($hash)->first();
 
         if ($invoice) {
-            $invoice->setUrlPageName($this->invoicePage);
+            $invoice->setUrlPageName($this->invoicePage());
         }
 
         return $this->invoice = $invoice;
     }
 
-    protected function prepareVars()
+    public function invoicePage()
     {
-        /*
-         * Page links
-         */
-        $this->invoicePage = $this->page['invoicePage'] = $this->property('invoicePage');
+        return $this->property('invoicePage');
     }
+
+    public function paymentMethod()
+    {
+        return ($invoice = $this->invoice()) ? $invoice->payment_method : null;
+    }
+
+    public function paymentMethods()
+    {
+        $countryId = ($invoice = $this->invoice()) ? $invoice->country_id : null;
+
+        return TypeModel::listApplicable($countryId);
+    }
+
+    //
+    // AJAX
+    //
 
     public function onUpdatePaymentType()
     {
-        if (!$invoice = $this->getInvoice()) {
+        if (!$invoice = $this->invoice()) {
             throw new ApplicationException('Invoice not found!');
         }
 
@@ -107,7 +120,7 @@ class Payment extends ComponentBase
 
     public function onPay($invoice = null)
     {
-        if (!$invoice = $this->getInvoice()) {
+        if (!$invoice = $this->invoice()) {
             return;
         }
 
@@ -115,11 +128,39 @@ class Payment extends ComponentBase
             return;
         }
 
-        $redirect = $paymentMethod->processPaymentForm(post(), $paymentMethod, $invoice);
-        if ($redirect === false) {
+        /*
+         * Pay from profile
+         */
+        if (post('pay_from_profile') && post('pay_from_profile') == 1) {
+            $redirect = true;
+
+            if (!$user = $this->user()) {
+                throw new ApplicationException('Please log in to pay using the stored details');
+            }
+
+            if ($invoice->user_id != $user->id) {
+                throw new ApplicationException('The invoice does not belong to your account');
+            }
+
+            $paymentMethod->payFromProfile($invoice);
+        }
+        else {
+            $redirect = $paymentMethod->processPaymentForm(post(), $invoice);
+        }
+
+        /*
+         * Custom response
+         */
+        if ($redirect instanceof RedirectResponse) {
+            return $redirect;
+        }
+        elseif ($redirect === false) {
             return;
         }
 
+        /*
+         * Standard response
+         */
         if (!$returnPage = $invoice->getReceiptUrl()) {
             return;
         }
@@ -127,4 +168,25 @@ class Payment extends ComponentBase
         return Redirect::to($returnPage);
     }
 
+    /**
+     * Returns the logged in user, if available, and touches
+     * the last seen timestamp.
+     * @return RainLab\User\Models\User
+     */
+    public function user()
+    {
+        if (!$user = Auth::getUser()) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    /**
+     * @deprecated Use $this->invoice()
+     */
+    public function getInvoice()
+    {
+        return $this->invoice();
+    }
 }

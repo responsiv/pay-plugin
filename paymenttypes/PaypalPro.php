@@ -6,15 +6,14 @@ use Redirect;
 use Validator;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
-use SystemException;
 use ApplicationException;
 use ValidationException;
+use SystemException;
 use Exception;
 use Omnipay\Omnipay;
 
 class PaypalPro extends GatewayBase
 {
-
     /**
      * {@inheritDoc}
      */
@@ -52,13 +51,13 @@ class PaypalPro extends GatewayBase
     public function initConfigData($host)
     {
         $host->test_mode = true;
-        $host->invoice_status = $this->createInvoiceStatusModel()->getStatusPaid();
+        $host->invoice_status = $this->createInvoiceStatusModel()->getPaidStatus();
     }
 
     /**
      * Action field options
      */
-    public function getCardActionOptions($keyValue = -1)
+    public function getCardActionOptions()
     {
         return [
             'purchase'  => 'Purchase',
@@ -77,8 +76,10 @@ class PaypalPro extends GatewayBase
     /**
      * {@inheritDoc}
      */
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
+        $host = $this->getHostObject();
+
         $rules = [
             'first_name'              => 'required',
             'last_name'               => 'required',
@@ -91,16 +92,14 @@ class PaypalPro extends GatewayBase
         $validation = Validator::make($data, $rules);
 
         try {
-            if ($validation->fails())
+            if ($validation->fails()) {
                 throw new ValidationException($validation);
+            }
         }
         catch (Exception $ex) {
             $invoice->logPaymentAttempt($ex->getMessage(), 0, [], [], null);
             throw $ex;
         }
-
-        if (!$paymentMethod = $invoice->getPaymentMethod())
-            throw new ApplicationException('Payment method not found');
 
         /*
          * Send payment request
@@ -135,15 +134,12 @@ class PaypalPro extends GatewayBase
         if ($response->isSuccessful()) {
             $invoice->logPaymentAttempt('Successful payment', 1, $formData, null, null);
             $invoice->markAsPaymentProcessed();
-            $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
+            $invoice->updateInvoiceStatus($host->invoice_status);
         }
         else {
             $errorMessage = $response->getMessage();
             $invoice->logPaymentAttempt($errorMessage, 0, $formData, null, null);
             throw new ApplicationException($errorMessage);
         }
-
     }
-
-
 }

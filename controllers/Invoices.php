@@ -14,9 +14,9 @@ use Responsiv\Pay\Models\InvoiceStatusLog;
 class Invoices extends Controller
 {
     public $implement = [
-        'Backend.Behaviors.FormController',
-        'Backend.Behaviors.ListController',
-        'Backend.Behaviors.RelationController',
+        \Backend\Behaviors\FormController::class,
+        \Backend\Behaviors\ListController::class,
+        \Backend\Behaviors\RelationController::class,
     ];
 
     public $formConfig = 'config_form.yaml';
@@ -47,7 +47,7 @@ class Invoices extends Controller
         try {
             $invoice = $this->formFindModelObject($recordId);
             $this->vars['currentStatus'] = isset($invoice->status->name) ? $invoice->status->name : '???';
-            $this->vars['widget'] = $this->makeStatusFormWidget();
+            $this->vars['widget'] = $this->makeStatusFormWidget($invoice);
         }
         catch (Exception $ex) {
             $this->handleError($ex);
@@ -59,19 +59,41 @@ class Invoices extends Controller
     public function preview_onChangeStatus($recordId = null)
     {
         $invoice = $this->formFindModelObject($recordId);
-        $widget = $this->makeStatusFormWidget();
+
+        $widget = $this->makeStatusFormWidget($invoice);
+
         $data = $widget->getSaveData();
+
+        $markPaid = array_get($data, 'mark_paid') && !$invoice->isPaymentProcessed();
+
+        if ($markPaid) {
+            $paymentComment = sprintf(
+                'Payment taken by %s (#%s)',
+                $this->user->full_name,
+                $this->user->id
+            );
+
+            $invoice->submitManualPayment($paymentComment);
+        }
+
         InvoiceStatusLog::createRecord($data['status'], $invoice, $data['comment']);
-        Flash::success('Invoice status updated successfully');
+
+        Flash::success('Invoice status updated.');
+
         return Backend::redirect(sprintf('responsiv/pay/invoices/preview/%s', $invoice->id));
     }
 
-    protected function makeStatusFormWidget()
+    protected function makeStatusFormWidget($invoice)
     {
+        $model = new InvoiceStatusLog;
+        $model->invoice = $invoice;
+
         $config = $this->makeConfig('~/plugins/responsiv/pay/models/invoicestatuslog/fields.yaml');
-        $config->model = new InvoiceStatusLog;
+        $config->model = $model;
         $config->arrayName = 'InvoiceStatusLog';
         $config->alias = 'statusLog';
+        $config->context = 'create';
+
         return $this->makeWidget('Backend\Widgets\Form', $config);
     }
 

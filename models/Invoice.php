@@ -7,6 +7,7 @@ use Request;
 use Carbon\Carbon;
 use Cms\Classes\Controller;
 use Responsiv\Currency\Facades\Currency as CurrencyHelper;
+use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\Location\Models\State;
@@ -45,18 +46,18 @@ class Invoice extends Model implements InvoiceInterface
      * @var array Relations
      */
     public $belongsTo = [
-        'user'           => ['RainLab\User\Models\User'],
-        'status'         => ['Responsiv\Pay\Models\InvoiceStatus'],
-        'template'       => ['Responsiv\Pay\Models\InvoiceTemplate'],
-        'payment_method' => ['Responsiv\Pay\Models\PaymentMethod'],
-        'country'        => ['RainLab\Location\Models\Country'],
-        'state'          => ['RainLab\Location\Models\State'],
+        'user'           => \RainLab\User\Models\User::class,
+        'status'         => InvoiceStatus::class,
+        'template'       => InvoiceTemplate::class,
+        'payment_method' => PaymentMethod::class,
+        'country'        => \RainLab\Location\Models\Country::class,
+        'state'          => \RainLab\Location\Models\State::class,
     ];
 
     public $hasMany = [
-        'items'       => ['Responsiv\Pay\Models\InvoiceItem', 'delete' => true],
-        'status_log'  => ['Responsiv\Pay\Models\InvoiceStatusLog', 'delete' => true],
-        'payment_log' => ['Responsiv\Pay\Models\InvoiceLog', 'delete' => true],
+        'items'       => [InvoiceItem::class, 'delete' => true],
+        'status_log'  => [InvoiceStatusLog::class, 'delete' => true],
+        'payment_log' => [InvoiceLog::class, 'delete' => true],
     ];
 
     public $morphTo = [
@@ -79,6 +80,27 @@ class Invoice extends Model implements InvoiceInterface
             'hash' => $this->hash,
         ];
     }
+
+    //
+    // Constructors
+    //
+
+    public static function makeForUser($user)
+    {
+        $invoice = new static;
+
+        $invoice->user = $user;
+        $invoice->first_name = $user->name;
+        $invoice->last_name = $user->surname;
+        $invoice->email = $user->email;
+        $invoice->phone = $user->phone;
+
+        return $invoice;
+    }
+
+    //
+    // Events
+    //
 
     public function afterFetch()
     {
@@ -106,8 +128,49 @@ class Invoice extends Model implements InvoiceInterface
 
     public function afterCreate()
     {
-        InvoiceStatusLog::createRecord(InvoiceStatus::getStatusDraft(), $this);
+        InvoiceStatusLog::createRecord(InvoiceStatus::STATUS_DRAFT, $this);
+
+        Event::fire('responsiv.pay.invoiceNew', [$this]);
     }
+
+    //
+    // Scopes
+    //
+
+    public function scopeApplyRelated($query, $object)
+    {
+        return $query
+            ->where('related_type', get_class($object))
+            ->where('related_id', $object->getKey())
+        ;
+    }
+
+    public function scopeApplyUser($query, $user)
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    public function scopeApplyThrowaway($query)
+    {
+        return $query->where('is_throwaway', 1);
+    }
+
+    public function scopeApplyNotThrowaway($query)
+    {
+        return $query->where(function($q) {
+            $q->where('is_throwaway', 0);
+            $q->orWhereNull('is_throwaway');
+        });
+    }
+
+    public function scopeApplyUnpaid($query)
+    {
+        return $query->whereNull('processed_at');
+    }
+
+    //
+    // Options
+    //
 
     public function getCountryOptions()
     {
@@ -119,18 +182,58 @@ class Invoice extends Model implements InvoiceInterface
         return State::getNameList($this->country_id);
     }
 
+    //
+    // Accessors
+    //
+
+    public function isPaid()
+    {
+        return $this->isPaymentProcessed();
+    }
+
+    public function isPastDueDate()
+    {
+        if (!$this->due_at) {
+            return true;
+        }
+
+        return $this->due_at->isPast() || $this->due_at->isToday();
+    }
+
+    public function getStatusCodeAttribute()
+    {
+        return $this->status ? $this->status->code : null;
+    }
+
+    //
+    // Utils
+    //
+
+    public function submitManualPayment($comment = null)
+    {
+        if ($comment) {
+            InvoiceLog::createManualPayment($this, $comment);
+        }
+
+        if ($this->payment_method && $this->payment_method->invoice_status) {
+            $this->updateInvoiceStatus($invoice->payment_method->invoice_status);
+        }
+        else {
+            $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
+        }
+
+        $this->markAsPaymentProcessed();
+    }
+
     public function setDefaults()
     {
         if (!$this->country_id) {
-            $this->country = Country::first();
-        }
-
-        if (!$this->state_id) {
-            $this->state = State::first();
+            $this->country = Country::getDefault();
+            $this->state = State::getDefault();
         }
 
         if (!$this->template_id) {
-            $this->template_id = InvoiceTemplate::pluck('id');
+            $this->template_id = InvoiceTemplate::value('id');
         }
     }
 
@@ -171,7 +274,7 @@ class Invoice extends Model implements InvoiceInterface
         /*
          * Calculate tax
          */
-        $taxInfo = Tax::calculateTaxes($items, $this->getLocationInfo());
+        $taxInfo = Tax::calculateInvoiceTaxes($this, $items);
         $this->setSalesTaxes($taxInfo->taxes);
         $tax = $taxInfo->tax_total;
 
@@ -193,15 +296,8 @@ class Invoice extends Model implements InvoiceInterface
     public function getLocationInfo()
     {
         $this->setDefaults();
-        $location = [
-            'street_addr' => $this->street_addr,
-            'city'        => $this->city,
-            'zip'         => $this->zip,
-            'state_id'    => $this->state_id,
-            'country_id'  => $this->country_id,
-        ];
 
-        return (object) $location;
+        return TaxLocation::makeFromObject($this);
     }
 
     /**
@@ -368,10 +464,10 @@ class Invoice extends Model implements InvoiceInterface
             'street_addr' => $this->street_addr,
             'city'        => $this->city,
             'zip'         => $this->zip,
-            'state_id'    => $this->state->code,
-            'state'       => $this->state->name,
-            'country_id'  => $this->country->code,
-            'country'     => $this->country->name
+            'state_id'    => $this->state ? $this->state->code : null,
+            'state'       => $this->state ? $this->state->name : null,
+            'country_id'  => $this->country ? $this->country->code : null,
+            'country'     => $this->country ? $this->country->name : null
         ];
 
         return $details;
@@ -417,7 +513,7 @@ class Invoice extends Model implements InvoiceInterface
     public function isPaymentProcessed($force = false)
     {
         if ($force) {
-            return $this->where('id', $this->id)->pluck('processed_at');
+            return $this->where('id', $this->id)->value('processed_at');
         }
 
         return $this->processed_at;
@@ -436,6 +532,9 @@ class Invoice extends Model implements InvoiceInterface
 
             Event::fire('responsiv.pay.invoicePaid', [$this]);
 
+            // Never allow a paid invoice to be thrown away
+            $this->is_throwaway = false;
+
             $this->save();
         }
 
@@ -453,21 +552,30 @@ class Invoice extends Model implements InvoiceInterface
     /**
      * {@inheritDoc}
      */
-    public function logPaymentAttempt($message, $isSuccess, $requestArray, $responseArray, $responseText)
-    {
-        $info = $this->getPaymentMethod()->gatewayDetails();
+    public function logPaymentAttempt(
+        $message,
+        $isSuccess,
+        $requestArray,
+        $responseArray,
+        $responseText
+    ) {
+        if ($payMethod = $this->getPaymentMethod()) {
+            $info = $payMethod->gatewayDetails();
+            $methodName = $info['name'];
+        }
+        else {
+            $methodName = 'Unspecified';
+        }
 
-        $record = new InvoiceLog;
-        $record->message = $message;
-        $record->invoice_id = $this->id;
-        $record->payment_method_name = $info['name'];
-        $record->is_success = $isSuccess;
+        $options = [
+            'isSuccess' => $isSuccess,
+            'methodName' => $methodName,
+            'requestArray' => $requestArray,
+            'responseArray' => $responseArray,
+            'responseText' => $responseText
+        ];
 
-        $record->raw_response = $responseText;
-        $record->request_data = $requestArray;
-        $record->response_data = $responseArray;
-
-        $record->save();
+        InvoiceLog::createRecord($this, $message, $options);
     }
 
     /**
@@ -475,21 +583,6 @@ class Invoice extends Model implements InvoiceInterface
      */
     public function updateInvoiceStatus($statusCode)
     {
-        if ($status = InvoiceStatus::getByCode($statusCode)) {
-            InvoiceStatusLog::createRecord($status, $this);
-        }
+        InvoiceStatusLog::createRecord($statusCode, $this);
     }
-
-    //
-    // Scopes
-    //
-
-    public function scopeApplyRelated($query, $object)
-    {
-        return $query
-            ->where('related_type', get_class($object))
-            ->where('related_id', $object->getKey())
-        ;
-    }
-
 }

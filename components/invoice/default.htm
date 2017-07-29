@@ -32,7 +32,7 @@
     <!-- Status -->
     <div class="text-right">
         {% if invoice.payment_method %}
-            {% if invoice.isPaymentProcessed %}
+            {% if invoice.isPaid %}
                 <h4>This invoice has been paid!</h4>
                 <p>Thank you for your business.</p>
             {% else %}

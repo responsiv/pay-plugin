@@ -56,13 +56,13 @@ class PaypalPro extends GatewayBase
     public function initConfigData($host)
     {
         $host->test_mode = true;
-        $host->invoice_status = $this->createInvoiceStatusModel()->getStatusPaid();
+        $host->invoice_status = $this->createInvoiceStatusModel()->getPaidStatus();
     }
 
     /**
      * Action field options
      */
-    public function getPaypalActionOptions($keyValue = -1)
+    public function getPaypalActionOptions()
     {
         return [
             'Sale'          => 'Capture',
@@ -73,7 +73,7 @@ class PaypalPro extends GatewayBase
     /**
      * {@inheritDoc}
      */
-    public function isApplicable($amount, $host)
+    public function isApplicable($amount)
     {
         return $amount <= 10000;
     }
@@ -81,9 +81,9 @@ class PaypalPro extends GatewayBase
     /**
      * Get the hostname for Paypal's servers
      */
-    public function getEndpointUrl($host)
+    public function getEndpointUrl()
     {
-        return $host->test_mode
+        return $this->model->test_mode
             ? 'api-3t.sandbox.paypal.com'
             : 'api-3t.paypal.com';
     }
@@ -91,8 +91,10 @@ class PaypalPro extends GatewayBase
     /**
      * {@inheritDoc}
      */
-    public function processPaymentForm($data, $host, $invoice, $isAdmin = false)
+    public function processPaymentForm($data, $invoice)
     {
+        $host = $this->getHostObject();
+
         $rules = [
             'card_type'               => 'required',
             'first_name'              => 'required',
@@ -121,7 +123,7 @@ class PaypalPro extends GatewayBase
          * Send payment request
          */
         @set_time_limit(3600);
-        $endpoint = $this->getEndpointUrl($host);
+        $endpoint = $this->getEndpointUrl();
 
         $fields = [];
         $response = null;

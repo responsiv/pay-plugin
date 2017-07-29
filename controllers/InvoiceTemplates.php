@@ -12,7 +12,7 @@ use System\Classes\SettingsManager;
 class InvoiceTemplates extends Controller
 {
     public $implement = [
-        'Backend.Behaviors.FormController'
+        \Backend\Behaviors\FormController::class
     ];
 
     public $formConfig = 'config_form.yaml';

@@ -1,0 +1,18 @@
+# ===================================
+# Filter Scope Definitions
+# ===================================
+
+scopes:
+
+    status:
+        # Filter name
+        label: Status
+
+        # Model Class name
+        modelClass: Responsiv\Pay\Models\InvoiceStatus
+
+        # Model attribute to display for the name
+        nameFrom: name
+
+        # Filter scope
+        conditions: status_id in (:filtered)

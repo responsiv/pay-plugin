@@ -9,68 +9,13 @@
 
     <div class="scoreboard">
         <div data-control="toolbar">
-            <div class="scoreboard-item title-value">
-                <h4>Invoice</h4>
-                <p>#<?= $formModel->id ?></p>
-                <p class="description">Created: <?= $formModel->created_at->toFormattedDateString() ?></p>
-            </div>
-            <?php if ($formModel->status): ?>
-                <div class="scoreboard-item title-value">
-                    <h4>Status</h4>
-                    <p><?= $formModel->status->name ?></p>
-                    <p class="description">Since: <?= $formModel->updated_at->toFormattedDateString() ?></p>
-                </div>
-            <?php endif ?>
-            <?php if ($formModel->user): ?>
-                <div class="scoreboard-item title-value">
-                    <h4>Customer</h4>
-                    <p><?= $formModel->user->name ?></p>
-                    <p class="description">Email: <a href="mailto: <?= $formModel->user->email ?>"><?= $formModel->user->email ?></a></p>
-                </div>
-            <?php endif ?>
-            <div class="scoreboard-item title-value">
-                <h4>Total</h4>
-                <p><?= $currency->formatCurrency($formModel->total) ?></p>
-                <p class="description">Tax: <?= $currency->formatCurrency($formModel->tax) ?></p>
-            </div>
+            <?= $this->makePartial('preview_scoreboard') ?>
         </div>
     </div>
 
     <div class="form-buttons buttons-offset">
         <div class="loading-indicator-container">
-            <a
-                href="<?= Backend::url('responsiv/pay/invoices/update/'.$formModel->id) ?>"
-                class="btn btn-primary">
-                Edit details
-            </a>
-            <a
-                href="javascript:;"
-                data-control="popup"
-                data-handler="onLoadChangeStatusForm"
-                class="btn btn-default">
-                Update status
-            </a>
-            <a
-                href="javascript:;"
-                onclick="$('#<?= $this->getId('invoiceIframe') ?>').trigger('print.invoice')"
-                class="btn btn-default">
-                Print invoice
-            </a>
-            <? /* @todo
-            <a
-                href="#"
-                class="btn btn-default">
-                Email invoice
-            </a>
-            */ ?>
-            <a
-                href="javascript:;"
-                data-request="onDelete"
-                data-load-indicator="Deleting Invoice..."
-                data-request-confirm="Delete this invoice?"
-                class="btn btn-danger">
-                Delete
-            </a>
+            <?= $this->makePartial('preview_toolbar') ?>
         </div>
     </div>
 

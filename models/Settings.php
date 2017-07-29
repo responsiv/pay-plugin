@@ -71,7 +71,7 @@ class Settings extends Model
      */
     protected function getLastInvoiceNumber()
     {
-        $lastId = Db::table('responsiv_pay_invoices')->orderBy('id', 'desc')->pluck('id');
+        $lastId = Db::table('responsiv_pay_invoices')->orderBy('id', 'desc')->value('id');
 
         return $lastId ? $lastId : 0;
     }

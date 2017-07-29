@@ -21,12 +21,12 @@ class GatewayManager
     /**
      * @var array Cache of registration callbacks.
      */
-    private $callbacks = [];
+    protected $callbacks = [];
 
     /**
      * @var array List of registered gateways.
      */
-    private $gateways;
+    protected $gateways;
 
     /**
      * @var System\Classes\PluginManager
@@ -60,12 +60,14 @@ class GatewayManager
         $plugins = $this->pluginManager->getPlugins();
 
         foreach ($plugins as $id => $plugin) {
-            if (!method_exists($plugin, 'registerPaymentGateways'))
+            if (!method_exists($plugin, 'registerPaymentGateways')) {
                 continue;
+            }
 
             $gateways = $plugin->registerPaymentGateways();
-            if (!is_array($gateways))
+            if (!is_array($gateways)) {
                 continue;
+            }
 
             $this->registerGateways($id, $gateways);
         }
@@ -76,12 +78,13 @@ class GatewayManager
      * The callback function should register gateways by calling the manager's
      * registerGateways() function. The manager instance is passed to the
      * callback function as an argument. Usage:
-     * <pre>
-     *   GatewayManager::registerCallback(function($manager){
-     *       $manager->registerGateways([...]);
-     *   });
-     * </pre>
+     *
+     *     GatewayManager::registerCallback(function($manager) {
+     *         $manager->registerGateways([...]);
+     *     });
+     *
      * @param callable $callback A callable function.
+     * @return void
      */
     public function registerCallback(callable $callback)
     {
@@ -93,14 +96,16 @@ class GatewayManager
      * The argument is an array of the gateway classes.
      * @param string $owner Specifies the menu items owner plugin or module in the format Author.Plugin.
      * @param array $classes An array of the payment gateway classes.
+     * @return void
      */
     public function registerGateways($owner, array $classes)
     {
-        if (!$this->gateways)
+        if (!$this->gateways) {
             $this->gateways = [];
+        }
 
         foreach ($classes as $class => $alias) {
-            $gateway = (object)[
+            $gateway = (object) [
                 'owner' => $owner,
                 'class' => $class,
                 'alias' => $alias,
@@ -130,12 +135,13 @@ class GatewayManager
          */
         $collection = [];
         foreach ($this->gateways as $gateway) {
-            if (!class_exists($gateway->class))
+            if (!class_exists($gateway->class)) {
                 continue;
+            }
 
             $gatewayObj = new $gateway->class;
             $gatewayDetails = $gatewayObj->gatewayDetails();
-            $collection[$gateway->alias] = (object)[
+            $collection[$gateway->alias] = (object) [
                 'owner'       => $gateway->owner,
                 'class'       => $gateway->class,
                 'alias'       => $gateway->alias,
@@ -156,6 +162,7 @@ class GatewayManager
     {
         $collection = [];
         $gateways = $this->listGateways();
+
         foreach ($gateways as $gateway) {
             $collection[$gateway->alias] = $gateway->object;
         }
@@ -169,8 +176,10 @@ class GatewayManager
     public function findByAlias($alias)
     {
         $gateways = $this->listGateways(false);
-        if (!isset($gateways[$alias]))
+
+        if (!isset($gateways[$alias])) {
             return false;
+        }
 
         return $gateways[$alias];
     }
@@ -188,8 +197,9 @@ class GatewayManager
         foreach ($gateways as $gateway) {
             $points = $gateway->registerAccessPoints();
 
-            if (isset($points[$code]))
+            if (isset($points[$code])) {
                 return $gateway->{$points[$code]}($params);
+            }
         }
 
         return Response::make('Access Forbidden', '403');
@@ -212,15 +222,24 @@ class GatewayManager
         foreach ($paymentMethods as $paymentMethod) {
             $class = $paymentMethod->class_name;
 
-            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase')
+            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase') {
                 continue;
+            }
 
-            $partialName = 'pay/'.strtolower(class_basename($class));
-            $partialExists = array_key_exists($partialName, $partials);
+            $paymentCode = strtolower(class_basename($class));
 
-            if (!$partialExists) {
-                $filePath = dirname(File::fromClass($class)).'/'.strtolower(class_basename($class)).'/payment_form.htm';
-                self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
+            $partialNames = [
+                'payment_form.htm' => 'pay-gateway/'.$paymentCode,
+                'profile_form.htm' => 'pay-gateway/'.$paymentCode.'-profile'
+            ];
+
+            foreach ($partialNames as $sourceFile => $partialName) {
+                $partialExists = array_key_exists($partialName, $partials);
+                $filePath = dirname(File::fromClass($class)).'/'.$paymentCode.'/'.$sourceFile;
+
+                if (!$partialExists && File::exists($filePath)) {
+                    self::createPartialFromFile($partialName, $filePath, Theme::getEditTheme());
+                }
             }
         }
     }
@@ -234,15 +253,13 @@ class GatewayManager
      */
     protected static function createPartialFromFile($name, $filePath, $themeCode)
     {
-        if (!File::exists($filePath))
-            return;
-
         $partial = Partial::inTheme($themeCode);
+
         $partial->fill([
             'fileName' => $name,
             'markup' => File::get($filePath)
         ]);
+
         $partial->save();
     }
-
 }

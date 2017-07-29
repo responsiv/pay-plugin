@@ -70,7 +70,7 @@ class PaypalStandard extends GatewayBase
     /**
      * Cancel page field options
      */
-    public function getCancelPageOptions($keyValue = -1)
+    public function getCancelPageOptions()
     {
         return Page::getNameList();
     }
@@ -78,8 +78,10 @@ class PaypalStandard extends GatewayBase
     /**
      * Get the URL to Paypal's servers
      */
-    public function getFormAction($host)
+    public function getFormAction()
     {
+        $host = $this->getHostObject();
+
         if ($host->test_mode) {
             return "https://www.sandbox.paypal.com/cgi-bin/webscr";
         }
@@ -98,8 +100,9 @@ class PaypalStandard extends GatewayBase
         return $this->makeAccessPointLink('paypal_standard_ipn');
     }
 
-    public function getHiddenFields($host, $invoice)
+    public function getHiddenFields($invoice)
     {
+        $host = $this->getHostObject();
         $result = [];
 
         /*
@@ -164,7 +167,7 @@ class PaypalStandard extends GatewayBase
         return $result;
     }
 
-    public function processPaymentForm($data, $host, $invoice)
+    public function processPaymentForm($data, $invoice)
     {
         /*
          * We do not need any code here since payments are processed on PayPal server.

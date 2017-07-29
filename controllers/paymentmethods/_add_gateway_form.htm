@@ -16,7 +16,7 @@
                         <?php foreach ($gateways as $gateway): ?>
 
                             <li>
-                                <a href="<?= Backend::URL('responsiv/pay/paymentmethods/create/' . $gateway->alias) ?>">
+                                <a href="<?= Backend::url('responsiv/pay/paymentmethods/create/' . $gateway->alias) ?>">
                                     <h5 class="heading"><?= $gateway->name ?></h5>
                                     <p class="description"><?= $gateway->description ?></p>
                                 </a>
@@ -40,4 +40,3 @@
         </button>
     </div>
 <?= Form::close() ?>
-

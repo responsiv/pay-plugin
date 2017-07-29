@@ -9,6 +9,15 @@ use October\Rain\Database\Model;
  */
 class InvoiceStatusLog extends Model
 {
+    use \October\Rain\Database\Traits\Validation;
+
+    /**
+     * @var array The rules to be applied to the data.
+     */
+    public $rules = [
+        'status' => 'required'
+    ];
+
     /**
      * @var string The database table used by the model.
      */
@@ -32,6 +41,22 @@ class InvoiceStatusLog extends Model
         'invoice' => ['Responsiv\Pay\Models\Invoice', 'push' => false],
     ];
 
+    public function filterFields($fields, $context = null)
+    {
+        if (isset($fields->status) && $this->invoice) {
+            $fields->status->value = $this->invoice->status_id;
+        }
+
+        if (
+            isset($fields->mark_paid) &&
+            $this->invoice &&
+            $this->invoice->isPaymentProcessed()
+        ) {
+            $fields->mark_paid->disabled = true;
+            $fields->mark_paid->value = true;
+        }
+    }
+
     public function getStatusOptions()
     {
         return InvoiceStatus::lists('name', 'id');
@@ -39,11 +64,17 @@ class InvoiceStatusLog extends Model
 
     public static function createRecord($statusId, $invoice, $comment = null)
     {
-        if ($statusId instanceof Model)
-            $statusId = $statusId->getKey();
+        if (is_string($statusId) && !is_numeric($statusId)) {
+            $statusId = InvoiceStatus::findByCode($statusId);
+        }
 
-        if ($invoice->status_id == $statusId)
+        if ($statusId instanceof Model) {
+            $statusId = $statusId->getKey();
+        }
+
+        if (!$statusId || $invoice->status_id == $statusId) {
             return false;
+        }
 
         $previousStatus = $invoice->status_id;
 
@@ -58,11 +89,13 @@ class InvoiceStatusLog extends Model
         /*
          * Extensibility
          */
-        if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
             return false;
+        }
 
-        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false)
+        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
             return false;
+        }
 
         $record->save();
 
@@ -74,10 +107,11 @@ class InvoiceStatusLog extends Model
             'status_updated_at' => Carbon::now()
         ]);
 
-        $statusPaid = InvoiceStatus::getStatusPaid();
+        $statusPaid = InvoiceStatus::findByCode(InvoiceStatus::STATUS_PAID);
 
-        if (!$statusPaid)
+        if (!$statusPaid) {
             return traceLog('Unable to find payment status with paid code');
+        }
 
         // @todo Send email notifications
 
