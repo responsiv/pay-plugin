@@ -53,7 +53,7 @@ class Invoices extends ComponentBase
             throw new ApplicationException('You must be logged in');
         }
 
-        $invoices = InvoiceModel::orderBy('sent_at')
+        $invoices = InvoiceModel::orderBy('sent_at', 'desc')
             ->applyUser($user)
             ->applyNotThrowaway()
             ->get()

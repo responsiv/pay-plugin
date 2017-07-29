@@ -2,6 +2,9 @@
 
 - [Upgrading to 1.1 from 1.0](#upgrade-1.1)
 
+<a name="upgrade-1.1"></a>
+## Upgrading To 1.1
+
 There are some housekeeping items that have been addressed in this version.
 
 The payment gateway partials folder has been renamed from `pay` to `pay-gateway`.

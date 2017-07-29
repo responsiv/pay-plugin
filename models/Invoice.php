@@ -216,7 +216,7 @@ class Invoice extends Model implements InvoiceInterface
         }
 
         if ($this->payment_method && $this->payment_method->invoice_status) {
-            $this->updateInvoiceStatus($invoice->payment_method->invoice_status);
+            $this->updateInvoiceStatus($this->payment_method->invoice_status);
         }
         else {
             $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
