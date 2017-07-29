@@ -326,17 +326,20 @@ class PaypalAdaptive extends GatewayBase
      */
     protected function getDetailedExceptionMessage($ex)
     {
-        if ($ex instanceof \PPConnectionException) {
-            return "Error connecting to " . $ex->getUrl();
+        if ($ex instanceof \PayPal\Exception\PPConnectionException) {
+            return 'Error connecting to ' . $ex->getUrl();
         }
-        elseif ($ex instanceof \PPConfigurationException) {
-            return "Error at $ex->getLine() in $ex->getFile()";
+        elseif ($ex instanceof \PayPal\Exception\PPConfigurationException) {
+            return 'Error at '.$ex->getLine().' in '.$ex->getFile();
         }
-        elseif ($ex instanceof \PPInvalidCredentialException || $ex instanceof \PPMissingCredentialException) {
+        elseif (
+            $ex instanceof \PayPal\Exception\PPInvalidCredentialException ||
+            $ex instanceof \PayPal\Exception\PPMissingCredentialException
+        ) {
             return $ex->errorMessage();
         }
 
-        return "";
+        return 'An unknown error occured in the payment gateway.';
     }
 
     /**
