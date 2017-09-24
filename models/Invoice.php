@@ -85,6 +85,15 @@ class Invoice extends Model implements InvoiceInterface
     // Constructors
     //
 
+    public static function makeThrowaway($user = null)
+    {
+        $invoice = $user === null ? new static : self::makeForUser($user);
+
+        $invoice->is_throwaway = true;
+
+        return $invoice;
+    }
+
     public static function makeForUser($user)
     {
         $invoice = new static;
@@ -208,6 +217,16 @@ class Invoice extends Model implements InvoiceInterface
     //
     // Utils
     //
+
+    /**
+     * Converts a throwaway invoice to a permanent one.
+     * @return void
+     */
+    public function convertToPermanent()
+    {
+        $this->is_throwaway = false;
+        $this->save();
+    }
 
     public function submitManualPayment($comment = null)
     {

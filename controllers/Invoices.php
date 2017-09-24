@@ -30,6 +30,11 @@ class Invoices extends Controller
         BackendMenu::setContext('Responsiv.Pay', 'pay', 'invoices');
     }
 
+    public function listExtendQuery($query)
+    {
+        return $query->applyNotThrowaway();
+    }
+
     public function preview($recordId = null, $context = null)
     {
         $this->bodyClass = 'slim-container';
