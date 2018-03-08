@@ -44,6 +44,33 @@ class Plugin extends PluginBase
     }
 
     /**
+     * Registers any back-end permissions used by this plugin.
+     *
+     * @return array
+     */
+    public function registerPermissions()
+    {
+        return [
+            'responsiv.pay.access_invoices' => [
+                'tab'   => 'Pay',
+                'label' => 'Access invoices'
+            ],
+            'responsiv.pay.manage_taxes' => [
+                'tab'   => 'Pay',
+                'label' => 'Manage taxes'
+            ],
+            'responsiv.pay.manage_gateways' => [
+                'tab'   => 'Pay',
+                'label' => 'Manage gateways'
+            ],
+            'responsiv.pay.access_settings' => [
+                'tab'   => 'Pay',
+                'label' => 'Access settings'
+            ],
+        ];
+    }
+
+    /**
      * Registers any payment gateways implemented in this plugin.
      * The gateways must be returned in the following format:
      * ['className1' => 'alias'],
@@ -69,7 +96,7 @@ class Plugin extends PluginBase
                 'url'         => Backend::url('responsiv/pay/invoices'),
                 'icon'        => 'icon-credit-card',
                 'iconSvg'     => 'plugins/responsiv/pay/assets/images/pay-icon.svg',
-                'permissions' => ['pay.*'],
+                'permissions' => ['responsiv.pay.*'],
                 'order'       => 520,
 
                 'sideMenu' => [
@@ -77,20 +104,20 @@ class Plugin extends PluginBase
                         'label'       => Lang::get('responsiv.pay::lang.menu.invoices'),
                         'icon'        => 'icon-file-text-o',
                         'url'         => Backend::url('responsiv/pay/invoices'),
-                        'permissions' => ['pay.access_invoices'],
+                        'permissions' => ['responsiv.pay.access_invoices'],
                     ],
                     'taxes' => [
                         'label'       => Lang::get('responsiv.pay::lang.menu.tax'),
                         'icon'        => 'icon-table',
                         'url'         => Backend::url('responsiv/pay/taxes'),
-                        'permissions' => ['pay.manage_taxes'],
+                        'permissions' => ['responsiv.pay.manage_taxes'],
                         'order'       => 500,
                     ],
                     'types' => [
                         'label'       => Lang::get('responsiv.pay::lang.menu.gateways'),
                         'icon'        => 'icon-money',
                         'url'         => Backend::url('responsiv/pay/paymentmethods'),
-                        'permissions' => ['pay.manage_gateways'],
+                        'permissions' => ['responsiv.pay.manage_gateways'],
                         'order'       => 510,
                     ],
                 ]
@@ -107,6 +134,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-credit-card',
                 'class'       => 'Responsiv\Pay\Models\Settings',
                 'category'    => Lang::get('responsiv.pay::lang.name'),
+                'permissions' => ['responsiv.pay.access_settings'],
                 'order'       => 520,
             ],
             'invoice_template' => [
@@ -115,6 +143,7 @@ class Plugin extends PluginBase
                 'icon'        => 'icon-file-excel-o',
                 'url'         => Backend::url('responsiv/pay/invoicetemplates'),
                 'category'    => Lang::get('responsiv.pay::lang.name'),
+                'permissions' => ['responsiv.pay.access_settings'],
                 'order'       => 520,
             ]
         ];
