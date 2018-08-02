@@ -355,7 +355,7 @@ class Tax extends Model
 
     protected function getCountryList($term)
     {
-        $result = ['*' => '* - Any country'];
+        $result = ['*' => 'responsiv.pay::lang.options.any_country'];
 
         // The search term functionality is disabled as it's not supported
         // by the Table widget's drop-down processor -ab 2015-01-03
@@ -372,7 +372,7 @@ class Tax extends Model
 
     protected function getStateList($countryCode, $term)
     {
-        $result = ['*' => '* - Any state'];
+        $result = ['*' => 'responsiv.pay::lang.options.any_state'];
 
         if (!$countryCode || $countryCode == '*') {
             return $result;
