@@ -25,4 +25,8 @@ return [
     'profile' => [
         'unset_default' => '":profile" is already default and cannot be unset as default.',
     ],
+    'options' => [
+        'any_country' => '* - Any country',
+        'any_state' => '* - Any state',
+    ],
 ];
