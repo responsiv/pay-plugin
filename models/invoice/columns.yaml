@@ -9,7 +9,7 @@ columns:
         select: name
         sortable: false
         type: partial
-        path: column_status
+        path: $/responsiv/pay/controllers/invoices/_column_status.htm
 
     id:
         label: ID
