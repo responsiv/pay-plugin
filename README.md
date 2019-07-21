@@ -6,6 +6,7 @@ This plugin requires the following plugins:
 
 - [Responsiv.Currency](http://octobercms.com/plugin/responsiv-currency)
 - [RainLab.User](http://octobercms.com/plugin/rainlab-user)
+- [RainLab.UserPlus](http://octobercms.com/plugin/rainlab-userplus)
 - [RainLab.Location](http://octobercms.com/plugin/rainlab-location)
 
 ### Invoices page
