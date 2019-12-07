@@ -24,8 +24,9 @@ tabs:
 
         discount:
             label: Discount (%)
-            type: number
+            type: partial
             tab: Tax & Discounts
+            path: $/responsiv/pay/partials/_percent_field.htm
 
         tax_class:
             label: Tax Class

@@ -8,6 +8,15 @@ use Model;
 class InvoiceItem extends Model
 {
     use \October\Rain\Database\Traits\Sortable;
+    use \October\Rain\Database\Traits\Validation;
+
+    /**
+     * @var array The rules to be applied to the data.
+     */
+    public $rules = [
+        'quantity' => 'required',
+        'price' => 'required'
+    ];
 
     /**
      * @var string The database table used by the model.
