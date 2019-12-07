@@ -51,9 +51,7 @@ class InvoiceItem extends Model
      */
     public function calculateTotals()
     {
-        
-        $discountAmount = $this->price / 100;
-        $discountAmount = $discountAmount * $this->discount;
+        $discountAmount = $this->price * $this->discount;
         $this->subtotal = ($this->price - $discountAmount) * $this->quantity;
 
         $taxClass = $this->getTaxClass();
