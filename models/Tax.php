@@ -361,7 +361,7 @@ class Tax extends Model
         // by the Table widget's drop-down processor -ab 2015-01-03
         //$countries = Country::searchWhere($term, ['name', 'code'])
 
-        $countries = Country::limit(10)->lists('name', 'code');
+        $countries = Country::isEnabled()->lists('name', 'code');
 
         foreach ($countries as $code => $name) {
             $result[$code] = $code .' - ' . $name;

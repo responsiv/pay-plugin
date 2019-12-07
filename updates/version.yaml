@@ -15,3 +15,5 @@
 1.1.1:
     - Added a throwaway flag to invoices.
     - add_invoice_throwaway_flag.php
+1.1.2:
+    - Fix issue with countries in Tax class
