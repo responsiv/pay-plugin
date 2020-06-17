@@ -287,7 +287,7 @@ class Invoice extends Model implements InvoiceInterface
         $subtotal = 0;
         foreach ($items as $item) {
             $subtotal += $item->subtotal;
-            $discount += $item->discount;
+            $discount += $item->discount * $item->price;
         }
 
         /*
