@@ -1,7 +1,7 @@
 {
-    "name": "responsiv/pay",
+    "name": "responsiv/pay-plugin",
     "type": "october-plugin",
-    "description": "Payment plugin for OctoberCMS",
+    "description": "Payment plugin for October CMS",
     "homepage": "http://octobercms.com",
     "keywords": ["october", "cms", "responsiv", "payment", "gateway"],
     "authors": [
