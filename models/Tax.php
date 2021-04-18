@@ -183,6 +183,10 @@ class Tax extends Model
 
         $rate = null;
         foreach ($this->rates as $row) {
+            // Minimum requirements, need to see a country at least
+            if (!array_key_exists('country', $row)) {
+                continue;
+            }
 
             $taxPriority = isset($row['priority']) ? $row['priority'] : 1;
             if (in_array($taxPriority, $ignoredPriorities)) {
@@ -197,7 +201,7 @@ class Tax extends Model
                 continue;
             }
 
-            $rowZip = isset($row['zip']) && strlen($row['zip']) 
+            $rowZip = isset($row['zip']) && strlen($row['zip'])
                 ? str_replace(' ', '', $row['zip'])
                 : '*';
 
