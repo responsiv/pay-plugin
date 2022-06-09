@@ -4,18 +4,18 @@
 
 columns:
     id:
-        label: responsive.pay::lang.invoice_status_log.id
+        label: responsiv.pay::lang.invoice_status_log.id
         invisible: true
 
     status:
-        label: responsive.pay::lang.invoice_status_log.status
+        label: responsiv.pay::lang.invoice_status_log.status
         relation: status
         select: name
         sortable: false
 
     created_at:
-        label: responsive.pay::lang.invoice_status_log.created_at
+        label: responsiv.pay::lang.invoice_status_log.created_at
         type: datetime
 
     comment:
-        label: responsive.pay::lang.invoice_status_log.comment
+        label: responsiv.pay::lang.invoice_status_log.comment
