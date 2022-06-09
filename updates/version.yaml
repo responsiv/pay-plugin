@@ -19,5 +19,5 @@
 1.1.3: Minor fix in discount calculation
 1.1.4: Discount field now displays the proper (%) figure but stores as a decimal
 1.2.0:
-    - Add VAT ID to invoices
+    - Add VAT ID to invoices, translate models and add Polish translation
     - add_vat_id_to_invoice_contacts.php
