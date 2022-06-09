@@ -5,30 +5,30 @@
 tabs:
     fields:
         is_enabled:
-            label: Enabled
+            label: responsiv.pay::lang.payment_method.is_enabled
             type: checkbox
-            tab: General
+            tab: responsiv.pay::lang.payment_method.general_tab
 
         name:
-            label: Name
-            tab: General
+            label: responsiv.pay::lang.payment_method.name
+            tab: responsiv.pay::lang.payment_method.general_tab
             span: auto
-            comment: The name to display this payment type on the front-end.
-            
+            comment: responsiv.pay::lang.payment_method.name_comment
+
         code:
-            label: Code
+            label: responsiv.pay::lang.payment_method.code
             span: auto
-            tab: General
-            comment: The unique code as an identifier of this payment type.
+            tab: responsiv.pay::lang.payment_method.general_tab
+            comment: responsiv.pay::lang.payment_method.code_comment
 
         description:
-            label: Description
+            label: responsiv.pay::lang.payment_method.description
             type: textarea
             size: small
-            tab: General
-            comment: An optional description for this payment type.
+            tab: responsiv.pay::lang.payment_method.general_tab
+            comment: responsiv.pay::lang.payment_method.description_comment
 
         countries:
             type: relation
-            commentAbove: Restrict payment type to selected countries. If none are selected the payment gateway is applicable to all countries.
-            tab: Countries
+            commentAbove: responsiv.pay::lang.payment_method.countries_comment
+            tab: responsiv.pay::lang.payment_method.countries_tab

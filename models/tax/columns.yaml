@@ -4,15 +4,15 @@
 
 columns:
     id:
-        label: ID
+        label: responsiv.pay::lang.tax.id
         invisible: true
 
     name:
-        label: Class Name
+        label: responsiv.pay::lang.tax.name
 
     description:
-        label: Description
+        label: responsiv.pay::lang.tax.description
 
     is_default:
-        label: Default
+        label: responsiv.pay::lang.tax.is_default
         type: switch
