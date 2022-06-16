@@ -4,11 +4,11 @@
 
 columns:
     payment_method_name:
-        label: Gateway
+        label: responsiv.pay::lang.invoice_type_log.payment_method_name
 
     message:
-        label: Message
+        label: responsiv.pay::lang.invoice_type_log.message
 
     created_at:
-        label: Recorded
+        label: responsiv.pay::lang.invoice_type_log.created_at
         type: datetime

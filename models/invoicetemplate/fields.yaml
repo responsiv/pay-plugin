@@ -7,15 +7,15 @@ tabs:
 
         # Reserved for future use
         name:
-            label: Name
-            tab: Invoice
+            label: responsiv.pay::lang.invoice_template.name
+            tab: responsiv.pay::lang.invoice_template.invoice_tab
             span: left
             cssClass: hidden
 
         # Reserved for future use
         code:
-            label: Code
-            tab: Invoice
+            label: responsiv.pay::lang.invoice_template.code
+            tab: responsiv.pay::lang.invoice_template.invoice_tab
             span: right
             hidden: true
             cssClass: hidden
@@ -23,12 +23,12 @@ tabs:
         content_html:
             type: codeeditor
             size: giant
-            tab: HTML
+            tab: responsiv.pay::lang.invoice_template.html_tab
             language: html
 
         content_css:
             type: codeeditor
             size: giant
-            tab: CSS
+            tab: responsiv.pay::lang.invoice_template.css_tab
             language: css
 

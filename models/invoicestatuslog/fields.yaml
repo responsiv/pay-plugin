@@ -4,17 +4,17 @@
 
 fields:
     status:
-        label: New Status
+        label: responsiv.pay::lang.invoice_status_log.status
         type: dropdown
-        emptyOption: - select a status -
+        emptyOption: responsiv.pay::lang.invoice_status_log.status_empty
 
     comment:
-        label: Comment
+        label: responsiv.pay::lang.invoice_status_log.comment
         type: textarea
         size: small
 
     mark_paid:
-        label: Mark as payment received
-        comment: Use this if a manual payment has been received from the customer.
+        label: responsiv.pay::lang.invoice_status_log.mark_paid
+        comment: responsiv.pay::lang.invoice_status_log.mark_paid_comment
         type: checkbox
         context: create

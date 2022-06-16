@@ -4,7 +4,7 @@
 
 columns:
     status_name:
-        label: Status
+        label: responsiv.pay::lang.invoice.status_name
         relation: status
         select: name
         sortable: false
@@ -12,92 +12,92 @@ columns:
         path: $/responsiv/pay/controllers/invoices/_column_status.htm
 
     id:
-        label: ID
+        label: responsiv.pay::lang.invoice.id
         type: partial
         path: $/responsiv/pay/controllers/invoices/_column_id.htm
         searchable: true
         width: 100px
 
     user_ip:
-        label: IP Address
+        label: responsiv.pay::lang.invoice.user_ip
         invisible: true
 
     email:
-        label: Email
+        label: responsiv.pay::lang.invoice.email
         searchable: true
 
     first_name:
-        label: First name
+        label: responsiv.pay::lang.invoice.first_name
         searchable: true
         invisible: true
 
     last_name:
-        label: Last name
+        label: responsiv.pay::lang.invoice.last_name
         searchable: true
         invisible: true
 
     processed_at:
-        label: Processed at
+        label: responsiv.pay::lang.invoice.processed_at
         type: date
         invisible: true
 
     status_updated_at:
-        label: Status updated
+        label: responsiv.pay::lang.invoice.status_updated_at
         type: date
         invisible: true
 
     sent_at:
-        label: Date
+        label: responsiv.pay::lang.invoice.sent_at
         type: date
 
     due_at:
-        label: Due date
+        label: responsiv.pay::lang.invoice.due_at
         type: date
 
     total:
-        label: Total
+        label: responsiv.pay::lang.invoice.total
         searchable: true
 
     subtotal:
-        label: Subtotal
+        label: responsiv.pay::lang.invoice.subtotal
         invisible: true
 
     phone:
-        label: Phone
+        label: responsiv.pay::lang.invoice.phone
         invisible: true
 
     company:
-        label: Company
+        label: responsiv.pay::lang.invoice.company
         invisible: true
 
     street_addr:
-        label: Address
+        label: responsiv.pay::lang.invoice.street_addr
         invisible: true
 
     city:
-        label: City
+        label: responsiv.pay::lang.invoice.city
         invisible: true
 
     zip:
-        label: Zip
+        label: responsiv.pay::lang.invoice.zip
         invisible: true
 
     state:
-        label: State
+        label: responsiv.pay::lang.invoice.state
         relation: state
         select: name
         sortable: false
         invisible: true
 
     country:
-        label: Country
+        label: responsiv.pay::lang.invoice.country
         relation: country
         select: name
         sortable: false
         invisible: true
 
     payment_method:
-        label: Gateway
+        label: responsiv.pay::lang.invoice.payment_method
         relation: payment_method
         select: name
         sortable: false
