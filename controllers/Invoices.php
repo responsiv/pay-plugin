@@ -45,7 +45,7 @@ class Invoices extends Controller
             $this->vars['currency'] = CurrencyModel::findByCode($invoice->currency);
         }
         catch (Exception $ex) {
-            $this->controller->handleError($ex);
+            $this->handleError($ex);
         }
 
         return $this->asExtension('FormController')->preview($recordId, $context);
