@@ -59,6 +59,8 @@ return [
         'status_updated_at' => 'Status updated',
         'total' => 'Total',
         'subtotal' => 'Subtotal',
+        'currency' => 'Currency',
+        'currency_default' => 'Default currency',
     ],
     'profile' => [
         'unset_default' => '":profile" is already default and cannot be unset as default.',

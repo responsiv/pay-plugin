@@ -2,11 +2,12 @@
 
 use Flash;
 use Backend;
-use Redirect;
+use Exception;
 use BackendMenu;
 use Backend\Classes\Controller;
-use Responsiv\Currency\Models\Currency as CurrencyModel;
+use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceStatusLog;
+use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * Invoices Back-end Controller
@@ -38,7 +39,15 @@ class Invoices extends Controller
     public function preview($recordId = null, $context = null)
     {
         $this->bodyClass = 'slim-container';
-        $this->vars['currency'] = CurrencyModel::getPrimary();
+
+        try {
+            $invoice = Invoice::find($recordId);
+            $this->vars['currency'] = CurrencyModel::findByCode($invoice->currency);
+        }
+        catch (Exception $ex) {
+            $this->controller->handleError($ex);
+        }
+
         return $this->asExtension('FormController')->preview($recordId, $context);
     }
 

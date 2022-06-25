@@ -1,18 +1,17 @@
 <?php namespace Responsiv\Pay\Models;
 
-use Db;
-use Model;
 use Event;
+use Model;
 use Request;
+use Exception;
 use Carbon\Carbon;
 use Cms\Classes\Controller;
-use Responsiv\Currency\Facades\Currency as CurrencyHelper;
-use Responsiv\Pay\Classes\TaxLocation;
-use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
-use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
-use Exception;
+use Responsiv\Pay\Classes\TaxLocation;
+use Responsiv\Currency\Models\Currency;
+use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 
 /**
  * Invoice Model
@@ -181,6 +180,15 @@ class Invoice extends Model implements InvoiceInterface
     // Options
     //
 
+    public function getCurrencyOptions()
+    {
+        $emptyOption = [
+            '' => 'responsiv.pay::lang.invoice.currency_default'
+        ];
+
+        return $emptyOption + Currency::listAvailable();
+    }
+
     public function getCountryOptions()
     {
         return Country::getNameList();
@@ -207,6 +215,11 @@ class Invoice extends Model implements InvoiceInterface
         }
 
         return $this->due_at->isPast() || $this->due_at->isToday();
+    }
+
+    public function getCurrencyAttribute()
+    {
+        return $this->attributes['currency'] ?? (Currency::getPrimary())->currency_code;
     }
 
     public function getStatusCodeAttribute()
@@ -520,7 +533,7 @@ class Invoice extends Model implements InvoiceInterface
             'total'    => $this->total,
             'subtotal' => $this->subtotal,
             'tax'      => $this->tax,
-            'currency' => CurrencyHelper::primaryCode(),
+            'currency' => $this->currency,
         ];
 
         return $details;
