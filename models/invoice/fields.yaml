@@ -17,16 +17,6 @@ tabs:
         #     tab: responsiv.pay::lang.invoice.invoice_details_tab
         #     span: auto
 
-        user:
-            label: responsiv.pay::lang.invoice.user
-            type: recordfinder
-            list: ~/plugins/rainlab/user/models/user/columns.yaml
-            prompt: responsiv.pay::lang.invoice.user_prompt
-            nameFrom: name
-            descriptionFrom: email
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
-            span: left
-
         sent_at:
             label: responsiv.pay::lang.invoice.sent_at
             type: datepicker
@@ -41,6 +31,22 @@ tabs:
             mode: date
             span: auto
             tab: responsiv.pay::lang.invoice.invoice_details_tab
+
+        currency:
+            label: responsiv.pay::lang.invoice.currency
+            type: dropdown
+            span: auto
+            tab: responsiv.pay::lang.invoice.invoice_details_tab
+
+        user:
+            label: responsiv.pay::lang.invoice.user
+            type: recordfinder
+            list: ~/plugins/rainlab/user/models/user/columns.yaml
+            prompt: responsiv.pay::lang.invoice.user_prompt
+            nameFrom: name
+            descriptionFrom: email
+            tab: responsiv.pay::lang.invoice.customer_details_tab
+            span: full
 
         first_name:
             label: responsiv.pay::lang.invoice.first_name
