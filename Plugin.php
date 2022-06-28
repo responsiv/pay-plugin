@@ -81,10 +81,10 @@ class Plugin extends PluginBase
         return [
             \Responsiv\Pay\PaymentTypes\PaypalStandard::class => 'paypal-standard',
             \Responsiv\Pay\PaymentTypes\PaypalAdaptive::class => 'paypal-adaptive',
-            \Responsiv\Pay\PaymentTypes\PaypalPro::class      => 'paypal-pro',
+            // \Responsiv\Pay\PaymentTypes\PaypalPro::class      => 'paypal-pro',
             \Responsiv\Pay\PaymentTypes\Offline::class        => 'offline',
             \Responsiv\Pay\PaymentTypes\Skrill::class         => 'skrill',
-            \Responsiv\Pay\PaymentTypes\Stripe::class         => 'stripe',
+            // \Responsiv\Pay\PaymentTypes\Stripe::class         => 'stripe',
         ];
     }
 
