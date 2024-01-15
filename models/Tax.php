@@ -400,4 +400,15 @@ class Tax extends Model
 
         return $result;
     }
+
+    /**
+     * Clears the model cache on attributes.
+     *
+     * @return void
+     */
+    public static function clearCache(): void
+    {
+        self::$defaultCache = null;
+        self::$cache = [];
+    }
 }
