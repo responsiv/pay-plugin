@@ -1,0 +1,15 @@
+{
+  "Pay": "Оплата",
+  "Invoicing and Accounting": "Выставление счетов и бухгалтерия",
+  "Payments": "Платежи",
+  "Invoices": "Счета",
+  "Tax Rules": "Налоговые ставки",
+  "Gateways": "Шлюзы",
+  "Payment settings": "Настройка платежей",
+  "Manage payment configuration": "Управление конфигурацией",
+  "Invoice template": "Шаблон счета",
+  "Customize the template used for invoices.": "Управление шаблоном выставления счетов",
+  "Change Invoice Status": "Изменить статус счета",
+  "Current status: :name": "Текущий статус: :name",
+  "Add Payment Method": "Добавить метод оплаты"
+}

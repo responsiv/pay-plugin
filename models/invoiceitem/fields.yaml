@@ -5,37 +5,37 @@
 tabs:
     fields:
         description:
-            label: responsiv.pay::lang.invoice_item.description
+            label: Description
             type: textarea
             size: tiny
-            tab: responsiv.pay::lang.invoice_item.line_item_tab
+            tab: Line item
 
         quantity:
-            label: responsiv.pay::lang.invoice_item.quantity
+            label: Quantity
             type: number
             span: left
-            tab: responsiv.pay::lang.invoice_item.line_item_tab
+            tab: Line item
 
         price:
-            label: responsiv.pay::lang.invoice_item.price
+            label: Unit price
             type: number
             span: right
-            tab: responsiv.pay::lang.invoice_item.line_item_tab
+            tab: Line item
 
         discount:
-            label: responsiv.pay::lang.invoice_item.discount
+            label: Discount (%)
             type: partial
-            tab: responsiv.pay::lang.invoice_item.tax_discounts_tab
+            tab: Tax & Discounts
             path: $/responsiv/pay/partials/_percent_field.htm
 
         tax_class:
-            label: responsiv.pay::lang.invoice_item.tax_class
+            label: Tax Class
             type: relation
-            tab: responsiv.pay::lang.invoice_item.tax_discounts_tab
-            emptyOption: responsiv.pay::lang.invoice_item.tax_class_empty
+            tab: Tax & Discounts
+            emptyOption: -- use default --
 
         is_tax_exempt:
-            label: responsiv.pay::lang.invoice_item.is_tax_exempt
-            comment: responsiv.pay::lang.invoice_item.is_tax_exempt_comment
+            label: Tax exempt
+            comment: Tick this checkbox if the tax should not be applied to this line item
             type: checkbox
-            tab: responsiv.pay::lang.invoice_item.tax_discounts_tab
+            tab: Tax & Discounts

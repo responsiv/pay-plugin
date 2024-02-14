@@ -6,13 +6,13 @@ tabs:
     fields:
 
         invoice_prefix:
-            label: responsiv.pay::lang.settings.invoice_prefix
-            comment: responsiv.pay::lang.settings.invoice_prefix_comment
-            tab: responsiv.pay::lang.settings.invoices_tab
+            label: Invoice prefix
+            comment: Enter a value to prefix all invoice numbers.
+            tab: Invoices
             span: auto
 
         new_invoice_number:
-            label: responsiv.pay::lang.settings.new_invoice_number
-            comment: responsiv.pay::lang.settings.new_invoice_number_comment
-            tab: responsiv.pay::lang.settings.invoices_tab
+            label: New invoice number
+            comment: Use this to set the next invoice number, must be more than the current invoice number.
+            tab: Invoices
             span: auto

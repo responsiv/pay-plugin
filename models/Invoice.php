@@ -183,7 +183,7 @@ class Invoice extends Model implements InvoiceInterface
     public function getCurrencyOptions()
     {
         $emptyOption = [
-            '' => 'responsiv.pay::lang.invoice.currency_default'
+            '' => "Default currency"
         ];
 
         return $emptyOption + Currency::listAvailable();

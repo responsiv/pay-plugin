@@ -1,6 +1,7 @@
 <?php namespace Responsiv\Pay\Models;
 
 use October\Rain\Database\Model;
+use ValidationException;
 
 /**
  * User Payment Profile Model
@@ -47,7 +48,7 @@ class UserProfile extends Model
             $this->makePrimary();
 
             if (!$this->is_primary) {
-                throw new ValidationException(['is_primary' => Lang::get('responsiv.pay::lang.profile.unset_default', ['profile'=>$this->card_last_four])]);
+                throw new ValidationException(['is_primary' => __('":profile" is already default and cannot be unset as default.', ['profile'=>$this->card_last_four])]);
             }
         }
     }

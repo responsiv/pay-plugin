@@ -1,0 +1,15 @@
+{
+  "Pay": "الدفع",
+  "Invoicing and Accounting": "فواتير ومحاسبة",
+  "Payments": "المدفوعات",
+  "Invoices": "الفواتير",
+  "Tax Rules": "الجداول الضريبية",
+  "Gateways": "خدمة الدفع الالكتروني",
+  "Payment settings": "إعدادات الدفع",
+  "Manage payment configuration": "إدارة التكوين دفع",
+  "Invoice template": "قالب الفواتير",
+  "Customize the template used for invoices.": "تعديل القالب المستخدم للفواتير.",
+  "Change Invoice Status": "تغيير مرتبة الفاتورة",
+  "Current status: :name": ":name :المرتبة الحالية",
+  "Add Payment Method": "أضف طريقة الدفع"
+}

@@ -4,16 +4,16 @@
 
 columns:
     description:
-        label: responsiv.pay::lang.invoice_item.description
+        label: Description
 
     quantity:
-        label: responsiv.pay::lang.invoice_item.quantity
+        label: Qty
 
     price:
-        label: responsiv.pay::lang.invoice_item.price
+        label: Unit price
 
     discount:
-        label: responsiv.pay::lang.invoice_item.discount
+        label: Discount (%)
 
     total:
-        label: responsiv.pay::lang.invoice_item.total
+        label: Amount

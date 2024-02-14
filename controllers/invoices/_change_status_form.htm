@@ -1,7 +1,7 @@
 <?= Form::open(['id' => 'disableForm']) ?>
     <div class="modal-header flex-row-reverse">
         <button type="button" class="close" data-dismiss="popup">&times;</button>
-        <h4 class="modal-title"><?= e(trans('responsiv.pay::lang.invoice.change_status_title')) ?></h4>
+        <h4 class="modal-title"><?= __("Change Invoice Status") ?></h4>
     </div>
     <div class="modal-body">
 
@@ -9,7 +9,7 @@
             <p class="flash-message static error"><?= $fatalError ?></p>
         <?php endif ?>
 
-        <p><?= e(trans('responsiv.pay::lang.invoice.current_status_name', ['name'=> $currentStatus])) ?></p>
+        <p><?= e(__("Current status: :name", ['name'=> $currentStatus])) ?></p>
 
         <div class="form-preview">
             <?= $widget->render() ?>

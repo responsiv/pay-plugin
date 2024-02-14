@@ -5,115 +5,114 @@
 tabs:
     fields:
         # payment_method:
-        #     label: responsiv.pay::lang.invoice.payment_method
+        #     label: Payment method
         #     type: relation
-        #     tab: responsiv.pay::lang.invoice.invoice_details_tab
+        #     tab: Invoice details
         #     span: left
 
         # is_tax_exempt:
-        #     label: responsiv.pay::lang.invoice.is_tax_exempt
+        #     label: Is tax exempt
         #     comment: Tick this checkbox if the tax should not be applied to this invoice
         #     type: checkbox
-        #     tab: responsiv.pay::lang.invoice.invoice_details_tab
+        #     tab: Invoice details
         #     span: auto
 
         sent_at:
-            label: responsiv.pay::lang.invoice.sent_at
+            label: Sent at
             type: datepicker
             mode: date
             span: left
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
+            tab: Invoice details
             context: update
 
         due_at:
-            label: responsiv.pay::lang.invoice.due_at
+            label: Due at
             type: datepicker
             mode: date
             span: auto
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
+            tab: Invoice details
 
         currency:
-            label: responsiv.pay::lang.invoice.currency
+            label: Currency
             type: dropdown
             span: auto
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
+            tab: Invoice details
 
         user:
-            label: responsiv.pay::lang.invoice.user
+            label: User
             type: recordfinder
             list: ~/plugins/rainlab/user/models/user/columns.yaml
-            prompt: responsiv.pay::lang.invoice.user_prompt
+            prompt: Click the %s button to find a user
             nameFrom: name
             descriptionFrom: email
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            tab: Customer details
             span: full
 
         first_name:
-            label: responsiv.pay::lang.invoice.first_name
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: First name
+            tab: Customer details
             span: left
             dependsOn: user
 
         last_name:
-            label: responsiv.pay::lang.invoice.last_name
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Last name
+            tab: Customer details
             span: right
             dependsOn: user
 
         email:
-            label: responsiv.pay::lang.invoice.email
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Email
+            tab: Customer details
             dependsOn: user
             span: left
 
         phone:
-            label: responsiv.pay::lang.invoice.phone
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Phone
+            tab: Customer details
             span: right
             dependsOn: user
 
         company:
-            label: responsiv.pay::lang.invoice.company
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Company
+            tab: Customer details
             span: left
             dependsOn: user
 
         vat_id:
-            label: responsiv.pay::lang.invoice.vat_id
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Vat ID
+            tab: Customer details
             span: right
             dependsOn: user
 
         city:
-            label: responsiv.pay::lang.invoice.city
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            label: City
+            tab: Billing address
             span: left
             dependsOn: user
 
         zip:
-            label: responsiv.pay::lang.invoice.zip
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            label: Zip
+            tab: Billing address
             span: right
             dependsOn: user
 
         street_addr:
-            label: responsiv.pay::lang.invoice.street_addr
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            label: Street Address
+            tab: Billing address
             dependsOn: user
 
         country:
-            label: responsiv.pay::lang.invoice.country
+            label: Country
             type: dropdown
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            tab: Billing address
             span: left
             dependsOn: user
-            placeholder: responsiv.pay::lang.invoice.country_placeholder
+            placeholder: -- select country --
 
         state:
-            label: responsiv.pay::lang.invoice.state
+            label: State
             type: dropdown
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            tab: Billing address
             span: right
             dependsOn: [country, user]
-            placeholder: responsiv.pay::lang.invoice.state_placeholder
-
+            placeholder: -- select state --

@@ -6,24 +6,24 @@ tabs:
     fields:
 
         name:
-            label: responsiv.pay::lang.tax.name
-            tab: responsiv.pay::lang.tax.tax_table_tab
+            label: Class Name
+            tab: Tax Table
 
         description:
-            label: responsiv.pay::lang.tax.description
-            tab: responsiv.pay::lang.tax.tax_table_tab
+            label: Description
+            tab: Tax Table
             type: textarea
             size: small
-            commentAbove: responsiv.pay::lang.tax.description_comment
+            commentAbove: Providing a description is optional.
 
         is_default:
-            label: responsiv.pay::lang.tax.is_default
+            label: Default
             type: checkbox
-            tab: responsiv.pay::lang.tax.tax_table_tab
-            comment: responsiv.pay::lang.tax.is_default_comment
+            tab: Tax Table
+            comment: Place a tick in this checkbox if you want to use this tax table by default.
 
         rates:
-            tab: responsiv.pay::lang.tax.rates_tab
+            tab: Rates
             type: datatable
             size: large
             # sortable: true
@@ -33,41 +33,40 @@ tabs:
             # exportFileName: tax-table
             columns:
                 country:
-                    title: responsiv.pay::lang.tax.rates_country
+                    title: Country Code
                     type: dropdown
                     strict: false
 
                 state:
-                    title: responsiv.pay::lang.tax.rates_state
+                    title: State Code
                     type: dropdown
                     strict: false
                     dependsOn: country
 
                 zip:
-                    title: responsiv.pay::lang.tax.rates_zip
+                    title: Zip
                     width: 100px
 
                 city:
-                    title: responsiv.pay::lang.tax.rates_city
+                    title: City
 
                 rate:
-                    title: responsiv.pay::lang.tax.rates_rate
+                    title: Rate %
                     width: 80px
                     align: right
                     # type: number
 
                 priority:
-                    title: responsiv.pay::lang.tax.rates_priority
+                    title: Priority
                     width: 80px
                     align: right
                     # type: number
 
                 tax_name:
-                    title: responsiv.pay::lang.tax.rates_tax_name
+                    title: Tax name
                     width: 100px
 
                 is_compound:
-                    title: responsiv.pay::lang.tax.rates_is_compound
+                    title: Compound
                     width: 100px
                     type: checkbox
-
