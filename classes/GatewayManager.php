@@ -12,7 +12,7 @@ use Responsiv\Pay\Models\PaymentMethod as TypeModel;
  * Manages payment gateways
  *
  * @package Responsiv.Pay
- * @author Responsiv Internet
+ * @author Responsiv Software
  */
 class GatewayManager
 {
