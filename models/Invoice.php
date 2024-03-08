@@ -11,12 +11,11 @@ use RainLab\Location\Models\Country;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Currency\Models\Currency;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
-use Responsiv\Pay\Interfaces\Invoice as InvoiceInterface;
 
 /**
  * Invoice Model
  */
-class Invoice extends Model implements InvoiceInterface
+class Invoice extends Model
 {
     use \Responsiv\Pay\Traits\UrlMaker;
     use \October\Rain\Database\Traits\Purgeable;

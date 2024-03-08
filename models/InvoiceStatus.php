@@ -1,12 +1,11 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use Responsiv\Pay\Interfaces\InvoiceStatus as InvoiceStatusInterface;
 
 /**
  * InvoiceStatus Model
  */
-class InvoiceStatus extends Model implements InvoiceStatusInterface
+class InvoiceStatus extends Model
 {
     const STATUS_DRAFT = 'draft';
     const STATUS_APPROVED = 'approved';
