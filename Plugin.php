@@ -10,6 +10,9 @@ use System\Classes\SettingsManager;
  */
 class Plugin extends PluginBase
 {
+    /**
+     * @var array require plugins
+     */
     public $require = [
         'RainLab.User',
         'RainLab.UserPlus',
@@ -18,9 +21,7 @@ class Plugin extends PluginBase
     ];
 
     /**
-     * Returns information about this plugin.
-     *
-     * @return array
+     * pluginDetails returns information about this plugin.
      */
     public function pluginDetails()
     {
@@ -33,6 +34,32 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * register the service provider.
+     */
+    public function register()
+    {
+        $this->registerSingletons();
+    }
+
+    /**
+     * boot the module events.
+     */
+    public function boot()
+    {
+    }
+
+    /**
+     * registerSingletons
+     */
+    protected function registerSingletons()
+    {
+        $this->app->singleton('pay.gateways', \Responsiv\Pay\Classes\GatewayManager::class);
+    }
+
+    /**
+     * registerComponents
+     */
     public function registerComponents()
     {
         return [
@@ -87,6 +114,9 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * registerNavigation
+     */
     public function registerNavigation()
     {
         return [
@@ -124,6 +154,9 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * registerSettings
+     */
     public function registerSettings()
     {
         return [

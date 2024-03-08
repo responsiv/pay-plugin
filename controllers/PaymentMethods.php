@@ -3,28 +3,51 @@
 use File;
 use BackendMenu;
 use Backend\Classes\Controller;
-use System\Classes\SettingsManager;
 use Responsiv\Pay\Classes\GatewayManager;
-use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use ApplicationException;
 use Exception;
 
 /**
- * Payment Methods Back-end Controller
+ * PaymentMethods Backend Controller
  */
 class PaymentMethods extends Controller
 {
+    /**
+     * @var array implement behaviors in this controller.
+     */
     public $implement = [
         \Backend\Behaviors\FormController::class,
-        \Backend\Behaviors\ListController::class
+        \Backend\Behaviors\ListController::class,
     ];
 
+    /**
+     * @var string formConfig file
+     */
     public $formConfig = 'config_form.yaml';
+
+    /**
+     * @var string listConfig file
+     */
     public $listConfig = 'config_list.yaml';
 
-    public $gatewayAlias;
-    protected $gatewayClass;
+    /**
+     * @var string driverAlias
+     */
+    public $driverAlias;
 
+    /**
+     * @var string driverClass
+     */
+    protected $driverClass;
+
+    /**
+     * @var array required permissions
+     */
+    public $requiredPermissions = [];
+
+    /**
+     * __construct
+     */
     public function __construct()
     {
         parent::__construct();
