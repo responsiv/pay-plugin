@@ -1,0 +1,15 @@
+# ===================================
+#  Payment Field Definitions
+# ===================================
+
+fields:
+    payment_instructions:
+        label: Payment Instructions
+        type: richeditor
+        tab: Configuration
+
+    suppress_new_notification:
+        label: Suppress New Order Notification
+        comment: Check this to disable new order notifications that use this payment method.
+        type: checkbox
+        tab: Configuration

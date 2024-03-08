@@ -1,0 +1,34 @@
+# ===================================
+#  Payment Field Definitions
+# ===================================
+
+fields:
+    test_mode:
+        label: Sandbox mode
+        type: switch
+        tab: Configuration
+        comment: Use the PayPal Sandbox Test Environment to try out payments using this gateway.
+
+    business_email:
+        label: Business email
+        comment: PayPal business account email address.
+        tab: Configuration
+
+    pdt_token:
+        label: PDT token
+        comment: PayPal Payment Data Transfer token.
+        tab: Configuration
+
+    cancel_page:
+        label: Cancel page
+        comment: "Page to which the user's browser is redirected if payment is cancelled."
+        tab: Configuration
+        span: auto
+        type: dropdown
+
+    order_status:
+        label: Order status
+        comment: Select status to assign the order in case of successful payment.
+        tab: Configuration
+        span: auto
+        type: dropdown

@@ -72,20 +72,18 @@ class Plugin extends PluginBase
     }
 
     /**
-     * Registers any payment gateways implemented in this plugin.
+     * registerPaymentTypes registers any payment gateways implemented in this plugin.
+     *
      * The gateways must be returned in the following format:
-     * ['className1' => 'alias'],
-     * ['className2' => 'anotherAlias']
+     *
+     * [DriverName1::class => 'alias'],
+     * [DriverName2::class => 'anotherAlias']
      */
-    public function registerPaymentGateways()
+    public function registerPaymentTypes()
     {
         return [
-            \Responsiv\Pay\PaymentTypes\PaypalStandard::class => 'paypal-standard',
-            \Responsiv\Pay\PaymentTypes\PaypalAdaptive::class => 'paypal-adaptive',
-            // \Responsiv\Pay\PaymentTypes\PaypalPro::class      => 'paypal-pro',
-            \Responsiv\Pay\PaymentTypes\Offline::class        => 'offline',
-            \Responsiv\Pay\PaymentTypes\Skrill::class         => 'skrill',
-            // \Responsiv\Pay\PaymentTypes\Stripe::class         => 'stripe',
+            \Responsiv\Pay\PaymentTypes\CustomPayment::class => 'custom',
+            \Responsiv\Pay\PaymentTypes\PayPalRestPayment::class => 'paypal-rest',
         ];
     }
 

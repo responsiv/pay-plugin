@@ -1,5 +1,5 @@
 # ===================================
-#  Gateway Field Definitions
+#  Payment Field Definitions
 # ===================================
 
 fields:
@@ -21,14 +21,14 @@ fields:
 
     cancel_page:
         label: Cancel page
-        comment: Page to which the user’s browser is redirected if payment is cancelled.
+        comment: "Page to which the user's browser is redirected if payment is cancelled."
         tab: Configuration
         span: auto
         type: dropdown
 
-    invoice_status:
-        label: Invoice status
-        comment: Select status to assign the invoice in case of successful payment.
+    order_status:
+        label: Order status
+        comment: Select status to assign the order in case of successful payment.
         tab: Configuration
         span: auto
         type: dropdown
