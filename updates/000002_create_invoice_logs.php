@@ -12,11 +12,13 @@ return new class extends Migration
             $table->integer('invoice_id')->unsigned()->nullable()->index();
             $table->string('payment_method_name')->nullable();
             $table->boolean('is_success')->default(false);
-            $table->string('message')->nullable();
-            $table->text('raw_response')->nullable();
-            $table->text('request_data')->nullable();
-            $table->text('response_data')->nullable();
-            $table->integer('admin_id')->unsigned()->nullable()->index();
+            $table->text('message')->nullable();
+            $table->mediumText('request_data')->nullable();
+            $table->mediumText('response_data')->nullable();
+            $table->mediumText('card_data')->nullable();
+            $table->mediumText('raw_response')->nullable();
+            $table->bigInteger('updated_user_id')->unsigned()->nullable();
+            $table->bigInteger('created_user_id')->unsigned()->nullable();
             $table->timestamps();
         });
     }

@@ -9,7 +9,6 @@ return new class extends Migration
     {
         Schema::create('responsiv_pay_taxes', function($table)
         {
-            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name')->nullable();
             $table->text('description')->nullable();

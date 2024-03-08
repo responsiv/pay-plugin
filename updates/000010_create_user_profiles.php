@@ -7,9 +7,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('responsiv_pay_user_profiles', function($table)
-        {
-            $table->engine = 'InnoDB';
+        Schema::create('responsiv_pay_user_profiles', function($table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('payment_method_id')->unsigned()->nullable()->index();

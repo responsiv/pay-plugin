@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('config_data')->nullable();
             $table->boolean('is_enabled')->default(false);
-            $table->boolean('is_default')->default(false);
+            $table->boolean('is_enabled_edit')->default(false);
             $table->timestamps();
         });
     }
