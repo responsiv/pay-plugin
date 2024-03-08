@@ -16,6 +16,12 @@ return new class extends Migration
             });
         }
 
+        if (!Schema::hasColumn('responsiv_pay_taxes', 'is_system')) {
+            Schema::table('responsiv_pay_taxes', function(Blueprint $table) {
+                $table->boolean('is_system')->default(false);
+            });
+        }
+
         if (!Schema::hasColumn('responsiv_pay_invoice_logs', 'updated_user_id')) {
             Schema::table('responsiv_pay_invoice_logs', function(Blueprint $table) {
                 $table->mediumText('card_data')->nullable();

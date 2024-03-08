@@ -3,24 +3,21 @@
 # ===================================
 
 tabs:
+    defaultTab: Tax Class
     fields:
-
         name:
-            label: Class Name
-            tab: Tax Table
+            label: Name
 
         description:
             label: Description
-            tab: Tax Table
+            commentAbove: Providing a description here is optional.
             type: textarea
             size: small
-            commentAbove: Providing a description is optional.
 
         is_default:
             label: Default
-            type: checkbox
-            tab: Tax Table
             comment: Place a tick in this checkbox if you want to use this tax table by default.
+            type: checkbox
 
         rates:
             tab: Rates
@@ -33,12 +30,12 @@ tabs:
             # exportFileName: tax-table
             columns:
                 country:
-                    title: Country Code
+                    title: Country
                     type: dropdown
                     strict: false
 
                 state:
-                    title: State Code
+                    title: State
                     type: dropdown
                     strict: false
                     dependsOn: country
@@ -51,7 +48,7 @@ tabs:
                     title: City
 
                 rate:
-                    title: Rate %
+                    title: Rate
                     width: 80px
                     align: right
                     # type: number
@@ -63,7 +60,7 @@ tabs:
                     # type: number
 
                 tax_name:
-                    title: Tax name
+                    title: Tax Name
                     width: 100px
 
                 is_compound:

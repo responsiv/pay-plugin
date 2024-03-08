@@ -8,7 +8,7 @@ use RainLab\Location\Models\Country;
 use Responsiv\Pay\Classes\TaxLocation;
 
 /**
- * TaxClass Model
+ * Tax Model
  *
  * @property int $id
  * @property string $name

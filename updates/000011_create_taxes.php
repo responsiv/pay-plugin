@@ -15,6 +15,7 @@ return new class extends Migration
             $table->mediumText('rates')->nullable();
             $table->string('code', 30)->nullable();
             $table->boolean('is_default')->default(false);
+            $table->boolean('is_system')->default(false);
             $table->timestamps();
         });
     }

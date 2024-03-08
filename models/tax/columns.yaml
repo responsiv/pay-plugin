@@ -8,10 +8,12 @@ columns:
         invisible: true
 
     name:
-        label: Class Name
+        label: Name
+        searchable: true
 
     description:
         label: Description
+        searchable: true
 
     is_default:
         label: Default
