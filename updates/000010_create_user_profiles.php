@@ -12,7 +12,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('payment_method_id')->unsigned()->nullable()->index();
             $table->string('vendor_id')->nullable();
-            $table->text('profile_data')->nullable();
+            $table->mediumText('profile_data')->nullable();
             $table->string('card_brand')->nullable();
             $table->string('card_last_four')->nullable();
             $table->string('card_country')->nullable();

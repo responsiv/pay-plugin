@@ -3,25 +3,49 @@
 use Model;
 
 /**
- * Invoice payment log
+ * InvoiceLog Model
+ *
+ * @property int $id
+ * @property string $payment_method_name
+ * @property bool $is_successful
+ * @property string $message
+ * @property array $request_data
+ * @property array $response_data
+ * @property array $card_data
+ * @property string $raw_response
+ * @property int $invoice_id
+ * @property int $updated_user_id
+ * @property int $created_user_id
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv/pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class InvoiceLog extends Model
 {
+    use \October\Rain\Database\Traits\UserFootprints;
+
     /**
      * @var string The database table used by the model.
      */
     public $table = 'responsiv_pay_invoice_logs';
 
     /**
-     * @var array Guarded fields
-     */
-    protected $guarded = [];
-
-    /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
+     * @var array jsonable attribute names that are json encoded and decoded from the database
      */
     protected $jsonable = ['request_data', 'response_data'];
 
+    /**
+     * @var array belongsTo
+     */
+    public $belongsTo = [
+        'invoice' => [Invoice::class, 'push' => false],
+    ];
+
+    /**
+     * createRecord
+     */
     public static function createRecord($invoice, $message = null, $options = [])
     {
         extract(array_merge([
@@ -47,12 +71,15 @@ class InvoiceLog extends Model
         return $record;
     }
 
+    /**
+     * createManualPayment
+     */
     public static function createManualPayment($invoice, $message = null)
     {
         $record = new self;
         $record->message = $message;
         $record->invoice_id = $invoice->id;
-        $record->payment_method_name = 'Manual payment';
+        $record->payment_method_name = 'Manual Payment';
         $record->is_success = true;
         $record->save();
 

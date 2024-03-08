@@ -4,7 +4,22 @@ use October\Rain\Database\Model;
 use ValidationException;
 
 /**
- * User Payment Profile Model
+ * UserProfile Model
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $payment_method_id
+ * @property string $vendor_id
+ * @property string $profile_data
+ * @property string $card_brand
+ * @property string $card_last_four
+ * @property string $card_country
+ * @property bool $is_primary
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class UserProfile extends Model
 {
@@ -16,7 +31,7 @@ class UserProfile extends Model
     public $table = 'responsiv_pay_user_profiles';
 
     /**
-     * @var array List of attribute names which should be encrypted
+     * @var array encryptable attribute names which should be encrypted
      */
     protected $encryptable = [
         'profile_data',
@@ -26,15 +41,21 @@ class UserProfile extends Model
     ];
 
     /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
+     * @var array jsonable attribute names that are json encoded and decoded from the database
      */
     protected $jsonable = [];
 
+    /**
+     * beforeSave
+     */
     public function beforeSave()
     {
         $this->card_last_four = substr($this->card_last_four, -4);
     }
 
+    /**
+     * afterCreate
+     */
     public function afterCreate()
     {
         if ($this->is_primary) {
@@ -42,6 +63,9 @@ class UserProfile extends Model
         }
     }
 
+    /**
+     * beforeUpdate
+     */
     public function beforeUpdate()
     {
         if ($this->isDirty('is_primary')) {
@@ -54,7 +78,7 @@ class UserProfile extends Model
     }
 
     /**
-     * Sets the gateway specific profile information and 4 last digits of the credit card number (PAN)
+     * setProfileData sets the gateway specific profile information and 4 last digits of the credit card number (PAN)
      * and saves the profile to the database
      * @param array $profileData Profile data
      * @param string $cardDigits Last four digits of the CC number
@@ -67,7 +91,7 @@ class UserProfile extends Model
     }
 
     /**
-     * Sets the 4 last digits of the credit card number (PAN)
+     * setCardNumber sets the 4 last digits of the credit card number (PAN)
      * and saves the profile to the database
      * @param string $cardDigits Last four digits of the CC number
      */
@@ -78,7 +102,7 @@ class UserProfile extends Model
     }
 
     /**
-     * Makes this model the default
+     * makePrimary makes this model the default
      * @return void
      */
     public function makePrimary()
@@ -99,7 +123,7 @@ class UserProfile extends Model
     }
 
     /**
-     * Returns the default profile defined.
+     * getPrimary returns the default profile defined.
      * @return self
      */
     public static function getPrimary($user)
@@ -115,6 +139,9 @@ class UserProfile extends Model
         return $profiles->first();
     }
 
+    /**
+     * userHasProfile
+     */
     public static function userHasProfile($user)
     {
         return self::applyUser($user)->count() > 0;
@@ -124,6 +151,9 @@ class UserProfile extends Model
     // Scopes
     //
 
+    /**
+     * scopeApplyUser
+     */
     public function scopeApplyUser($query, $user)
     {
         if ($user instanceof Model) {

@@ -17,7 +17,7 @@ use ApplicationException;
  * @property \Illuminate\Support\Carbon $updated_at
  * @property \Illuminate\Support\Carbon $created_at
  *
- * @package october\shop
+ * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
  */
 class PaymentMethod extends ExpandoModel
@@ -68,11 +68,11 @@ class PaymentMethod extends ExpandoModel
     public $belongsToMany = [
         'countries' => [
             \RainLab\Location\Models\Country::class,
-            'table' => 'shop_payment_methods_countries'
+            'table' => 'responsiv_pay_methods_countries'
         ],
         'user_groups' => [
             \RainLab\User\Models\UserGroup::class,
-            'table' => 'shop_payment_methods_user_groups'
+            'table' => 'responsiv_pay_methods_user_groups'
         ]
     ];
 
