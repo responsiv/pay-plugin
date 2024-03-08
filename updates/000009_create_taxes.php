@@ -3,9 +3,8 @@
 use Schema;
 use October\Rain\Database\Updates\Migration;
 
-class CreateTaxesTable extends Migration
+return new class extends Migration
 {
-
     public function up()
     {
         Schema::create('responsiv_pay_taxes', function($table)
@@ -25,5 +24,4 @@ class CreateTaxesTable extends Migration
     {
         Schema::dropIfExists('responsiv_pay_taxes');
     }
-
-}
+};

@@ -6,7 +6,6 @@ use Responsiv\Pay\Models\InvoiceTemplate;
 
 class SeedAllTables extends Seeder
 {
-
     public function run()
     {
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Draft', 'code' => 'draft']);
@@ -20,5 +19,4 @@ class SeedAllTables extends Seeder
             'is_default' => true
         ]);
     }
-
 }

@@ -3,7 +3,7 @@
 use Schema;
 use October\Rain\Database\Updates\Migration;
 
-class CreateUserProfilesTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -27,4 +27,4 @@ class CreateUserProfilesTable extends Migration
     {
         Schema::dropIfExists('responsiv_pay_user_profiles');
     }
-}
+};
