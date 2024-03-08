@@ -136,7 +136,7 @@ class Plugin extends PluginBase
                         'permissions' => ['responsiv.pay.access_invoices'],
                     ],
                     'taxes' => [
-                        'label' => "Tax Rules",
+                        'label' => "Tax Classes",
                         'icon' => 'icon-table',
                         'url' => Backend::url('responsiv/pay/taxes'),
                         'permissions' => ['responsiv.pay.manage_taxes'],

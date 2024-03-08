@@ -5,7 +5,7 @@ use RainLab\Location\Models\Country;
 use RainLab\Location\Models\Setting as LocationSetting;
 
 /**
- * Represents a location used for tax calculation
+ * TaxLocation represents a location used for tax calculation
  */
 class TaxLocation
 {
