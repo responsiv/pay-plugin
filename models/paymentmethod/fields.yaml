@@ -3,32 +3,51 @@
 # ===================================
 
 tabs:
+    defaultTab: General
     fields:
         is_enabled:
             label: Enabled
+            comment: Disabled payment methods are not shown on the frontend.
             type: checkbox
-            tab: General
+            span: auto
+            default: true
+
+        is_enabled_edit:
+            label: Enabled in the Admin Panel
+            comment: Use this to enable this method in the admin panel only.
+            type: checkbox
+            span: auto
+            default: true
+            trigger:
+                action: disable|fill
+                field: is_enabled
+                condition: checked
+
+        _ruler1:
+            type: ruler
 
         name:
             label: Name
-            tab: General
-            span: auto
-            comment: The name to display this payment type on the front-end.
-
-        code:
-            label: Code
-            span: auto
-            tab: General
-            comment: The unique code as an identifier of this payment type.
+            commentAbove: The name to display this payment method on the frontend.
 
         description:
             label: Description
             type: textarea
             size: small
-            tab: General
-            comment: An optional description for this payment type.
+            commentAbove: An optional description for this payment method.
+
+        code:
+            label: Code
+            commentAbove: The unique code as an identifier of this payment method.
 
         countries:
             type: relation
-            commentAbove: Restrict payment type to selected countries. If none are selected the payment gateway is applicable to all countries.
+            label: Countries
+            commentAbove: Restrict payment method to selected countries. If none are selected the payment gateway is applicable to all countries.
             tab: Countries
+
+        user_groups:
+            type: relation
+            label: User Groups
+            commentAbove: Select the user groups this payment method is available for. If no groups are selected, the payment method will be available for all user groups.
+            tab: Visibility

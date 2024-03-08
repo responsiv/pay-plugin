@@ -4,6 +4,6 @@
         data-control="popup"
         data-handler="onLoadAddPopup"
         class="btn btn-primary oc-icon-plus">
-        New Payment Method
+        <?= __("Add Payment Method") ?>
     </a>
 </div>

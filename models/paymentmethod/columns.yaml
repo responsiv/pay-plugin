@@ -7,7 +7,7 @@ columns:
         label: Name
         searchable: true
 
-    gateway_name:
+    driver_name:
         label: Gateway Name
 
     description:
@@ -16,8 +16,4 @@ columns:
 
     is_enabled:
         label: Enabled
-        type: switch
-
-    is_default:
-        label: Default
         type: switch

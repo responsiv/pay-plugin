@@ -2,8 +2,8 @@
 
 use File;
 use BackendMenu;
-use Backend\Classes\Controller;
 use Responsiv\Pay\Classes\GatewayManager;
+use Backend\Classes\Controller;
 use ApplicationException;
 use Exception;
 
@@ -53,10 +53,19 @@ class PaymentMethods extends Controller
         parent::__construct();
 
         BackendMenu::setContext('Responsiv.Pay', 'pay', 'types');
+    }
 
+    /**
+     * beforeDisplay
+     */
+    public function beforeDisplay()
+    {
         GatewayManager::createPartials();
     }
 
+    /**
+     * index_onLoadAddPopup
+     */
     protected function index_onLoadAddPopup()
     {
         try {
@@ -81,14 +90,17 @@ class PaymentMethods extends Controller
         }
     }
 
-    public function create($gatewayAlias = null)
+    /**
+     * create
+     */
+    public function create($driverAlias = null)
     {
         try {
-            if (!$gatewayAlias) {
+            if (!$driverAlias) {
                 throw new ApplicationException('Missing a gateway code');
             }
 
-            $this->gatewayAlias = $gatewayAlias;
+            $this->driverAlias = $driverAlias;
             $this->asExtension('FormController')->create();
         }
         catch (Exception $ex) {
@@ -96,25 +108,39 @@ class PaymentMethods extends Controller
         }
     }
 
+    /**
+     * formBeforeSave
+     */
+    public function formBeforeSave($model)
+    {
+        if (post('PaymentMethod[is_enabled]')) {
+            $this->formSetSaveValue('is_enabled_edit', true);
+        }
+    }
+
+    /**
+     * formExtendModel
+     */
     public function formExtendModel($model)
     {
         if (!$model->exists) {
-            $model->applyGatewayClass($this->getGatewayClass());
+            $model->applyDriverClass($this->getDriverClass());
         }
 
         return $model;
     }
 
+    /**
+     * formExtendFields
+     */
     public function formExtendFields($widget)
     {
         $model = $widget->model;
         $config = $model->getFieldConfig();
         $widget->addFields($config->fields, 'primary');
 
-        /*
-         * Add the set up help partial
-         */
-        $setupPartial = $model->getPartialPath().'/setup_help.htm';
+        // Add the set up help partial
+        $setupPartial = $model->getPartialPath().'/_setup_help.php';
         if (File::exists($setupPartial)) {
             $widget->addFields([
                 'setup_help' => [
@@ -126,16 +152,19 @@ class PaymentMethods extends Controller
         }
     }
 
-    protected function getGatewayClass()
+    /**
+     * getDriverClass
+     */
+    protected function getDriverClass()
     {
-        $alias = post('gateway_alias', $this->gatewayAlias);
+        $alias = post('driver_alias', $this->driverAlias);
 
         if ($this->gatewayClass !== null) {
             return $this->gatewayClass;
         }
 
         if (!$gateway = GatewayManager::instance()->findByAlias($alias)) {
-            throw new ApplicationException('Unable to find gateway: '. $alias);
+            throw new ApplicationException("Unable to find driver: {$alias}");
         }
 
         return $this->gatewayClass = $gateway->class;

@@ -99,14 +99,14 @@ class Plugin extends PluginBase
     }
 
     /**
-     * registerPaymentTypes registers any payment gateways implemented in this plugin.
+     * registerPaymentGateways registers any payment gateways implemented in this plugin.
      *
      * The gateways must be returned in the following format:
      *
      * [DriverName1::class => 'alias'],
      * [DriverName2::class => 'anotherAlias']
      */
-    public function registerPaymentTypes()
+    public function registerPaymentGateways()
     {
         return [
             \Responsiv\Pay\PaymentTypes\CustomPayment::class => 'custom',
@@ -143,7 +143,7 @@ class Plugin extends PluginBase
                         'order' => 500,
                     ],
                     'types' => [
-                        'label' => "Gateways",
+                        'label' => "Payment Methods",
                         'icon' => 'icon-money',
                         'url' => Backend::url('responsiv/pay/paymentmethods'),
                         'permissions' => ['responsiv.pay.manage_gateways'],
