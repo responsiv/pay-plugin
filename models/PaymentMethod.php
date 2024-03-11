@@ -103,7 +103,7 @@ class PaymentMethod extends ExpandoModel
     /**
      * getDriverObject returns the gateway class extension object.
      * @param  string $class Class name
-     * @return \Responsiv\Shop\Classes\PaymentTypeBase
+     * @return \Responsiv\Pay\Classes\GatewayBase
      */
     public function getDriverObject($class = null)
     {

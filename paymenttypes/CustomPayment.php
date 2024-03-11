@@ -1,11 +1,11 @@
 <?php namespace Responsiv\Pay\PaymentTypes;
 
-use Responsiv\Shop\Classes\PaymentTypeBase;
+use Responsiv\Pay\Classes\GatewayBase;
 
 /**
  * CustomPayment type
  */
-class CustomPayment extends PaymentTypeBase
+class CustomPayment extends GatewayBase
 {
     /**
      * {@inheritDoc}

@@ -3,14 +3,14 @@
 use Http;
 use Redirect;
 use Cms\Classes\Page;
-use Responsiv\Shop\Classes\PaymentTypeBase;
+use Responsiv\Pay\Classes\GatewayBase;
 use ApplicationException;
 use Exception;
 
 /**
  * PayPalStandardPayment
  */
-class PayPalStandardPayment extends PaymentTypeBase
+class PayPalStandardPayment extends GatewayBase
 {
     /**
      * {@inheritDoc}
