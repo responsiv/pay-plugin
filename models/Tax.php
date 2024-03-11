@@ -5,7 +5,6 @@ use Auth;
 use Model;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
-use Responsiv\Pay\Classes\TaxLocation;
 
 /**
  * Tax Model
@@ -24,6 +23,7 @@ use Responsiv\Pay\Classes\TaxLocation;
  */
 class Tax extends Model
 {
+    use \Responsiv\Pay\Models\Tax\HasGlobalContext;
     use \System\Traits\KeyCodeModel;
     use \October\Rain\Database\Traits\Validation;
     use \October\Rain\Database\Traits\Defaultable;
@@ -46,45 +46,9 @@ class Tax extends Model
     ];
 
     /**
-     * @var \Responsiv\Pay\Classes\TaxLocation|null locationContext
-     */
-    protected static $locationContext;
-
-    /**
-     * @var \User\Models\User|null userContext
-     */
-    protected static $userContext = null;
-
-    /**
-     * @var bool taxExempt
-     */
-    protected static $taxExempt = false;
-
-    /**
-     * @var bool pricesIncludeTax
-     */
-    protected static $pricesIncludeTax = false;
-
-    /**
      * @var int roundPrecision
      */
     protected $roundPrecision = 2;
-
-    /**
-     * setTaxableContext for the current request, these settings will apply
-     * to all tax calculations.
-     */
-    public static function setTaxableContext(
-        $user = null,
-        TaxLocation $location = null,
-        $taxExempt = false,
-        $pricesIncludeTax = false
-    ) {
-        static::$userContext = $user;
-        static::$locationContext = $location;
-        static::$taxExempt = $taxExempt;
-        static::$pricesIncludeTax = $pricesIncludeTax;
-    }
 
     /**
      * getTotalTax adds tax to an untaxed amount. Return value is the tax amount
@@ -299,7 +263,6 @@ class Tax extends Model
 
         return $result;
     }
-
 
     /**
      * calculateTaxes for an array of TaxItems
