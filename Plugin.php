@@ -1,6 +1,5 @@
 <?php namespace Responsiv\Pay;
 
-use Lang;
 use Backend;
 use System\Classes\PluginBase;
 use System\Classes\SettingsManager;
@@ -80,19 +79,19 @@ class Plugin extends PluginBase
     {
         return [
             'responsiv.pay.access_invoices' => [
-                'tab'   => 'Pay',
+                'tab' => 'Pay',
                 'label' => 'Access invoices'
             ],
             'responsiv.pay.manage_taxes' => [
-                'tab'   => 'Pay',
+                'tab' => 'Pay',
                 'label' => 'Manage taxes'
             ],
             'responsiv.pay.manage_gateways' => [
-                'tab'   => 'Pay',
+                'tab' => 'Pay',
                 'label' => 'Manage gateways'
             ],
             'responsiv.pay.access_settings' => [
-                'tab'   => 'Pay',
+                'tab' => 'Pay',
                 'label' => 'Access settings'
             ],
         ];

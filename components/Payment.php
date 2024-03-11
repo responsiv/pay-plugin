@@ -1,123 +1,110 @@
 <?php namespace Responsiv\Pay\Components;
 
+use Auth;
 use Redirect;
-use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
-use Responsiv\Pay\Models\Invoice as InvoiceModel;
-use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use RainLab\User\Models\User;
+use Responsiv\Pay\Models\PaymentMethod;
 use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
+/**
+ * Payment screen for an existing invoice.
+ */
 class Payment extends ComponentBase
 {
     /**
-     * @var Responsiv\Pay\Models\Invoice Cached object
+     * @var \Responsiv\Pay\Models\Invoice invoice object
      */
     protected $invoice;
 
+    /**
+     * componentDetails
+     */
     public function componentDetails()
     {
         return [
-            'name'        => 'Payment Component',
-            'description' => 'Allows the payment of an invoice by its hash'
+            'name' => 'Payment',
+            'description' => 'Payment screen for an existing invoice.'
         ];
     }
 
+    /**
+     * defineProperties
+     */
     public function defineProperties()
     {
         return [
-            'hash' => [
-                'title'       => 'Invoice Hash',
-                'description' => 'The URL route parameter used for looking up the invoice by its hash.',
-                'default'     => '{{ :hash }}',
-                'type'        => 'string'
-            ],
-            'invoicePage' => [
-                'title'       => 'Invoice page',
-                'description' => 'Name of the invoice page file for the invoice links.',
-                'type'        => 'dropdown'
+            'isDefault' => [
+                'title' => 'Default View',
+                'type' => 'checkbox',
+                'description' => 'Used as default entry point when paying an invoice.',
+                'showExternalParam' => false
             ],
         ];
     }
 
-    public function getPropertyOptions($property)
-    {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
-    }
-
+    /**
+     * onRun
+     */
     public function onRun()
     {
         $this->page['invoice'] = $this->invoice();
-        $this->page['invoicePage'] = $this->invoicePage();
-        $this->page['paymentMethods'] = $this->paymentMethods();
-        $this->page['paymentMethod'] = $this->paymentMethod();
-
-        if (post('submit_payment')) {
-            $this->onPay();
-        }
+        $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
     }
 
+    /**
+     * invoice
+     */
     public function invoice()
     {
-        if ($this->invoice !== null) {
-            return $this->invoice;
-        }
-
-        if (!$hash = $this->property('hash')) {
-            return null;
-        }
-
-        $invoice = InvoiceModel::whereHash($hash)->first();
-
-        if ($invoice) {
-            $invoice->setUrlPageName($this->invoicePage());
-        }
-
-        return $this->invoice = $invoice;
+        return $this->invoice ??= Invoice::findByOrderHash($this->param('hash'));
     }
 
-    public function invoicePage()
+    /**
+     * onUpdatePaymentMethod
+     */
+    public function onUpdatePaymentMethod()
     {
-        return $this->property('invoicePage');
-    }
-
-    public function paymentMethod()
-    {
-        return ($invoice = $this->invoice()) ? $invoice->payment_method : null;
-    }
-
-    public function paymentMethods()
-    {
-        $countryId = ($invoice = $this->invoice()) ? $invoice->country_id : null;
-
-        return TypeModel::listApplicable($countryId);
-    }
-
-    //
-    // AJAX
-    //
-
-    public function onUpdatePaymentType()
-    {
-        if (!$invoice = $this->invoice()) {
-            throw new ApplicationException('Invoice not found!');
+        $invoice = $this->invoice();
+        if (!$invoice) {
+            return;
         }
 
-        if (!$methodId = post('payment_method')) {
-            throw new ApplicationException('Payment type not specified!');
-        }
-
-        if (!$method = TypeModel::find($methodId)) {
-            throw new ApplicationException('Payment type not found!');
-        }
-
-        $invoice->payment_method = $method;
+        $invoice->payment_method_id = post('payment_method');
+        $invoice->unsetRelation('payment_method');
         $invoice->save();
 
-        $this->page['invoice'] = $invoice;
-        $this->page['paymentMethod'] = $method;
+        $this->prepareVars();
     }
 
+    /**
+     * listAvailablePaymentMethods
+     */
+    protected function listAvailablePaymentMethods()
+    {
+        $result = [];
+
+        $invoice = $this->invoice();
+        if (!$invoice) {
+            return [];
+        }
+
+        $availableOptions = PaymentMethod::listApplicable([
+            'countryId' => $invoice->country_id,
+            'totalPrice' => $invoice->total
+        ]);
+
+        foreach ($availableOptions as $key => $option) {
+            $result[$key] = $option;
+        }
+
+        return $result;
+    }
+
+    /**
+     * onPay
+     */
     public function onPay($invoice = null)
     {
         if (!$invoice = $this->invoice()) {
@@ -128,9 +115,7 @@ class Payment extends ComponentBase
             return;
         }
 
-        /*
-         * Pay from profile
-         */
+        // Pay from profile
         if (post('pay_from_profile') && post('pay_from_profile') == 1) {
             $redirect = true;
 
@@ -148,9 +133,7 @@ class Payment extends ComponentBase
             $redirect = $paymentMethod->processPaymentForm(post(), $invoice);
         }
 
-        /*
-         * Custom response
-         */
+        // Custom response
         if ($redirect instanceof RedirectResponse) {
             return $redirect;
         }
@@ -158,9 +141,7 @@ class Payment extends ComponentBase
             return;
         }
 
-        /*
-         * Standard response
-         */
+        // Standard response
         if (!$returnPage = $invoice->getReceiptUrl()) {
             return;
         }
@@ -169,24 +150,10 @@ class Payment extends ComponentBase
     }
 
     /**
-     * Returns the logged in user, if available, and touches
-     * the last seen timestamp.
-     * @return RainLab\User\Models\User
+     * user returns the logged in user
      */
-    public function user()
+    public function user(): ?User
     {
-        if (!$user = Auth::getUser()) {
-            return null;
-        }
-
-        return $user;
-    }
-
-    /**
-     * @deprecated Use $this->invoice()
-     */
-    public function getInvoice()
-    {
-        return $this->invoice();
+        return Auth::user();
     }
 }
