@@ -8,7 +8,9 @@ return new class extends Migration
     public function up()
     {
         $updater = App::make('db.updater');
-        $updater->setUp(__DIR__.'/000009_create_methods_user_groups.php');
+        if (!Schema::hasTable('responsiv_pay_methods_user_groups')) {
+            $updater->setUp(__DIR__.'/000009_create_methods_user_groups.php');
+        }
 
         if (!Schema::hasColumn('responsiv_pay_methods', 'is_enabled_edit')) {
             Schema::table('responsiv_pay_methods', function(Blueprint $table) {

@@ -44,17 +44,17 @@ class Invoice extends Model
      * @var array Relations
      */
     public $belongsTo = [
-        'user'           => \RainLab\User\Models\User::class,
-        'status'         => InvoiceStatus::class,
-        'template'       => InvoiceTemplate::class,
+        'user' => \RainLab\User\Models\User::class,
+        'status' => InvoiceStatus::class,
+        'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
-        'country'        => \RainLab\Location\Models\Country::class,
-        'state'          => \RainLab\Location\Models\State::class,
+        'country' => \RainLab\Location\Models\Country::class,
+        'state' => \RainLab\Location\Models\State::class,
     ];
 
     public $hasMany = [
-        'items'       => [InvoiceItem::class, 'delete' => true],
-        'status_log'  => [InvoiceStatusLog::class, 'delete' => true],
+        'items' => [InvoiceItem::class, 'delete' => true],
+        'status_log' => [InvoiceStatusLog::class, 'delete' => true],
         'payment_log' => [InvoiceLog::class, 'delete' => true],
     ];
 
