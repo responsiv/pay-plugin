@@ -36,7 +36,9 @@ class Tax extends Model
     /**
      * @var array jsonable attribute names that are json encoded and decoded from the database
      */
-    protected $jsonable = ['rates'];
+    protected $jsonable = [
+        'rates'
+    ];
 
     /**
      * @var array rules for validation
@@ -174,7 +176,7 @@ class Tax extends Model
         }
 
         $rate = null;
-        foreach ($this->rates as $row) {
+        foreach ((array) $this->rates as $row) {
             // Minimum requirements, need to see a country at least
             if (!array_key_exists('country', $row)) {
                 continue;

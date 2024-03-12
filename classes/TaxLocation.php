@@ -180,7 +180,9 @@ class TaxLocation extends ElementBase
         ;
 
         if ($address === null) {
-            $address = $user->primary_address;
+            $address = $user->primary_address?->exists
+                ? $user->primary_address
+                : null;
         }
 
         if ($address) {
