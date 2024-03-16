@@ -205,9 +205,11 @@ class Invoice extends Model implements InvoiceContract
      */
     public function afterCreate()
     {
-        InvoiceStatusLog::createRecord(InvoiceStatus::STATUS_DRAFT, $this);
+        $statusId = InvoiceStatus::getNewStatus()?->getKey();
 
         $invoiceCopy = static::find($this->getKey());
+
+        InvoiceStatusLog::createRecord($statusId, $invoiceCopy);
 
         /**
          * @event responsiv.pay.newInvoice

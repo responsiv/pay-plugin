@@ -24,6 +24,13 @@ return new class extends Migration
             });
         }
 
+        if (!Schema::hasColumn('responsiv_pay_invoice_statuses', 'user_message_template')) {
+            Schema::table('responsiv_pay_invoice_statuses', function(Blueprint $table) {
+                $table->string('user_message_template')->nullable();
+                $table->timestamps();
+            });
+        }
+
         if (!Schema::hasColumn('responsiv_pay_invoice_logs', 'updated_user_id')) {
             Schema::table('responsiv_pay_invoice_logs', function(Blueprint $table) {
                 $table->mediumText('card_data')->nullable();

@@ -13,7 +13,8 @@ return new class extends Migration
             $table->string('code', 30)->index()->nullable();
             $table->boolean('is_enabled')->default(false);
             $table->boolean('notify_user')->default(false);
-            $table->string('notify_template')->index()->nullable();
+            $table->string('user_message_template')->nullable();
+            $table->timestamps();
         });
     }
 

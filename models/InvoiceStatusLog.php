@@ -62,7 +62,7 @@ class InvoiceStatusLog extends Model
         return InvoiceStatus::lists('name', 'id');
     }
 
-    public static function createRecord($statusId, $invoice, $comment = null)
+    public static function createRecord($statusId, $invoice, $comment = null, $sendNotifications = true)
     {
         if (is_string($statusId) && !is_numeric($statusId)) {
             $statusId = InvoiceStatus::findByCode($statusId);
