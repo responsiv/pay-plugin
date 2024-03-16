@@ -58,12 +58,8 @@ class InvoiceStatus extends Model
         return static::$codeCache[$code] = $status;
     }
 
-    //
-    // InvoiceStatusInterface obligations
-    //
-
     /**
-     * {@inheritDoc}
+     * getPaidStatus
      */
     public function getPaidStatus()
     {
@@ -71,19 +67,18 @@ class InvoiceStatus extends Model
     }
 
     /**
-     * {@inheritDoc}
+     * getNewStatus
      */
     public function getNewStatus()
     {
-        return static::STATUS_NEW;
+        return static::STATUS_DRAFT;
     }
 
     /**
-     * {@inheritDoc}
+     * listStatuses
      */
     public function listStatuses()
     {
         return static::lists('name', 'code');
     }
-
 }

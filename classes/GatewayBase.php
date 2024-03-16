@@ -99,11 +99,11 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
-     * orderAfterCreate is called when an order with this payment method is created
+     * invoiceAfterCreate is called when an order with this payment method is created
      * @param \Responsiv\Shop\Models\PaymentMethod $host
      * @param \Responsiv\Pay\Models\Invoice $order
      */
-    public function orderAfterCreate($host, $order)
+    public function invoiceAfterCreate($host, $order)
     {
     }
 

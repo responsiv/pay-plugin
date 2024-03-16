@@ -58,6 +58,7 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  */
 class Invoice extends Model implements InvoiceContract
 {
+    use \RainLab\Location\Traits\LocationModel;
     use \Responsiv\Pay\Models\Invoice\HasInvoiceContract;
     use \Responsiv\Pay\Models\Invoice\HasModelAttributes;
     use \Responsiv\Pay\Models\Invoice\HasCalculatedAttributes;
@@ -86,8 +87,6 @@ class Invoice extends Model implements InvoiceContract
         'status' => InvoiceStatus::class,
         'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
-        'country' => \RainLab\Location\Models\Country::class,
-        'state' => \RainLab\Location\Models\State::class,
     ];
 
     /**
@@ -135,22 +134,15 @@ class Invoice extends Model implements InvoiceContract
     }
 
     /**
-     * afterFetch event
+     * getCurrencyOptions options
      */
-    public function afterFetch()
+    public function getCurrencyOptions()
     {
-        if (!$this->payment_method_id) {
-            $this->payment_method = TypeModel::getDefault($this->country_id);
-        }
-    }
+        $emptyOption = [
+            '' => "Default currency"
+        ];
 
-    /**
-     * beforeSave event
-     */
-    public function beforeSave()
-    {
-        $this->setDefaults();
-        $this->calculateTotals();
+        return $emptyOption + Currency::listAvailable();
     }
 
     /**
@@ -165,6 +157,47 @@ class Invoice extends Model implements InvoiceContract
         }
 
         $this->user_ip = Request::getClientIp();
+
+        /**
+         * @event responsiv.pay.beforeCreateInvoiceRecord
+         * Triggered before a new invoice is created via the admin panel, or programmatically
+         *
+         * Example usage:
+         *
+         *     Event::listen('responsiv.pay.beforeCreateInvoiceRecord', function($invoice) {
+         *         // Do something with the invoice
+         *     });
+         *
+         */
+        Event::fire('responsiv.pay.beforeCreateInvoiceRecord', [$this]);
+    }
+
+    /**
+     * beforeSave event
+     */
+    public function beforeSave()
+    {
+        $this->setDefaults();
+        $this->calculateTotals();
+    }
+
+    /**
+     * beforeUpdate
+     */
+    public function beforeUpdate()
+    {
+        /**
+         * @event responsiv.pay.beforeUpdateInvoiceRecord
+         * Triggered before a new invoice is updated via the admin panel, or programmatically
+         *
+         * Example usage:
+         *
+         *     Event::listen('responsiv.pay.beforeUpdateInvoiceRecord', function($invoice) {
+         *         // Do something with the invoice
+         *     });
+         *
+         */
+        Event::fire('responsiv.pay.beforeUpdateInvoiceRecord', [$this]);
     }
 
     /**
@@ -174,7 +207,26 @@ class Invoice extends Model implements InvoiceContract
     {
         InvoiceStatusLog::createRecord(InvoiceStatus::STATUS_DRAFT, $this);
 
-        Event::fire('responsiv.pay.invoiceNew', [$this]);
+        $invoiceCopy = static::find($this->getKey());
+
+        /**
+         * @event responsiv.pay.newInvoice
+         * Triggered after a new invoice is placed.
+         *
+         * Use this listener to perform further invoice processing.
+         *
+         * Example usage:
+         *
+         *     Event::listen('responsiv.pay.newInvoice', function($invoice) {
+         *         // Do something with the invoice
+         *     });
+         *
+         */
+        Event::fire('responsiv.pay.newInvoice', [$invoiceCopy]);
+
+        if ($paymentMethod = $this->payment_method) {
+            $paymentMethod->getDriverObject()->invoiceAfterCreate($paymentMethod, $this);
+        }
     }
 
     /**
@@ -221,34 +273,6 @@ class Invoice extends Model implements InvoiceContract
     public function scopeApplyUnpaid($query)
     {
         return $query->whereNull('processed_at');
-    }
-
-    /**
-     * getCurrencyOptions options
-     */
-    public function getCurrencyOptions()
-    {
-        $emptyOption = [
-            '' => "Default currency"
-        ];
-
-        return $emptyOption + Currency::listAvailable();
-    }
-
-    /**
-     * getCountryOptions options
-     */
-    public function getCountryOptions()
-    {
-        return Country::getNameList();
-    }
-
-    /**
-     * getStateOptions options
-     */
-    public function getStateOptions()
-    {
-        return State::getNameList($this->country_id);
     }
 
     //
