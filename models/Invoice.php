@@ -5,12 +5,12 @@ use Model;
 use Request;
 use Exception;
 use Carbon\Carbon;
-use Cms\Classes\Controller;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Currency\Models\Currency;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
 
 /**
  * Invoice Model
@@ -56,8 +56,9 @@ use Responsiv\Pay\Models\PaymentMethod as TypeModel;
  * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
  */
-class Invoice extends Model
+class Invoice extends Model implements InvoiceContract
 {
+    use \Responsiv\Pay\Models\Invoice\HasInvoiceContract;
     use \Responsiv\Pay\Models\Invoice\HasModelAttributes;
     use \Responsiv\Pay\Models\Invoice\HasCalculatedAttributes;
 
@@ -436,211 +437,22 @@ class Invoice extends Model
     }
 
     /**
-     * Internal helper, and set generate a unique hash for this invoice.
-     * @return string
+     * generateHash is an internal helper to set generate a unique hash for this invoice.
      */
     protected function generateHash()
     {
         $this->hash = $this->createHash();
+
         while ($this->newQuery()->where('hash', $this->hash)->count() > 0) {
             $this->hash = $this->createHash();
         }
     }
 
     /**
-     * Internal helper, create a hash for this invoice.
-     * @return string
+     * createHash is an internal helper, create a hash for this invoice.
      */
-    protected function createHash()
+    protected function createHash(): string
     {
         return md5(uniqid('invoice', microtime()));
-    }
-
-    //
-    // InvoiceInterface obligations
-    //
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getUniqueId()
-    {
-        return Settings::get('invoice_prefix') . $this->id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findByUniqueId($id = null)
-    {
-        return static::find($id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getUniqueHash()
-    {
-        return $this->hash;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findByUniqueHash($hash = null)
-    {
-        return static::whereHash($hash)->first();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getReceiptUrl()
-    {
-        if ($this->return_page) {
-            $controller = Controller::getController() ?: new Controller;
-            return $controller->pageUrl($this->return_page, [
-                'id' => $this->id,
-                'hash' => $this->hash,
-            ]);
-        }
-
-        return $this->getUrlAttribute();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getCustomerDetails()
-    {
-        $this->setDefaults();
-        $details = [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'street_addr' => $this->street_addr,
-            'city' => $this->city,
-            'zip' => $this->zip,
-            'state_id' => $this->state ? $this->state->code : null,
-            'state' => $this->state ? $this->state->name : null,
-            'country_id' => $this->country ? $this->country->code : null,
-            'country' => $this->country ? $this->country->name : null
-        ];
-
-        return $details;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getLineItemDetails()
-    {
-        $details = [];
-
-        foreach ($this->items as $item) {
-            $details[] = [
-                'description' => $item->description,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'total' => $item->total,
-            ];
-        }
-
-        return $details;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTotalDetails()
-    {
-        $details = [
-            'total' => $this->total,
-            'subtotal' => $this->subtotal,
-            'tax' => $this->tax,
-            'currency' => $this->currency,
-        ];
-
-        return $details;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isPaymentProcessed($force = false)
-    {
-        if ($force) {
-            return $this->where('id', $this->id)->value('processed_at');
-        }
-
-        return $this->processed_at;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function markAsPaymentProcessed()
-    {
-        if (!$isPaid = $this->isPaymentProcessed(true)) {
-            $now = $this->processed_at = Carbon::now();
-
-            // Instant update here in case a simultaneous request causes invalid data
-            $this->newQuery()->where('id', $this->id)->update(['processed_at' => $now]);
-
-            Event::fire('responsiv.pay.invoicePaid', [$this]);
-
-            // Never allow a paid invoice to be thrown away
-            $this->is_throwaway = false;
-
-            $this->save();
-        }
-
-        return !$isPaid;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPaymentMethod()
-    {
-        return $this->payment_method;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function logPaymentAttempt(
-        $message,
-        $isSuccess,
-        $requestArray,
-        $responseArray,
-        $responseText
-    ) {
-        if ($payMethod = $this->getPaymentMethod()) {
-            $info = $payMethod->gatewayDetails();
-            $methodName = $info['name'];
-        }
-        else {
-            $methodName = 'Unspecified';
-        }
-
-        $options = [
-            'isSuccess' => $isSuccess,
-            'methodName' => $methodName,
-            'requestArray' => $requestArray,
-            'responseArray' => $responseArray,
-            'responseText' => $responseText
-        ];
-
-        InvoiceLog::createRecord($this, $message, $options);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function updateInvoiceStatus($statusCode)
-    {
-        InvoiceStatusLog::createRecord($statusCode, $this);
     }
 }
