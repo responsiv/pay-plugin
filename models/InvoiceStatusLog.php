@@ -5,42 +5,54 @@ use Carbon\Carbon;
 use October\Rain\Database\Model;
 
 /**
- * Invoice Status Log Model
+ * InvoiceStatusLog record
+ *
+ * @property int $id
+ * @property int $invoice_id
+ * @property int $status_id
+ * @property string $comment
+ * @property int $admin_id
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class InvoiceStatusLog extends Model
 {
     use \October\Rain\Database\Traits\Validation;
 
     /**
-     * @var array The rules to be applied to the data.
-     */
-    public $rules = [
-        'status' => 'required'
-    ];
-
-    /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_invoice_status_logs';
 
     /**
-     * @var array Guarded fields
+     * @var array rules for validation
      */
-    protected $guarded = ['*'];
-
-    /**
-     * @var array Fillable fields
-     */
-    protected $fillable = [];
-
-    /**
-     * @var array Relations
-     */
-    public $belongsTo = [
-        'status'  => ['Responsiv\Pay\Models\InvoiceStatus'],
-        'invoice' => ['Responsiv\Pay\Models\Invoice', 'push' => false],
+    public $rules = [
+        'status' => 'required',
     ];
 
+    /**
+     * @var array belongsTo
+     */
+    public $belongsTo = [
+        'status'  => InvoiceStatus::class,
+        'invoice' => [Invoice::class, 'push' => false],
+    ];
+
+    /**
+     * getStatusOptions
+     */
+    public function getStatusOptions()
+    {
+        return InvoiceStatus::lists('name', 'id');
+    }
+
+    /**
+     * filterFields
+     */
     public function filterFields($fields, $context = null)
     {
         if (isset($fields->status) && $this->invoice) {
@@ -57,11 +69,9 @@ class InvoiceStatusLog extends Model
         }
     }
 
-    public function getStatusOptions()
-    {
-        return InvoiceStatus::lists('name', 'id');
-    }
-
+    /**
+     * createRecord
+     */
     public static function createRecord($statusId, $invoice, $comment = null, $sendNotifications = true)
     {
         if (is_string($statusId) && !is_numeric($statusId)) {
@@ -78,37 +88,26 @@ class InvoiceStatusLog extends Model
 
         $previousStatus = $invoice->status_id;
 
-        /*
-         * Create record
-         */
+        // Create record
         $record = new static;
         $record->status_id = $statusId;
         $record->invoice_id = $invoice->id;
         $record->comment = $comment;
 
-        /*
-         * Extensibility
-         */
+        // Extensibility
         if (Event::fire('responsiv.pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
-            return false;
-        }
-
-        if ($record->fireEvent('pay.beforeUpdateInvoiceStatus', [$record, $invoice, $statusId, $previousStatus], true) === false) {
             return false;
         }
 
         $record->save();
 
-        /*
-         * Update invoice status
-         */
+        // Update invoice status
         $invoice->newQuery()->where('id', $invoice->id)->update([
             'status_id' => $statusId,
             'status_updated_at' => Carbon::now()
         ]);
 
-        $statusPaid = InvoiceStatus::findByCode(InvoiceStatus::STATUS_PAID);
-
+        $statusPaid = InvoiceStatus::getPaidStatus();
         if (!$statusPaid) {
             return traceLog('Unable to find payment status with paid code');
         }
@@ -119,5 +118,4 @@ class InvoiceStatusLog extends Model
             // Invoice is paid
         }
     }
-
 }
