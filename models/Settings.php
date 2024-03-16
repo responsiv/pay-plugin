@@ -2,8 +2,6 @@
 
 use Db;
 use Model;
-use Cms\Classes\Page;
-use ApplicationException;
 use ValidationException;
 
 class Settings extends Model

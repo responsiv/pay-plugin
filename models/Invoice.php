@@ -17,31 +17,31 @@ use Responsiv\Pay\Models\PaymentMethod as TypeModel;
  */
 class Invoice extends Model
 {
-    use \Responsiv\Pay\Traits\UrlMaker;
     use \October\Rain\Database\Traits\Purgeable;
 
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_invoices';
 
     /**
-     * @var array Guarded fields
+     * @var array dates are attributes to convert to an instance of Carbon/DateTime objects.
      */
-    protected $guarded = [];
+    protected $dates = [
+        'processed_at',
+        'status_updated_at',
+        'deleted_at',
+        'sent_at',
+        'due_at'
+    ];
 
     /**
-     * @var array Purgeable fields
+     * @var array purgeable attribute names which should not be saved to the database.
      */
     protected $purgeable = ['url'];
 
     /**
-     * @var array List of datetime attributes to convert to an instance of Carbon/DateTime objects.
-     */
-    public $dates = ['processed_at', 'status_updated_at', 'deleted_at', 'sent_at', 'due_at'];
-
-    /**
-     * @var array Relations
+     * @var array belongsTo
      */
     public $belongsTo = [
         'user' => \RainLab\User\Models\User::class,
@@ -52,32 +52,21 @@ class Invoice extends Model
         'state' => \RainLab\Location\Models\State::class,
     ];
 
+    /**
+     * @var array hasMany
+     */
     public $hasMany = [
         'items' => [InvoiceItem::class, 'delete' => true],
         'status_log' => [InvoiceStatusLog::class, 'delete' => true],
         'payment_log' => [InvoiceLog::class, 'delete' => true],
     ];
 
+    /**
+     * @var array morphTo
+     */
     public $morphTo = [
         'related' => []
     ];
-
-    /**
-     * @var string The component to use for generating URLs.
-     */
-    protected $urlComponentName = 'invoice';
-
-    /**
-     * Returns an array of values to use in URL generation.
-     * @return @array
-     */
-    public function getUrlParams()
-    {
-        return [
-            'id' => $this->id,
-            'hash' => $this->hash,
-        ];
-    }
 
     //
     // Constructors
@@ -475,7 +464,10 @@ class Invoice extends Model
     {
         if ($this->return_page) {
             $controller = Controller::getController() ?: new Controller;
-            return $controller->pageUrl($this->return_page, $this->getUrlParams());
+            return $controller->pageUrl($this->return_page, [
+                'id' => $this->id,
+                'hash' => $this->hash,
+            ]);
         }
 
         return $this->getUrlAttribute();
@@ -488,17 +480,17 @@ class Invoice extends Model
     {
         $this->setDefaults();
         $details = [
-            'first_name'  => $this->first_name,
-            'last_name'   => $this->last_name,
-            'email'       => $this->email,
-            'phone'       => $this->phone,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email,
+            'phone' => $this->phone,
             'street_addr' => $this->street_addr,
-            'city'        => $this->city,
-            'zip'         => $this->zip,
-            'state_id'    => $this->state ? $this->state->code : null,
-            'state'       => $this->state ? $this->state->name : null,
-            'country_id'  => $this->country ? $this->country->code : null,
-            'country'     => $this->country ? $this->country->name : null
+            'city' => $this->city,
+            'zip' => $this->zip,
+            'state_id' => $this->state ? $this->state->code : null,
+            'state' => $this->state ? $this->state->name : null,
+            'country_id' => $this->country ? $this->country->code : null,
+            'country' => $this->country ? $this->country->name : null
         ];
 
         return $details;
@@ -514,9 +506,9 @@ class Invoice extends Model
         foreach ($this->items as $item) {
             $details[] = [
                 'description' => $item->description,
-                'quantity'    => $item->quantity,
-                'price'       => $item->price,
-                'total'       => $item->total,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'total' => $item->total,
             ];
         }
 
@@ -529,9 +521,9 @@ class Invoice extends Model
     public function getTotalDetails()
     {
         $details = [
-            'total'    => $this->total,
+            'total' => $this->total,
             'subtotal' => $this->subtotal,
-            'tax'      => $this->tax,
+            'tax' => $this->tax,
             'currency' => $this->currency,
         ];
 
