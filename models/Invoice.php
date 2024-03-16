@@ -14,10 +14,52 @@ use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 
 /**
  * Invoice Model
+ *
+ * @property int $id
+ * @property string $hash
+ * @property string $user_ip
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $phone
+ * @property string $company
+ * @property string $street_addr
+ * @property string $city
+ * @property string $zip
+ * @property string $vat_id
+ * @property int $total
+ * @property int $subtotal
+ * @property int $discount
+ * @property int $tax
+ * @property int $tax_discount
+ * @property bool $is_tax_exempt
+ * @property string $currency
+ * @property string $tax_data
+ * @property string $return_page
+ * @property bool $is_throwaway
+ * @property int $user_id
+ * @property int $template_id
+ * @property int $payment_method_id
+ * @property int $related_id
+ * @property string $related_type
+ * @property int $status_id
+ * @property int $state_id
+ * @property int $country_id
+ * @property \Illuminate\Support\Carbon $sent_at
+ * @property \Illuminate\Support\Carbon $due_at
+ * @property \Illuminate\Support\Carbon $status_updated_at
+ * @property \Illuminate\Support\Carbon $processed_at
+ * @property \Illuminate\Support\Carbon $deleted_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class Invoice extends Model
 {
-    use \October\Rain\Database\Traits\Purgeable;
+    use \Responsiv\Pay\Models\Invoice\HasModelAttributes;
+    use \Responsiv\Pay\Models\Invoice\HasCalculatedAttributes;
 
     /**
      * @var string table used by the model
@@ -34,11 +76,6 @@ class Invoice extends Model
         'sent_at',
         'due_at'
     ];
-
-    /**
-     * @var array purgeable attribute names which should not be saved to the database.
-     */
-    protected $purgeable = ['url'];
 
     /**
      * @var array belongsTo
@@ -68,10 +105,9 @@ class Invoice extends Model
         'related' => []
     ];
 
-    //
-    // Constructors
-    //
-
+    /**
+     * makeThrowaway constructor
+     */
     public static function makeThrowaway($user = null)
     {
         $invoice = $user === null ? new static : self::makeForUser($user);
@@ -81,6 +117,9 @@ class Invoice extends Model
         return $invoice;
     }
 
+    /**
+     * makeForUser constructor
+     */
     public static function makeForUser($user)
     {
         $invoice = new static;
@@ -94,10 +133,9 @@ class Invoice extends Model
         return $invoice;
     }
 
-    //
-    // Events
-    //
-
+    /**
+     * afterFetch event
+     */
     public function afterFetch()
     {
         if (!$this->payment_method_id) {
@@ -105,12 +143,18 @@ class Invoice extends Model
         }
     }
 
+    /**
+     * beforeSave event
+     */
     public function beforeSave()
     {
         $this->setDefaults();
         $this->calculateTotals();
     }
 
+    /**
+     * beforeCreate event
+     */
     public function beforeCreate()
     {
         $this->generateHash();
@@ -122,6 +166,9 @@ class Invoice extends Model
         $this->user_ip = Request::getClientIp();
     }
 
+    /**
+     * afterCreate event
+     */
     public function afterCreate()
     {
         InvoiceStatusLog::createRecord(InvoiceStatus::STATUS_DRAFT, $this);
@@ -129,10 +176,9 @@ class Invoice extends Model
         Event::fire('responsiv.pay.invoiceNew', [$this]);
     }
 
-    //
-    // Scopes
-    //
-
+    /**
+     * scopeApplyRelated scope
+     */
     public function scopeApplyRelated($query, $object)
     {
         return $query
@@ -141,16 +187,25 @@ class Invoice extends Model
         ;
     }
 
+    /**
+     * scopeApplyUser scope
+     */
     public function scopeApplyUser($query, $user)
     {
         return $query->where('user_id', $user->id);
     }
 
+    /**
+     * scopeApplyThrowaway scope
+     */
     public function scopeApplyThrowaway($query)
     {
         return $query->where('is_throwaway', 1);
     }
 
+    /**
+     * scopeApplyNotThrowaway scope
+     */
     public function scopeApplyNotThrowaway($query)
     {
         return $query->where(function($q) {
@@ -159,15 +214,17 @@ class Invoice extends Model
         });
     }
 
+    /**
+     * scopeApplyUnpaid scope
+     */
     public function scopeApplyUnpaid($query)
     {
         return $query->whereNull('processed_at');
     }
 
-    //
-    // Options
-    //
-
+    /**
+     * getCurrencyOptions options
+     */
     public function getCurrencyOptions()
     {
         $emptyOption = [
@@ -177,42 +234,20 @@ class Invoice extends Model
         return $emptyOption + Currency::listAvailable();
     }
 
+    /**
+     * getCountryOptions options
+     */
     public function getCountryOptions()
     {
         return Country::getNameList();
     }
 
+    /**
+     * getStateOptions options
+     */
     public function getStateOptions()
     {
         return State::getNameList($this->country_id);
-    }
-
-    //
-    // Accessors
-    //
-
-    public function isPaid()
-    {
-        return $this->isPaymentProcessed();
-    }
-
-    public function isPastDueDate()
-    {
-        if (!$this->due_at) {
-            return true;
-        }
-
-        return $this->due_at->isPast() || $this->due_at->isToday();
-    }
-
-    public function getCurrencyAttribute()
-    {
-        return $this->attributes['currency'] ?? (Currency::getPrimary())->currency_code;
-    }
-
-    public function getStatusCodeAttribute()
-    {
-        return $this->status ? $this->status->code : null;
     }
 
     //
