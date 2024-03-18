@@ -5,6 +5,7 @@ use RainLab\User\Models\User;
 use RainLab\UserPlus\Models\UserAddress;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
+use Responsiv\Pay\Models\Invoice;
 use October\Rain\Element\ElementBase;
 
 /**
@@ -157,6 +158,26 @@ class TaxLocation extends ElementBase
             ->countryId($countryId)
             ->countryCode($countryCode)
             ->stateCode($stateCode)
+        ;
+
+        $this->loadInternals();
+    }
+
+    /**
+     * fillFromInvoice
+     */
+    public function fillFromInvoice(Invoice $invoice)
+    {
+        $this
+            ->email($invoice->email)
+            ->firstName($invoice->first_name)
+            ->lastName($invoice->last_name)
+            ->company($invoice->company)
+            ->phone($invoice->phone)
+            ->city($invoice->city)
+            ->zip($invoice->zip)
+            ->stateId($invoice->state_id)
+            ->countryId($invoice->country_id)
         ;
 
         $this->loadInternals();

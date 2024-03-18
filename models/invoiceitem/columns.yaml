@@ -11,9 +11,12 @@ columns:
 
     price:
         label: Unit Price
+        type: currency
 
     discount:
-        label: Discount (%)
+        label: Discount
+        type: currency
 
     total:
         label: Amount
+        type: currency

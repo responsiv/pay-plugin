@@ -39,7 +39,7 @@ class InvoiceStatusLog extends Model
      */
     public $belongsTo = [
         'status'  => InvoiceStatus::class,
-        'invoice' => [Invoice::class, 'push' => false],
+        'invoice' => Invoice::class,
     ];
 
     /**

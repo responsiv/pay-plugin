@@ -123,8 +123,8 @@ class Invoice extends Model implements InvoiceContract
         $invoice = new static;
 
         $invoice->user = $user;
-        $invoice->first_name = $user->name;
-        $invoice->last_name = $user->surname;
+        $invoice->first_name = $user->first_name;
+        $invoice->last_name = $user->last_name;
         $invoice->email = $user->email;
         $invoice->phone = $user->phone;
 
@@ -364,14 +364,13 @@ class Invoice extends Model implements InvoiceContract
     }
 
     /**
-     * Build a helper object for this invoice's location, used by tax calcuation.
-     * @return object
+     * getTaxableAddress returns the address used for calculating tax on this order
      */
-    public function getLocationInfo()
+    public function getTaxableAddress(): TaxLocation
     {
-        $this->setDefaults();
-
-        return TaxLocation::makeFromObject($this);
+        $address = new TaxLocation;
+        $address->fillFromInvoice($this);
+        return $address;
     }
 
     /**

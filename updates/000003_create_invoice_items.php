@@ -9,8 +9,6 @@ return new class extends Migration
     {
         Schema::create('responsiv_pay_invoice_items', function($table) {
             $table->increments('id');
-            $table->integer('invoice_id')->unsigned()->nullable()->index();
-            $table->integer('tax_class_id')->unsigned()->nullable()->index();
             $table->string('description')->nullable();
             $table->integer('quantity')->default(0);
             $table->bigInteger('price')->nullable();
@@ -23,6 +21,8 @@ return new class extends Migration
             $table->integer('sort_order')->nullable();
             $table->string('related_id')->index()->nullable();
             $table->string('related_type')->index()->nullable();
+            $table->integer('invoice_id')->unsigned()->nullable()->index();
+            $table->integer('tax_class_id')->unsigned()->nullable()->index();
             $table->timestamps();
         });
     }

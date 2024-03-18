@@ -40,7 +40,7 @@ class InvoiceLog extends Model
      * @var array belongsTo
      */
     public $belongsTo = [
-        'invoice' => [Invoice::class, 'push' => false],
+        'invoice' => Invoice::class,
     ];
 
     /**
