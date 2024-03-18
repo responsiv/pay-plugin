@@ -9,7 +9,6 @@ use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Currency\Models\Currency;
-use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
 
 /**
@@ -111,7 +110,6 @@ class Invoice extends Model implements InvoiceContract
     public static function makeThrowaway($user = null)
     {
         $invoice = $user === null ? new static : self::makeForUser($user);
-
         $invoice->is_throwaway = true;
 
         return $invoice;

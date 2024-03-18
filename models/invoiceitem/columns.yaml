@@ -10,7 +10,7 @@ columns:
         label: Qty
 
     price:
-        label: Unit price
+        label: Unit Price
 
     discount:
         label: Discount (%)

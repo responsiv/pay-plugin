@@ -51,7 +51,7 @@ columns:
         type: date
 
     due_at:
-        label: Due at
+        label: Due At
         type: date
 
     total:

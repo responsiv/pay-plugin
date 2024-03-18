@@ -7,14 +7,14 @@ tabs:
         # payment_method:
         #     label: Payment method
         #     type: relation
-        #     tab: Invoice details
+        #     tab: Invoice Details
         #     span: left
 
         # is_tax_exempt:
         #     label: Is tax exempt
         #     comment: Tick this checkbox if the tax should not be applied to this invoice
         #     type: checkbox
-        #     tab: Invoice details
+        #     tab: Invoice Details
         #     span: auto
 
         sent_at:
@@ -22,21 +22,21 @@ tabs:
             type: datepicker
             mode: date
             span: left
-            tab: Invoice details
+            tab: Invoice Details
             context: update
 
         due_at:
-            label: Due at
+            label: Due At
             type: datepicker
             mode: date
             span: auto
-            tab: Invoice details
+            tab: Invoice Details
 
         currency:
             label: Currency
             type: dropdown
             span: auto
-            tab: Invoice details
+            tab: Invoice Details
 
         user:
             label: User
@@ -45,66 +45,66 @@ tabs:
             prompt: Click the %s button to find a user
             nameFrom: name
             descriptionFrom: email
-            tab: Customer details
+            tab: Customer Details
             span: full
 
         first_name:
             label: First name
-            tab: Customer details
+            tab: Customer Details
             span: left
             dependsOn: user
 
         last_name:
             label: Last name
-            tab: Customer details
+            tab: Customer Details
             span: right
             dependsOn: user
 
         email:
             label: Email
-            tab: Customer details
+            tab: Customer Details
             dependsOn: user
             span: left
 
         phone:
             label: Phone
-            tab: Customer details
+            tab: Customer Details
             span: right
             dependsOn: user
 
         company:
             label: Company
-            tab: Customer details
+            tab: Customer Details
             span: left
             dependsOn: user
 
         vat_id:
             label: Vat ID
-            tab: Customer details
+            tab: Customer Details
             span: right
             dependsOn: user
 
         city:
             label: City
-            tab: Billing address
+            tab: Billing Address
             span: left
             dependsOn: user
 
         zip:
             label: Zip
-            tab: Billing address
+            tab: Billing Address
             span: right
             dependsOn: user
 
         street_addr:
             label: Street Address
-            tab: Billing address
+            tab: Billing Address
             dependsOn: user
 
         country:
             label: Country
             type: dropdown
-            tab: Billing address
+            tab: Billing Address
             span: left
             dependsOn: user
             placeholder: -- select country --
@@ -112,7 +112,7 @@ tabs:
         state:
             label: State
             type: dropdown
-            tab: Billing address
+            tab: Billing Address
             span: right
             dependsOn: [country, user]
             placeholder: -- select state --

@@ -4,12 +4,6 @@
 
 tabs:
     fields:
-        description:
-            label: Description
-            type: textarea
-            size: tiny
-            tab: Line item
-
         quantity:
             label: Quantity
             type: number
@@ -17,9 +11,15 @@ tabs:
             tab: Line item
 
         price:
-            label: Unit price
+            label: Unit Price
             type: number
             span: right
+            tab: Line item
+
+        description:
+            label: Description
+            type: textarea
+            size: tiny
             tab: Line item
 
         discount:
@@ -35,7 +35,7 @@ tabs:
             emptyOption: -- use default --
 
         is_tax_exempt:
-            label: Tax exempt
+            label: Tax Exempt
             comment: Tick this checkbox if the tax should not be applied to this line item
             type: checkbox
             tab: Tax & Discounts
