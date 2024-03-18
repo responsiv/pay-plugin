@@ -38,6 +38,16 @@ return new class extends Migration
                 $table->bigInteger('created_user_id')->unsigned()->nullable();
             });
         }
+
+        if (!Schema::hasColumn('responsiv_pay_invoice_items', 'price_less_tax')) {
+            Schema::table('responsiv_pay_invoice_items', function(Blueprint $table) {
+                $table->bigInteger('price_less_tax')->nullable();
+                $table->bigInteger('price_with_tax')->nullable();
+                $table->bigInteger('discount_less_tax')->nullable();
+                $table->bigInteger('discount_with_tax')->nullable();
+                $table->boolean('prices_include_tax')->default(false)->nullable();
+            });
+        }
     }
 
     public function down()

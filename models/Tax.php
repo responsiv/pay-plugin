@@ -5,6 +5,8 @@ use Auth;
 use Model;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
+use Responsiv\Pay\Models\InvoiceItem;
+use Responsiv\Pay\Classes\TaxItem;
 
 /**
  * Tax Model
@@ -264,6 +266,26 @@ class Tax extends Model
         }
 
         return $result;
+    }
+
+    /**
+     * calculateInvoiceTaxes
+     */
+    public static function calculateInvoiceTaxes($invoiceItems)
+    {
+        $items = [];
+
+        foreach ($invoiceItems as $invoiceItem) {
+            if ($invoiceItem instanceof InvoiceItem) {
+                $item = new TaxItem;
+                $item->taxClassId = $invoiceItem->tax_class_id;
+                $item->quantity = $invoiceItem->quantity;
+                $item->unitPrice = $invoiceItem->price;
+                $items[] = $item;
+            }
+        }
+
+        return static::calculateTaxes($items);
     }
 
     /**

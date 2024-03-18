@@ -33,6 +33,12 @@ tabs:
             tab: Tax & Discounts
             emptyOption: -- use default --
 
+        prices_include_tax:
+            label: Prices Include Tax
+            comment: Tick this checkbox if the tax is included in the quoted prices for this line item
+            type: checkbox
+            tab: Tax & Discounts
+
         is_tax_exempt:
             label: Tax Exempt
             comment: Tick this checkbox if the tax should not be applied to this line item

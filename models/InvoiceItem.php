@@ -9,12 +9,14 @@ use Model;
  * @property string $description
  * @property int $quantity quantity the total quantity of units
  * @property int $price
- * @property int $total
+ * @property int $price_less_tax
+ * @property int $price_with_tax
  * @property int $discount
- * @property int $subtotal
+ * @property int $discount_less_tax
+ * @property int $discount_with_tax
  * @property int $tax
- * @property int $tax_discount
  * @property bool $is_tax_exempt
+ * @property bool $prices_include_tax
  * @property int $sort_order
  * @property int $related_id
  * @property string $related_type
@@ -61,53 +63,18 @@ class InvoiceItem extends Model
         'related' => []
     ];
 
-    // /**
-    //  * beforeSave
-    //  */
-    // public function beforeSave()
-    // {
-    //     if (!$this->tax_class_id) {
-    //         $this->tax_class = Tax::getDefault();
-    //     }
+    /**
+     * beforeSave
+     */
+    public function beforeSave()
+    {
+        if (!$this->tax_class_id) {
+            $this->tax_class = Tax::getDefault();
+        }
 
-    //     $this->calculateTotals();
-    // }
-
-    // /**
-    //  * calculateTotals for this line item, including taxes.
-    //  */
-    // public function calculateTotals()
-    // {
-    //     $discountAmount = $this->price * $this->discount;
-    //     $this->subtotal = ($this->price - $discountAmount) * $this->quantity;
-
-    //     $taxClass = $this->getTaxClass();
-
-    //     if ($taxClass && $this->invoice && !$this->is_tax_exempt) {
-    //         $this->tax = $taxClass->getTotalTax($this->subtotal);
-    //     }
-
-    //     $this->total = $this->subtotal + $this->tax;
-    // }
-
-    // public function getTaxClass()
-    // {
-    //     if ($this->tax_class_id && $this->tax_class) {
-    //         $taxClass = $this->tax_class;
-    //     }
-    //     elseif ($this->invoice && $this->invoice->tax_class) {
-    //         $taxClass = $this->invoice->tax_class;
-    //     }
-    //     else {
-    //         $taxClass = Tax::getDefault();
-    //     }
-
-    //     if ($taxClass && $this->invoice) {
-    //         $taxClass->setLocationInfo($this->invoice->getLocationInfo());
-    //     }
-
-    //     return $taxClass;
-    // }
+        $this->subtotal = $this->quantity * ($this->price - $this->discount);
+        $this->total = $this->subtotal + $this->tax;
+    }
 
     /**
      * scopeApplyRelated

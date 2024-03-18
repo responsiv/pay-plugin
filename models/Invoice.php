@@ -350,9 +350,9 @@ class Invoice extends Model implements InvoiceContract
         }
 
         // Calculate tax
-        $taxInfo = Tax::calculateInvoiceTaxes($this, $items);
-        $this->setSalesTaxes($taxInfo->taxes);
-        $tax = $taxInfo->tax_total;
+        $taxInfo = Tax::calculateInvoiceTaxes($items);
+        $this->setSalesTaxes($taxInfo['taxes']);
+        $tax = $taxInfo['taxTotal'];
 
         // Grand total
         $this->discount = $discount;

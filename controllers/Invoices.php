@@ -172,4 +172,14 @@ class Invoices extends Controller
         $data['state'] = $user->state_id;
         return $data;
     }
+
+    /**
+     * relationBeforeSave
+     */
+    public function relationBeforeSave($field, $model)
+    {
+        if ($field === 'items') {
+            $model->evalInvoiceItemTotals();
+        }
+    }
 }
