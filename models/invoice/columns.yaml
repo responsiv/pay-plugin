@@ -27,12 +27,12 @@ columns:
         searchable: true
 
     first_name:
-        label: First name
+        label: First Name
         searchable: true
         invisible: true
 
     last_name:
-        label: Last name
+        label: Last Name
         searchable: true
         invisible: true
 

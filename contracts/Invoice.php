@@ -41,8 +41,8 @@ interface Invoice
     /**
      * Returns an array with location information about the customer. Must contain:
      *
-     * - first_name: First name
-     * - last_name: Last name
+     * - first_name: First Name
+     * - last_name: Last Name
      * - email: Email address
      * - street_addr: Street address
      * - city: City / Province

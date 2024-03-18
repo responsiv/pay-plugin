@@ -38,24 +38,29 @@ tabs:
             span: auto
             tab: Invoice Details
 
+        items:
+            label: Items
+            type: relation
+            tab: Invoice Details
+
         user:
             label: User
             type: recordfinder
             list: ~/plugins/rainlab/user/models/user/columns.yaml
             prompt: Click the %s button to find a user
-            nameFrom: name
+            nameFrom: full_name
             descriptionFrom: email
             tab: Customer Details
             span: full
 
         first_name:
-            label: First name
+            label: First Name
             tab: Customer Details
             span: left
             dependsOn: user
 
         last_name:
-            label: Last name
+            label: Last Name
             tab: Customer Details
             span: right
             dependsOn: user
@@ -86,25 +91,25 @@ tabs:
 
         city:
             label: City
-            tab: Billing Address
+            tab: Customer Details
             span: left
             dependsOn: user
 
         zip:
             label: Zip
-            tab: Billing Address
+            tab: Customer Details
             span: right
             dependsOn: user
 
         street_addr:
             label: Street Address
-            tab: Billing Address
+            tab: Customer Details
             dependsOn: user
 
         country:
             label: Country
             type: dropdown
-            tab: Billing Address
+            tab: Customer Details
             span: left
             dependsOn: user
             placeholder: -- select country --
@@ -112,7 +117,7 @@ tabs:
         state:
             label: State
             type: dropdown
-            tab: Billing Address
+            tab: Customer Details
             span: right
             dependsOn: [country, user]
             placeholder: -- select state --

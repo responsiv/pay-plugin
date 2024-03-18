@@ -1,8 +1,8 @@
 <?php Block::put('breadcrumb') ?>
-    <ul>
-        <li><a href="<?= Backend::url('responsiv/pay/invoices') ?>">Invoices</a></li>
-        <li><?= e(trans($this->pageTitle)) ?></li>
-    </ul>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?= Backend::url('responsiv/pay/invoices') ?>">Invoices</a></li>
+        <li class="breadcrumb-item active"><?= e(trans($this->pageTitle)) ?></li>
+    </ol>
 <?php Block::endPut() ?>
 
 <?php if (!$this->fatalError): ?>
@@ -22,8 +22,8 @@
     <div class="control-tabs content-tabs tabs-offset" data-control="tab">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#invoiceTemplate">Invoice</a></li>
-            <li><a href="#statusLog">Status history</a></li>
-            <li><a href="#typeLog">Pay attempts</a></li>
+            <li><a href="#statusLog">Status History</a></li>
+            <li><a href="#typeLog">Pay Attempts</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
@@ -47,6 +47,6 @@
 <?php else: ?>
 
     <p class="flash-message static error"><?= e(trans($this->fatalError)) ?></p>
-    <p><a href="<?= Backend::url('responsiv/pay/invoices') ?>" class="btn btn-default">Return to invoices list</a></p>
+    <p><a href="<?= Backend::url('responsiv/pay/invoices') ?>" class="btn btn-default">Return to Invoices List</a></p>
 
 <?php endif ?>

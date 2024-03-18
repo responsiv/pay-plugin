@@ -137,7 +137,7 @@ class Invoice extends Model implements InvoiceContract
     public function getCurrencyOptions()
     {
         $emptyOption = [
-            '' => "Default currency"
+            '' => "Default Currency"
         ];
 
         return $emptyOption + Currency::listAvailable();
