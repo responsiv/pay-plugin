@@ -12,7 +12,7 @@ tabs:
 
         price:
             label: Unit Price
-            type: number
+            type: currency
             span: right
             tab: Line Item
 
@@ -23,10 +23,9 @@ tabs:
             tab: Line Item
 
         discount:
-            label: Discount (%)
-            type: partial
+            label: Discount
+            type: discount
             tab: Tax & Discounts
-            path: percent_field
 
         tax_class:
             label: Tax Class

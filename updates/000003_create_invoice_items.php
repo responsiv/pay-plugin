@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('total')->nullable();
             $table->bigInteger('discount')->nullable();
             $table->bigInteger('subtotal')->nullable();
-            $table->boolean('is_tax_exempt')->default(false);
+            $table->boolean('is_tax_exempt')->default(false)->nullable();
             $table->bigInteger('tax')->nullable();
             $table->bigInteger('tax_discount')->nullable();
             $table->integer('sort_order')->nullable();

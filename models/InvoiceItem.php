@@ -55,6 +55,23 @@ class InvoiceItem extends Model
     }
 
     /**
+     * setDiscountAttribute checks for negative and percentage values
+     */
+    public function setDiscountAttribute($amount)
+    {
+        if (strpos($amount, '-') !== false) {
+            $amount = str_replace('-', '', $amount);
+        }
+
+        if (strpos($amount, '%') !== false) {
+            $amount = str_replace('%', '', $amount);
+            $amount = $this->price * ($amount / 100);
+        }
+
+        $this->attributes['discount'] = $amount;
+    }
+
+    /**
      * Calculates the totals for this line item, including taxes.
      * @return void
      */

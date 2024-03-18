@@ -16,7 +16,7 @@ class Discount extends FormWidgetBase
     /**
      * @var bool fixedPrice allows a set price override
      */
-    public $fixedPrice = true;
+    public $fixedPrice = false;
 
     //
     // Object properties
