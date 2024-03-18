@@ -16,28 +16,28 @@
                         {{ item.quantity }}x {{ item.description }}
                     </div>
                 </td>
-                <td class="numeric">{{ item.price|currency({'in': invoice.currency}) }}</td>
-                <td class="numeric">{{ item.discount|currency({'in': invoice.currency}) }}</td>
-                <td class="numeric">{{ item.tax|currency({'in': invoice.currency}) }}</td>
-                <td class="numeric last total">{{ item.total|currency({'in': invoice.currency}) }}</td>
+                <td class="numeric">{{ item.price|currency({ in: invoice.currency }) }}</td>
+                <td class="numeric">{{ item.discount|currency({ in: invoice.currency }) }}</td>
+                <td class="numeric">{{ item.tax|currency({ in: invoice.currency }) }}</td>
+                <td class="numeric last total">{{ item.total|currency({ in: invoice.currency }) }}</td>
             </tr>
         {% endfor %}
     </tbody>
     <tfoot>
         <tr>
             <td colspan="4" class="text-right">Subtotal</td>
-            <td class="numeric total">{{ invoice.subtotal|currency({'in': invoice.currency}) }}</td>
+            <td class="numeric total">{{ invoice.subtotal|currency({ in: invoice.currency }) }}</td>
         </tr>
         {% for tax in invoice.listSalesTaxes %}
             <tr>
-                <td colspan="4" class="text-right" colspan="4">Sales tax ({{ tax.name }})</td>
-                <td class="numeric total">{{ tax.total|currency({'in': invoice.currency}) }}</td>
+                <td colspan="4" class="text-right" colspan="4">Sales Tax ({{ tax.name }})</td>
+                <td class="numeric total">{{ tax.total|currency({ in: invoice.currency }) }}</td>
             </tr>
         {% endfor %}
         <tr class="grand-total">
             <td class="blank">&nbsp;</td>
             <td class="text-right" colspan="3"><h4>Total</h4></td>
-            <td class="numeric"><h4>{{ invoice.total|currency({'in': invoice.currency}) }}</h4></td>
+            <td class="numeric"><h4>{{ invoice.total|currency({ in: invoice.currency }) }}</h4></td>
         </tr>
     </tfoot>
 </table>​

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('zip')->nullable();
             $table->string('vat_id')->nullable(); // @todo rename to tax_id_number
-            $table->decimal('total', 15, 2)->default(0);
-            $table->decimal('subtotal', 15, 2)->default(0);
-            $table->decimal('discount', 15, 2)->default(0);
-            $table->decimal('tax', 15, 2)->default(0);
-            $table->decimal('tax_discount', 15, 2)->default(0);
+            $table->bigInteger('total')->nullable();
+            $table->bigInteger('subtotal')->nullable();
+            $table->bigInteger('discount')->nullable();
+            $table->bigInteger('tax')->nullable();
+            $table->bigInteger('tax_discount')->nullable();
             $table->boolean('is_tax_exempt')->default(false);
             $table->string('currency', 10)->nullable(); // @todo rename currency_code
             $table->text('tax_data')->nullable();

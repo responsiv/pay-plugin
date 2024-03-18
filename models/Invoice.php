@@ -341,9 +341,7 @@ class Invoice extends Model implements InvoiceContract
             $items = $this->items()->withDeferred($this->sessionKey)->get();
         }
 
-        /*
-         * Discount and subtotal
-         */
+        // Discount and subtotal
         $discount = 0;
         $subtotal = 0;
         foreach ($items as $item) {
@@ -351,16 +349,12 @@ class Invoice extends Model implements InvoiceContract
             $discount += $item->discount * $item->price;
         }
 
-        /*
-         * Calculate tax
-         */
+        // Calculate tax
         $taxInfo = Tax::calculateInvoiceTaxes($this, $items);
         $this->setSalesTaxes($taxInfo->taxes);
         $tax = $taxInfo->tax_total;
 
-        /*
-         * Grand total
-         */
+        // Grand total
         $this->discount = $discount;
         $this->subtotal = $subtotal;
         $this->tax = $tax;
@@ -446,10 +440,10 @@ class Invoice extends Model implements InvoiceContract
 
         if (!array_key_exists($name, $list)) {
             $taxInfo = [
-                'name'     => $name,
-                'amount'   => 0,
+                'name' => $name,
+                'amount' => 0,
                 'discount' => 0,
-                'total'    => 0
+                'total' => 0
             ];
             $list[$name] = (object) $taxInfo;
         }
