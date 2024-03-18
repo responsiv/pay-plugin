@@ -8,25 +8,25 @@ tabs:
             label: Quantity
             type: number
             span: left
-            tab: Line item
+            tab: Line Item
 
         price:
             label: Unit Price
             type: number
             span: right
-            tab: Line item
+            tab: Line Item
 
         description:
             label: Description
             type: textarea
             size: tiny
-            tab: Line item
+            tab: Line Item
 
         discount:
             label: Discount (%)
             type: partial
             tab: Tax & Discounts
-            path: $/responsiv/pay/partials/_percent_field.htm
+            path: percent_field
 
         tax_class:
             label: Tax Class
