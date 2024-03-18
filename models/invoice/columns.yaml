@@ -9,12 +9,12 @@ columns:
         select: name
         sortable: false
         type: partial
-        path: $/responsiv/pay/controllers/invoices/_column_status.htm
+        path: column_status
 
     id:
         label: ID
         type: partial
-        path: $/responsiv/pay/controllers/invoices/_column_id.htm
+        path: column_id
         searchable: true
         width: 100px
 

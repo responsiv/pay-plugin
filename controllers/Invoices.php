@@ -14,16 +14,33 @@ use Responsiv\Currency\Models\Currency as CurrencyModel;
  */
 class Invoices extends Controller
 {
+    /**
+     * @var array implement extensions
+     */
     public $implement = [
         \Backend\Behaviors\FormController::class,
         \Backend\Behaviors\ListController::class,
         \Backend\Behaviors\RelationController::class,
     ];
 
+    /**
+     * @var array formConfig configuration.
+     */
     public $formConfig = 'config_form.yaml';
+
+    /**
+     * @var array listConfig configuration.
+     */
     public $listConfig = 'config_list.yaml';
+
+    /**
+     * @var array relationConfig for extensions.
+     */
     public $relationConfig = 'config_relation.yaml';
 
+    /**
+     * __construct
+     */
     public function __construct()
     {
         parent::__construct();
@@ -31,11 +48,17 @@ class Invoices extends Controller
         BackendMenu::setContext('Responsiv.Pay', 'pay', 'invoices');
     }
 
+    /**
+     * listExtendQuery
+     */
     public function listExtendQuery($query)
     {
         return $query->applyNotThrowaway();
     }
 
+    /**
+     * preview
+     */
     public function preview($recordId = null, $context = null)
     {
         $this->bodyClass = 'slim-container';
@@ -51,11 +74,17 @@ class Invoices extends Controller
         return $this->asExtension('FormController')->preview($recordId, $context);
     }
 
+    /**
+     * preview_onDelete
+     */
     public function preview_onDelete($recordId = null)
     {
         return $this->asExtension('FormController')->update_onDelete($recordId);
     }
 
+    /**
+     * preview_onLoadChangeStatusForm
+     */
     public function preview_onLoadChangeStatusForm($recordId = null)
     {
         try {
@@ -70,6 +99,9 @@ class Invoices extends Controller
         return $this->makePartial('change_status_form');
     }
 
+    /**
+     * preview_onChangeStatus
+     */
     public function preview_onChangeStatus($recordId = null)
     {
         $invoice = $this->formFindModelObject($recordId);
@@ -97,6 +129,9 @@ class Invoices extends Controller
         return Backend::redirect(sprintf('responsiv/pay/invoices/preview/%s', $invoice->id));
     }
 
+    /**
+     * makeStatusFormWidget
+     */
     protected function makeStatusFormWidget($invoice)
     {
         $model = new InvoiceStatusLog;
@@ -111,9 +146,12 @@ class Invoices extends Controller
         return $this->makeWidget('Backend\Widgets\Form', $config);
     }
 
+    /**
+     * formExtendRefreshData
+     */
     public function formExtendRefreshData($host, $data)
     {
-        if (empty($data['user'])) {
+        if (!isset($data['user'])) {
             return;
         }
 
