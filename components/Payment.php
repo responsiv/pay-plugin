@@ -58,7 +58,7 @@ class Payment extends ComponentBase
      */
     public function invoice()
     {
-        return $this->invoice ??= Invoice::findByOrderHash($this->param('hash'));
+        return $this->invoice ??= Invoice::where('hash', $this->param('hash'))->first();
     }
 
     /**

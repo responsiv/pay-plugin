@@ -25,12 +25,12 @@ tabs:
             span: auto
             tab: Invoice Details
 
-        currency:
-            label: Currency
-            type: relation
-            span: auto
-            tab: Invoice Details
-            emptyOption: — Use Default —
+        # currency:
+        #     label: Currency
+        #     type: relation
+        #     span: auto
+        #     tab: Invoice Details
+        #     emptyOption: — Use Default —
 
         items:
             label: Items
