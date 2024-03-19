@@ -62,4 +62,17 @@ class InvoiceStatus extends Model
     {
         return static::lists('name', 'code');
     }
+
+    /**
+     * getStatusNameOptions
+     */
+    public function getStatusCodeOptions()
+    {
+        return [
+            'draft' => ['Draft', '#98a0a0'],
+            'approved' => ['Approved', 'var(--bs-info)'],
+            'void' => ['Void', 'var(--bs-danger)'],
+            'paid' => ['Paid', 'var(--bs-success)'],
+        ];
+    }
 }

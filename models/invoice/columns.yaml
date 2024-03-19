@@ -3,13 +3,12 @@
 # ===================================
 
 columns:
-    status_name:
+    status_code:
         label: Status
         relation: status
         select: name
         sortable: false
-        type: partial
-        path: column_status
+        type: selectable
 
     id:
         label: ID
@@ -57,10 +56,12 @@ columns:
     total:
         label: Total
         searchable: true
+        type: currency
 
     subtotal:
         label: Subtotal
         invisible: true
+        type: currency
 
     phone:
         label: Phone
