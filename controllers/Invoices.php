@@ -63,8 +63,6 @@ class Invoices extends Controller
      */
     public function preview($recordId = null, $context = null)
     {
-        $this->bodyClass = 'slim-container';
-
         try {
             $invoice = Invoice::find($recordId);
             $this->vars['currency'] = CurrencyModel::findByCode($invoice->currency);

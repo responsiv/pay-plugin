@@ -46,7 +46,7 @@ columns:
         invisible: true
 
     sent_at:
-        label: Sent at
+        label: Sent At
         type: date
 
     due_at:

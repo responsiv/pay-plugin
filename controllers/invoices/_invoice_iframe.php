@@ -21,12 +21,12 @@
             })
 
             invoiceFrame.on('print.invoice', function(){
-               var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0')
-               printWindow.document.write(invoiceContents)
-               printWindow.document.close()
-               printWindow.focus()
-               printWindow.print()
-               printWindow.close()
+               var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0');
+               printWindow.document.write(invoiceContents);
+               printWindow.document.close();
+               printWindow.focus();
+               printWindow.print();
+               printWindow.onafterprint = window.close;
             })
         })(window.jQuery);
     </script>

@@ -19,14 +19,13 @@ return new class extends Migration
             $table->string('street_addr')->nullable();
             $table->string('city')->nullable();
             $table->string('zip')->nullable();
-            $table->string('vat_id')->nullable(); // @todo rename to tax_id_number
+            $table->string('tax_id_number')->nullable();
             $table->bigInteger('total')->nullable();
             $table->bigInteger('subtotal')->nullable();
             $table->bigInteger('discount')->nullable();
             $table->bigInteger('tax')->nullable();
             $table->bigInteger('tax_discount')->nullable();
             $table->boolean('is_tax_exempt')->default(false);
-            $table->string('currency', 10)->nullable(); // @todo rename currency_code
             $table->text('tax_data')->nullable();
             $table->string('return_page')->nullable();
             $table->boolean('is_throwaway')->default(false);
@@ -35,6 +34,7 @@ return new class extends Migration
             $table->integer('payment_method_id')->unsigned()->nullable()->index();
             $table->string('related_id')->index()->nullable();
             $table->string('related_type')->index()->nullable();
+            $table->integer('currency_id')->unsigned()->nullable()->index();
             $table->integer('state_id')->unsigned()->nullable()->index();
             $table->integer('country_id')->unsigned()->nullable()->index();
             $table->integer('status_id')->unsigned()->nullable()->index();

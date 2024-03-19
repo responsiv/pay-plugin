@@ -25,7 +25,7 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property string $street_addr
  * @property string $city
  * @property string $zip
- * @property string $vat_id
+ * @property string $tax_id_number
  * @property int $total
  * @property int $subtotal
  * @property int $discount
@@ -82,10 +82,11 @@ class Invoice extends Model implements InvoiceContract
      * @var array belongsTo
      */
     public $belongsTo = [
-        'user' => \RainLab\User\Models\User::class,
         'status' => InvoiceStatus::class,
         'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
+        'user' => \RainLab\User\Models\User::class,
+        'currency' => \Responsiv\Currency\Models\Currency::class,
     ];
 
     /**
@@ -129,18 +130,6 @@ class Invoice extends Model implements InvoiceContract
         $invoice->phone = $user->phone;
 
         return $invoice;
-    }
-
-    /**
-     * getCurrencyOptions options
-     */
-    public function getCurrencyOptions()
-    {
-        $emptyOption = [
-            '' => "Default Currency"
-        ];
-
-        return $emptyOption + Currency::listAvailable();
     }
 
     /**

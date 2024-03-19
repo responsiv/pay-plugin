@@ -11,7 +11,7 @@ tabs:
         #     span: left
 
         sent_at:
-            label: Sent at
+            label: Sent At
             type: datepicker
             mode: date
             span: left
@@ -27,9 +27,10 @@ tabs:
 
         currency:
             label: Currency
-            type: dropdown
+            type: relation
             span: auto
             tab: Invoice Details
+            emptyOption: — Use Default —
 
         items:
             label: Items
@@ -76,7 +77,7 @@ tabs:
             span: left
             dependsOn: user
 
-        vat_id:
+        tax_id_number:
             label: Vat ID
             tab: Customer Details
             span: right

@@ -39,6 +39,14 @@ return new class extends Migration
             });
         }
 
+        if (!Schema::hasColumn('responsiv_pay_invoices', 'currency_id')) {
+            Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->integer('currency_id')->unsigned()->nullable()->index();
+                $table->renameColumn('currency', 'currency_code');
+                $table->renameColumn('vat_id', 'tax_id_number');
+            });
+        }
+
         if (!Schema::hasColumn('responsiv_pay_invoice_items', 'price_less_tax')) {
             Schema::table('responsiv_pay_invoice_items', function(Blueprint $table) {
                 $table->bigInteger('price_less_tax')->nullable();

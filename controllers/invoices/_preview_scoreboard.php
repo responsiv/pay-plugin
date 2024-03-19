@@ -19,6 +19,6 @@
 <?php endif ?>
 <div class="scoreboard-item title-value">
     <h4>Total</h4>
-    <p><?= $currency->formatCurrency($formModel->total) ?></p>
-    <p class="description">Tax: <?= $currency->formatCurrency($formModel->tax) ?></p>
+    <p><?= $formModel->currency?->formatCurrency($formModel->total) ?: Currency::format($formModel->total) ?></p>
+    <p class="description">Tax: <?= $formModel->currency?->formatCurrency($formModel->tax) ?: Currency::format($formModel->tax) ?></p>
 </div>
