@@ -5,6 +5,9 @@
 # Model List Column configuration
 list: ~/plugins/responsiv/pay/models/invoice/columns.yaml
 
+# Filter widget configuration
+filter: ~/plugins/responsiv/pay/models/invoice/scopes.yaml
+
 # Model Class name
 modelClass: Responsiv\Pay\Models\Invoice
 
@@ -32,7 +35,7 @@ showSorting: true
 #     direction: desc
 
 # Display checkboxes next to each record
-# showCheckboxes: true
+showCheckboxes: true
 
 # Toolbar widget configuration
 toolbar:
@@ -42,5 +45,3 @@ toolbar:
     # Search widget configuration
     search:
         prompt: backend::lang.list.search_prompt
-
-filter: config_filter.yaml

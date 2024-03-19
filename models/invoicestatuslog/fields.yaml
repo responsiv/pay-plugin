@@ -6,15 +6,13 @@ fields:
     status:
         label: Status
         type: dropdown
-        emptyOption: - select a status -
+        placeholder: -- select --
 
     comment:
         label: Comment
         type: textarea
         size: small
 
-    mark_paid:
-        label: Mark as payment received
-        comment: Use this if a manual payment has been received from the customer.
+    send_notifications:
+        label: Send Notifications
         type: checkbox
-        context: create

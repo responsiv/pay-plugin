@@ -97,7 +97,7 @@ columns:
         invisible: true
 
     payment_method:
-        label: Payment method
+        label: Payment Method
         relation: payment_method
         select: name
         sortable: false

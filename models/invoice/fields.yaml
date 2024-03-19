@@ -5,17 +5,10 @@
 tabs:
     fields:
         # payment_method:
-        #     label: Payment method
+        #     label: Payment Method
         #     type: relation
         #     tab: Invoice Details
         #     span: left
-
-        # is_tax_exempt:
-        #     label: Is tax exempt
-        #     comment: Tick this checkbox if the tax should not be applied to this invoice
-        #     type: checkbox
-        #     tab: Invoice Details
-        #     span: auto
 
         sent_at:
             label: Sent at
