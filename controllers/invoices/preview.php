@@ -11,7 +11,7 @@
 
 <div class="scoreboard">
     <div data-control="toolbar">
-        <?= $this->makePartial('preview_scoreboard') ?>
+        <?= $this->makePartial('scoreboard_preview') ?>
     </div>
 </div>
 

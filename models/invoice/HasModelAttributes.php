@@ -17,6 +17,14 @@ use Responsiv\Currency\Models\Currency;
 trait HasModelAttributes
 {
     /**
+     * getInvoiceNumberAttribute
+     */
+    public function getInvoiceNumberAttribute()
+    {
+        return $this->getUniqueId();
+    }
+
+    /**
      * getOriginalSubtotalAttribute
      */
     public function getOriginalSubtotalAttribute(): int

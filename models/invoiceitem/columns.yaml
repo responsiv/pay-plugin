@@ -6,17 +6,19 @@ columns:
     description:
         label: Description
 
-    quantity:
-        label: Qty
-
     price:
-        label: Unit Price
+        label: Price
         type: currency
 
     discount:
         label: Discount
         type: currency
 
-    total:
-        label: Amount
+    quantity:
+        label: Quantity
+        shortLabel: Qty
+        type: number
+
+    subtotal:
+        label: Total
         type: currency
