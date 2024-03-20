@@ -39,17 +39,18 @@ interface Invoice
     public function getReceiptUrl();
 
     /**
-     * Returns an array with location information about the customer. Must contain:
+     * getCustomerDetails returns an array with location information about the customer. Must contain:
      *
      * - first_name: First Name
      * - last_name: Last Name
-     * - email: Email address
-     * - street_addr: Street address
+     * - email: Email Address
+     * - address_line1: Street Address (Line 1)
+     * - address_line2: Street Address (Line 2)
      * - city: City / Province
-     * - country: Country code (US)
-     * - state: State code (FL)
-     * - zip: Zip code
-     * - phone: Telephone number
+     * - country: Country Code (US)
+     * - state: State Code (FL)
+     * - zip: Zip Code
+     * - phone: Telephone Number
      *
      * @return array
      */

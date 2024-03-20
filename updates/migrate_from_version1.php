@@ -48,6 +48,7 @@ return new class extends Migration
                 $table->renameColumn('vat_id', 'tax_id_number');
                 $table->renameColumn('tax_discount', 'discount_tax');
                 $table->renameColumn('tax_data', 'taxes');
+                $table->renameColumn('street_addr', 'address_line1');
             });
         }
 

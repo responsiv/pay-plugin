@@ -101,7 +101,8 @@ class Invoices extends Controller
         $data['email'] = $user->email;
         $data['phone'] = $user->phone;
         $data['company'] = $user->company;
-        $data['street_addr'] = $user->street_addr;
+        $data['address_line1'] = $user->address_line1;
+        $data['address_line2'] = $user->address_line2;
         $data['city'] = $user->city;
         $data['zip'] = $user->zip;
         $data['country'] = $user->country_id;

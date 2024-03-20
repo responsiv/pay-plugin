@@ -71,7 +71,7 @@ columns:
         label: Company
         invisible: true
 
-    street_addr:
+    street_address:
         label: Street Address
         invisible: true
 

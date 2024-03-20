@@ -101,9 +101,11 @@ tabs:
             span: right
             dependsOn: user
 
-        street_addr:
+        street_address:
             label: Street Address
             tab: Customer Details
+            type: textarea
+            size: tiny
             dependsOn: user
 
         country:

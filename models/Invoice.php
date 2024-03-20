@@ -22,7 +22,8 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property string $email
  * @property string $phone
  * @property string $company
- * @property string $street_addr
+ * @property string $address_line1
+ * @property string $address_line2
  * @property string $city
  * @property string $zip
  * @property string $tax_id_number

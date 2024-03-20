@@ -21,7 +21,8 @@
                     <p>
                         {% if invoice.company %}<strong>{{ invoice.company }}</strong>{% endif %}<br />
                         Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                        {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                        {% if invoice.address_line1 %}{{ invoice.address_line1 }}<br />{% endif %}
+                        {% if invoice.address_line2 %}{{ invoice.address_line2 }}<br />{% endif %}
                         {% if invoice.city or invoice.zip %}{{ invoice.city }} {{ invoice.zip }}<br />{% endif %}
                         {% if invoice.state %}{{ invoice.state.name }}, {% endif %}
                         {% if invoice.country %}{{ invoice.country.name }}{% endif %}

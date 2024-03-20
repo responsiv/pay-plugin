@@ -11,6 +11,7 @@ use Responsiv\Currency\Models\Currency;
  * @property int $final_subtotal
  * @property int $final_discount
  * @property string $currency_code
+ * @property string $street_address
  * @property string $status_code
  */
 trait HasModelAttributes
@@ -77,5 +78,23 @@ trait HasModelAttributes
     public function getStatusCodeAttribute()
     {
         return $this->status ? $this->status->code : null;
+    }
+
+    /**
+     * getStreetAddressAttribute
+     */
+    public function getStreetAddressAttribute()
+    {
+        return "{$this->address_line1}\n{$this->address_line2}";
+    }
+
+    /**
+     * setStreetAddressAttribute
+     */
+    public function setStreetAddressAttribute($address)
+    {
+        $parts = explode("\n", $address, 2);
+        $this->attributes['address_line1'] = $parts[0];
+        $this->attributes['address_line2'] = $parts[1] ?? '';
     }
 }

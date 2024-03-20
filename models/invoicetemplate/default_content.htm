@@ -26,7 +26,8 @@
                         <div class="invoice-client-details">
                             {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
                             Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                            {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                            {% if invoice.address_line1 %}{{ invoice.address_line1 }}<br />{% endif %}
+                            {% if invoice.address_line2 %}{{ invoice.address_line2 }}<br />{% endif %}
                             {% if invoice.city %}{{ invoice.city }}, {% endif %}
                             {{ invoice.state.name }} {{ invoice.zip }}<br />
                             {{ invoice.country.name }}
