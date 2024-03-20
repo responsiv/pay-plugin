@@ -49,13 +49,13 @@ trait HasCalculatedAttributes
 
             // Calculate item taxes
             $cartTaxes = TaxClass::calculateInvoiceTaxes($items);
-            $this->sales_taxes = $cartTaxes['taxes'];
-            $this->sales_tax = $cartTaxes['taxTotal'];
+            $this->taxes = $cartTaxes['taxes'];
+            $this->tax = $cartTaxes['taxTotal'];
         }
 
         // Reset total
         $this->total = $this->final_subtotal;
-        $this->total_tax = $this->sales_tax - $this->discount_tax;
+        $this->total_tax = $this->tax - $this->discount_tax;
     }
 
     /**

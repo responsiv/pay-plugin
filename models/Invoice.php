@@ -27,13 +27,14 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property string $zip
  * @property string $tax_id_number
  * @property int $total
- * @property int $subtotal
+ * @property int $total_tax
  * @property int $discount
+ * @property int $discount_tax
+ * @property int $subtotal
  * @property int $tax
- * @property int $tax_discount
+ * @property string $taxes
  * @property bool $is_tax_exempt
  * @property bool $prices_include_tax
- * @property string $tax_data
  * @property string $return_page
  * @property bool $is_throwaway
  * @property int $user_id

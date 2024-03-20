@@ -21,13 +21,14 @@ return new class extends Migration
             $table->string('zip')->nullable();
             $table->string('tax_id_number')->nullable();
             $table->bigInteger('total')->nullable();
-            $table->bigInteger('subtotal')->nullable();
+            $table->bigInteger('total_tax')->nullable();
             $table->bigInteger('discount')->nullable();
+            $table->bigInteger('discount_tax')->nullable();
+            $table->bigInteger('subtotal')->nullable();
             $table->bigInteger('tax')->nullable();
-            $table->bigInteger('tax_discount')->nullable();
+            $table->mediumText('taxes')->nullable();
             $table->boolean('is_tax_exempt')->default(false);
             $table->boolean('prices_include_tax')->default(false)->nullable();
-            $table->text('tax_data')->nullable();
             $table->string('return_page')->nullable();
             $table->boolean('is_throwaway')->default(false);
             $table->integer('user_id')->unsigned()->nullable()->index();
