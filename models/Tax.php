@@ -281,6 +281,7 @@ class Tax extends Model
                 $item->taxClassId = $invoiceItem->tax_class_id;
                 $item->quantity = $invoiceItem->quantity;
                 $item->unitPrice = $invoiceItem->price;
+                $item->pricesIncludeTax = $invoiceItem->prices_include_tax;
                 $items[] = $item;
             }
         }

@@ -225,6 +225,22 @@ class TaxLocation extends ElementBase
     }
 
     /**
+     * saveToInvoice transfers this address to an invoice
+     */
+    public function saveToInvoice(Invoice $invoice)
+    {
+        $invoice->first_name = $this->firstName;
+        $invoice->last_name = $this->lastName;
+        $invoice->company = $this->company;
+        $invoice->email = $this->email;
+        $invoice->phone = $this->phone;
+        $invoice->city = $this->city;
+        $invoice->zip = $this->zip;
+        $invoice->state_id = $this->stateId;
+        $invoice->country_id = $this->countryId;
+    }
+
+    /**
      * saveToUser transfers this address to a user
      */
     public function saveToUser(User $user)
@@ -234,6 +250,10 @@ class TaxLocation extends ElementBase
         $user->company = $this->company;
         $user->email = $this->email;
         $user->phone = $this->phone;
+        $user->city = $this->city;
+        $user->zip = $this->zip;
+        $user->state_id = $this->stateId;
+        $user->country_id = $this->countryId;
     }
 
     /**

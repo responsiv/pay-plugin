@@ -32,13 +32,13 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property int $tax
  * @property int $tax_discount
  * @property bool $is_tax_exempt
- * @property string $currency
  * @property string $tax_data
  * @property string $return_page
  * @property bool $is_throwaway
  * @property int $user_id
  * @property int $template_id
  * @property int $payment_method_id
+ * @property int $currency_id
  * @property int $related_id
  * @property string $related_type
  * @property int $status_id
