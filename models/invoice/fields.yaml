@@ -37,6 +37,12 @@ tabs:
             type: relation
             tab: Invoice Details
 
+        prices_include_tax:
+            label: Prices Include Tax
+            comment: Tick this checkbox if the tax is included in the quoted prices for this line item
+            type: checkbox
+            tab: Invoice Details
+
         user:
             label: User
             type: recordfinder

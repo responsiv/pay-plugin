@@ -41,6 +41,7 @@ return new class extends Migration
 
         if (!Schema::hasColumn('responsiv_pay_invoices', 'currency_id')) {
             Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->boolean('prices_include_tax')->default(false)->nullable();
                 $table->integer('currency_id')->unsigned()->nullable()->index();
                 $table->renameColumn('currency', 'currency_code');
                 $table->renameColumn('vat_id', 'tax_id_number');
@@ -53,7 +54,6 @@ return new class extends Migration
                 $table->bigInteger('price_with_tax')->nullable();
                 $table->bigInteger('discount_less_tax')->nullable();
                 $table->bigInteger('discount_with_tax')->nullable();
-                $table->boolean('prices_include_tax')->default(false)->nullable();
             });
         }
     }

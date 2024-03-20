@@ -26,6 +26,7 @@ return new class extends Migration
             $table->bigInteger('tax')->nullable();
             $table->bigInteger('tax_discount')->nullable();
             $table->boolean('is_tax_exempt')->default(false);
+            $table->boolean('prices_include_tax')->default(false)->nullable();
             $table->text('tax_data')->nullable();
             $table->string('return_page')->nullable();
             $table->boolean('is_throwaway')->default(false);

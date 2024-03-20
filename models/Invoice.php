@@ -32,6 +32,7 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property int $tax
  * @property int $tax_discount
  * @property bool $is_tax_exempt
+ * @property bool $prices_include_tax
  * @property string $tax_data
  * @property string $return_page
  * @property bool $is_throwaway

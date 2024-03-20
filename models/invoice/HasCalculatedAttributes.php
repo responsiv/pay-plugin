@@ -16,7 +16,7 @@ trait HasCalculatedAttributes
         extract(array_merge([
             'items' => null,
             'address' => null,
-            // 'pricesIncludeTax' => null,
+            'pricesIncludeTax' => null,
         ], $options));
 
         // Locate address
@@ -24,8 +24,12 @@ trait HasCalculatedAttributes
             $address = $this->getTaxableAddress();
         }
 
+        if ($pricesIncludeTax === null) {
+            $pricesIncludeTax = $this->prices_include_tax;
+        }
+
         TaxClass::setLocationContext($address);
-        // TaxClass::setPricesIncludeTax($this->prices_include_tax);
+        TaxClass::setPricesIncludeTax($pricesIncludeTax);
 
         // Calculate totals for order items
         if ($items !== null) {
@@ -33,7 +37,6 @@ trait HasCalculatedAttributes
             $this->discount_tax = 0;
             $this->total_cost = 0;
             $this->subtotal = 0;
-            $this->total = 0;
 
             foreach ($items as $item) {
                 if ($item instanceof InvoiceItem) {
@@ -41,7 +44,6 @@ trait HasCalculatedAttributes
                     $this->discount_tax += $item->quantity * ($item->discount_with_tax - $item->discount);
                     $this->total_cost += $item->quantity * $item->cost;
                     $this->subtotal += $item->quantity * $item->price;
-                    $this->total = $this->subtotal + ($item->prices_include_tax ? $item->tax : 0);
                 }
             }
 
@@ -52,6 +54,7 @@ trait HasCalculatedAttributes
         }
 
         // Reset total
+        $this->total = $this->final_subtotal;
         $this->total_tax = $this->sales_tax - $this->discount_tax;
     }
 

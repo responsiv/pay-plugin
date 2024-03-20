@@ -23,11 +23,6 @@ class TaxItem
     public $unitPrice;
 
     /**
-     * @var bool|null pricesIncludeTax
-     */
-    public $pricesIncludeTax;
-
-    /**
      * getTaxModel returns a tax model for this item
      */
     public function getTaxModel(): ?TaxModel

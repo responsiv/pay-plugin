@@ -13,6 +13,18 @@ use Responsiv\Currency\Models\Currency;
 trait HasModelAttributes
 {
     /**
+     * getFinalSubtotalAttribute
+     */
+    public function getFinalSubtotalAttribute(): int
+    {
+        if ($this->prices_include_tax) {
+            return $this->subtotal;
+        }
+
+        return $this->subtotal + $this->sales_tax;
+    }
+
+    /**
      * getIsPaidAttribute
      */
     public function getIsPaidAttribute()

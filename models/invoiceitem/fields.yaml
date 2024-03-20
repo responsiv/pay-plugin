@@ -3,44 +3,33 @@
 # ===================================
 
 tabs:
+    defaultTab: Line Item
     fields:
         quantity:
             label: Quantity
             type: number
             span: left
-            tab: Line Item
 
         price:
             label: Unit Price
             type: currency
             span: right
-            tab: Line Item
+
+        discount:
+            label: Unit Discount
+            type: discount
 
         description:
             label: Description
             type: textarea
             size: tiny
-            tab: Line Item
-
-        discount:
-            label: Discount
-            type: discount
-            tab: Tax & Discounts
 
         tax_class:
             label: Tax Class
             type: relation
-            tab: Tax & Discounts
             emptyOption: -- use default --
-
-        prices_include_tax:
-            label: Prices Include Tax
-            comment: Tick this checkbox if the tax is included in the quoted prices for this line item
-            type: checkbox
-            tab: Tax & Discounts
 
         is_tax_exempt:
             label: Tax Exempt
             comment: Tick this checkbox if the tax should not be applied to this line item
             type: checkbox
-            tab: Tax & Discounts
