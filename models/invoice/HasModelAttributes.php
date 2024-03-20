@@ -7,11 +7,22 @@ use Responsiv\Currency\Models\Currency;
  *
  * @property bool $is_paid
  * @property bool $is_past_due_date
+ * @property int $original_subtotal
+ * @property int $final_subtotal
+ * @property int $final_discount
  * @property string $currency_code
  * @property string $status_code
  */
 trait HasModelAttributes
 {
+    /**
+     * getOriginalSubtotalAttribute
+     */
+    public function getOriginalSubtotalAttribute(): int
+    {
+        return $this->subtotal - $this->discount;
+    }
+
     /**
      * getFinalSubtotalAttribute
      */
@@ -21,7 +32,15 @@ trait HasModelAttributes
             return $this->subtotal;
         }
 
-        return $this->subtotal + $this->sales_tax;
+        return $this->subtotal + $this->tax;
+    }
+
+    /**
+     * getFinalDiscountAttribute
+     */
+    public function getFinalDiscountAttribute(): int
+    {
+        return $this->discount + $this->discount_tax;
     }
 
     /**
