@@ -4,6 +4,7 @@ use Flash;
 use Backend;
 use Exception;
 use BackendMenu;
+use Responsiv\Pay\Models\Tax;
 use Backend\Classes\Controller;
 use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceStatusLog;
@@ -39,6 +40,16 @@ class Invoices extends Controller
      * @var array relationConfig for extensions.
      */
     public $relationConfig = 'config_relation.yaml';
+
+    /**
+     * @var mixed invoiceItemCache
+     */
+    protected $invoiceItemCache;
+
+    /**
+     * @var bool hasSetFormValues
+     */
+    protected $hasSetFormValues = false;
 
     /**
      * __construct
@@ -101,8 +112,7 @@ class Invoices extends Controller
         $data['email'] = $user->email;
         $data['phone'] = $user->phone;
         $data['company'] = $user->company;
-        $data['address_line1'] = $user->address_line1;
-        $data['address_line2'] = $user->address_line2;
+        $data['street_address'] = $user->street_address;
         $data['city'] = $user->city;
         $data['zip'] = $user->zip;
         $data['country'] = $user->country_id;
@@ -118,5 +128,101 @@ class Invoices extends Controller
         if ($field === 'items') {
             $model->evalInvoiceItemTotals();
         }
+    }
+
+    /**
+     * onUpdateTotals
+     */
+    public function onUpdateTotals()
+    {
+        $this->pageAction();
+        $this->updateInvoiceTotals();
+
+        return [
+            '#'.$this->getId('scoreboard') => $this->makePartial('scoreboard_edit')
+        ];
+    }
+
+    /**
+     * onUpdateUser
+     */
+    public function onUpdateUser()
+    {
+        $response = $this->onUpdateTotals();
+
+        $invoice = $this->formGetModel();
+        if ($user = $invoice->user) {
+            $this->formGetWidget()->setFormValues([
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'company' => $user->company,
+                'phone' => $user->phone,
+                'street_address' => $user->street_address,
+                'city' => $user->city,
+                'zip' => $user->zip,
+                'country' => $user->country_id,
+                'state' => $user->state_id,
+            ]);
+
+            $invoice->unsetRelation('country');
+            $invoice->unsetRelation('state');
+
+            $response += $this->formRefreshFields([
+                'first_name',
+                'last_name',
+                'email',
+                'company',
+                'phone',
+                'street_address',
+                'city',
+                'zip',
+                'country',
+                'state'
+            ]);
+        }
+
+        return $response;
+    }
+
+    /**
+     * updateInvoiceTotals
+     */
+    protected function updateInvoiceTotals()
+    {
+        $this->setFormValuesOnce();
+
+        $invoice = $this->formGetModel();
+
+        Tax::setUserContext($invoice->user);
+        Tax::setTaxExempt($invoice->is_tax_exempt);
+
+        $invoice->evalInvoiceTotals(['items' => $this->getDeferredInvoiceItems()]);
+    }
+
+    /**
+     * getDeferredInvoiceItems
+     */
+    protected function getDeferredInvoiceItems()
+    {
+        return $this->invoiceItemCache ??= $this->formGetModel()
+            ->items()
+            ->withDeferred($this->formGetSessionKey())
+            ->get()
+        ;
+    }
+
+    /**
+     * setFormValuesOnce
+     */
+    protected function setFormValuesOnce()
+    {
+        if ($this->hasSetFormValues) {
+            return;
+        }
+
+        $this->formGetWidget()->setFormValues();
+
+        $this->hasSetFormValues = true;
     }
 }

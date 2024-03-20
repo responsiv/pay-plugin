@@ -20,7 +20,6 @@ return new class extends Migration
             $table->bigInteger('subtotal')->nullable();
             $table->bigInteger('tax')->nullable();
             $table->bigInteger('total')->nullable();
-            $table->boolean('is_tax_exempt')->default(false)->nullable();
             $table->integer('sort_order')->nullable();
             $table->string('related_id')->index()->nullable();
             $table->string('related_type')->index()->nullable();

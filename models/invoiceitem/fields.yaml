@@ -28,8 +28,3 @@ tabs:
             label: Tax Class
             type: relation
             emptyOption: -- use default --
-
-        is_tax_exempt:
-            label: Tax Exempt
-            comment: Tick this checkbox if the tax should not be applied to this line item
-            type: checkbox

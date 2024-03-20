@@ -3,11 +3,11 @@
 # ===================================
 
 tabs:
+    defaultTab: Invoice Details
     fields:
         # payment_method:
         #     label: Payment Method
         #     type: relation
-        #     tab: Invoice Details
         #     span: left
 
         sent_at:
@@ -15,7 +15,6 @@ tabs:
             type: datepicker
             mode: date
             span: left
-            tab: Invoice Details
             context: update
 
         due_at:
@@ -23,31 +22,42 @@ tabs:
             type: datepicker
             mode: date
             span: auto
-            tab: Invoice Details
 
         # currency:
         #     label: Currency
         #     type: relation
         #     span: auto
-        #     tab: Invoice Details
         #     emptyOption: — Use Default —
 
         items:
             label: Items
             type: relation
-            tab: Invoice Details
+            changeHandler: onUpdateTotals
+
+        is_tax_exempt:
+            label: Tax Exempt
+            comment: Check this if tax should not be applied to the invoice.
+            type: checkbox
+            span: auto
+            changeHandler: onUpdateTotals
 
         prices_include_tax:
             label: Prices Include Tax
-            comment: Tick this checkbox if the tax is included in the quoted prices for this line item
+            comment: Tick this checkbox if the tax is included in the quoted prices for this line item.
             type: checkbox
-            tab: Invoice Details
+            span: auto
+            changeHandler: onUpdateTotals
+            trigger:
+                action: disable|empty
+                field: is_tax_exempt
+                condition: checked
 
         user:
             label: User
             type: recordfinder
             list: ~/plugins/rainlab/user/models/user/columns.yaml
             prompt: Click the %s button to find a user
+            changeHandler: onUpdateUser
             nameFrom: full_name
             descriptionFrom: email
             tab: Customer Details
@@ -57,63 +67,53 @@ tabs:
             label: First Name
             tab: Customer Details
             span: left
-            dependsOn: user
 
         last_name:
             label: Last Name
             tab: Customer Details
             span: right
-            dependsOn: user
 
         email:
             label: Email
             tab: Customer Details
-            dependsOn: user
             span: left
 
         phone:
             label: Phone
             tab: Customer Details
             span: right
-            dependsOn: user
 
         company:
             label: Company
             tab: Customer Details
             span: left
-            dependsOn: user
 
         tax_id_number:
             label: Vat ID
             tab: Customer Details
             span: right
-            dependsOn: user
 
         city:
             label: City
             tab: Customer Details
             span: left
-            dependsOn: user
 
         zip:
             label: Zip
             tab: Customer Details
             span: right
-            dependsOn: user
 
         street_address:
             label: Street Address
             tab: Customer Details
             type: textarea
             size: tiny
-            dependsOn: user
 
         country:
             label: Country
             type: dropdown
             tab: Customer Details
             span: left
-            dependsOn: user
             placeholder: -- select country --
 
         state:
@@ -121,5 +121,5 @@ tabs:
             type: dropdown
             tab: Customer Details
             span: right
-            dependsOn: [country, user]
+            dependsOn: country
             placeholder: -- select state --
