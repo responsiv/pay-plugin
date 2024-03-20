@@ -3,12 +3,8 @@
 use Event;
 use Model;
 use Request;
-use Exception;
 use Carbon\Carbon;
-use RainLab\Location\Models\State;
-use RainLab\Location\Models\Country;
 use Responsiv\Pay\Classes\TaxLocation;
-use Responsiv\Currency\Models\Currency;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
 
 /**
@@ -167,8 +163,9 @@ class Invoice extends Model implements InvoiceContract
      */
     public function beforeSave()
     {
-        $this->setDefaults();
-        $this->calculateTotals();
+        if (!$this->template_id) {
+            $this->template_id = InvoiceTemplate::value('id');
+        }
     }
 
     /**
@@ -297,64 +294,6 @@ class Invoice extends Model implements InvoiceContract
         $this->markAsPaymentProcessed();
     }
 
-    public function setDefaults()
-    {
-        if (!$this->country_id) {
-            $this->country = Country::getDefault();
-            $this->state = State::getDefault();
-        }
-
-        if (!$this->template_id) {
-            $this->template_id = InvoiceTemplate::value('id');
-        }
-    }
-
-    /**
-     * Useful to recalculate the total for this invoice and items.
-     * @return void
-     */
-    public function touchTotals()
-    {
-        $this->touch();
-
-        $this->items->each(function($item) {
-            $item->touch();
-        });
-    }
-
-    /**
-     * Calculate totals from invoice items
-     * @param  Model $items
-     * @return float
-     */
-    public function calculateTotals($items = null)
-    {
-        if (!$items) {
-            $items = $this->items()->withDeferred($this->sessionKey)->get();
-        }
-
-        // Discount and subtotal
-        $discount = 0;
-        $subtotal = 0;
-        foreach ($items as $item) {
-            $subtotal += $item->subtotal;
-            $discount += $item->discount * $item->price;
-        }
-
-        // Calculate tax
-        $taxInfo = Tax::calculateInvoiceTaxes($items);
-        $this->setSalesTaxes($taxInfo['taxes']);
-        $tax = $taxInfo['taxTotal'];
-
-        // Grand total
-        $this->discount = $discount;
-        $this->subtotal = $subtotal;
-        $this->tax = $tax;
-        $this->total = $subtotal + $tax;
-
-        return $this->total;
-    }
-
     /**
      * getTaxableAddress returns the address used for calculating tax on this order
      */
@@ -363,86 +302,6 @@ class Invoice extends Model implements InvoiceContract
         $address = new TaxLocation;
         $address->fillFromInvoice($this);
         return $address;
-    }
-
-    /**
-     * Sets the tax data for the invoice
-     * @param array $taxes
-     * @return void
-     */
-    public function setSalesTaxes($taxes)
-    {
-        if (!is_array($taxes)) {
-            $taxes = [];
-        }
-
-        $taxesToSave = $taxes;
-
-        foreach ($taxesToSave as $taxName => &$taxInfo) {
-            $taxInfo->total = round($taxInfo->total, 2);
-        }
-
-        $this->tax_data = json_encode($taxesToSave);
-    }
-
-    /**
-     * Lists tax breakdown for this invoice.
-     * @return array
-     */
-    public function listSalesTaxes()
-    {
-        $result = [];
-
-        if (!strlen($this->tax_data)) {
-            return $result;
-        }
-
-        try {
-            $taxes = json_decode($this->tax_data);
-            foreach ($taxes as $taxName => $taxInfo) {
-                if ($taxInfo->total <= 0) {
-                    continue;
-                }
-
-                $result = $this->addTaxItem($result, $taxName, $taxInfo->total, 0, 'Sales tax');
-            }
-        }
-        catch (Exception $ex) {
-            return $result;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Internal method, adds a tax item to the list of taxes.
-     * @param array  $list
-     * @param string $name
-     * @param float  $amount
-     * @param float  $discount
-     * @param string $defaultName
-     * @return array
-     */
-    protected function addTaxItem($list, $name, $amount, $discount, $defaultName = 'Tax')
-    {
-        if (!$name) {
-            $name = $defaultName;
-        }
-
-        if (!array_key_exists($name, $list)) {
-            $taxInfo = [
-                'name' => $name,
-                'amount' => 0,
-                'discount' => 0,
-                'total' => 0
-            ];
-            $list[$name] = (object) $taxInfo;
-        }
-
-        $list[$name]->amount += $amount;
-        $list[$name]->discount += $discount;
-        $list[$name]->total += ($amount - $discount);
-        return $list;
     }
 
     /**

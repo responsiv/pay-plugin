@@ -77,7 +77,7 @@ Australia
                     <td colspan="4" class="invoice-end-label invoice-subtotal-label">Subtotal</td>
                     <td class="invoice-end-amount invoice-subtotal-amount">{{ invoice.subtotal|currency({ in: invoice.currency.code }) }}</td>
                 </tr>
-                {% for tax in invoice.listSalesTaxes %}
+                {% for tax in invoice.taxes %}
                     <tr>
                         <td colspan="4" class="invoice-end-label invoice-tax-label">Sales tax ({{ tax.name }})</td>
                         <td class="invoice-end-amount invoice-tax-amount">{{ tax.total|currency({ in: invoice.currency.code }) }}</td>

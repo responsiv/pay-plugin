@@ -94,30 +94,12 @@ class Invoices extends Controller
     }
 
     /**
-     * formExtendRefreshData
+     * formBeforeSave
      */
-    public function formExtendRefreshData($host, $data)
+    public function formBeforeSave($model)
     {
-        if (!isset($data['user'])) {
-            return;
-        }
-
-        $host->model->user = $data['user'];
-        if (!$user = $host->model->user) {
-            return;
-        }
-
-        $data['first_name'] = $user->first_name;
-        $data['last_name'] = $user->last_name;
-        $data['email'] = $user->email;
-        $data['phone'] = $user->phone;
-        $data['company'] = $user->company;
-        $data['street_address'] = $user->street_address;
-        $data['city'] = $user->city;
-        $data['zip'] = $user->zip;
-        $data['country'] = $user->country_id;
-        $data['state'] = $user->state_id;
-        return $data;
+        $this->setFormValuesOnce();
+        $this->updateInvoiceTotals();
     }
 
     /**

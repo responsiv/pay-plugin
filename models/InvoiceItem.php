@@ -15,7 +15,8 @@ use Model;
  * @property int $discount_less_tax
  * @property int $discount_with_tax
  * @property int $tax
- * @property bool $is_tax_exempt
+ * @property int $subtotal
+ * @property int $total
  * @property int $sort_order
  * @property int $related_id
  * @property string $related_type
