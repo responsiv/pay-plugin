@@ -12,6 +12,14 @@
         ->icon('ph ph-arrow-fat-lines-right')
         ->secondary() ?>
 
+
+     <?= Ui::ajaxButton("Delete", 'onDelete')
+        ->listCheckedTrigger()
+        ->listCheckedRequest()
+        ->icon('icon-delete')
+        ->secondary()
+        ->confirmMessage("Are you sure?") ?>
+
     <?=
         /**
          * @event pay.invoices.extendListToolbar

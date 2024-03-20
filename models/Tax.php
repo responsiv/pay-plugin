@@ -26,9 +26,9 @@ use Responsiv\Pay\Classes\TaxItem;
 class Tax extends Model
 {
     use \Responsiv\Pay\Models\Tax\HasGlobalContext;
-    use \System\Traits\KeyCodeModel;
     use \October\Rain\Database\Traits\Validation;
     use \October\Rain\Database\Traits\Defaultable;
+    use \System\Traits\KeyCodeModel;
 
     /**
      * @var string The database table used by the model.

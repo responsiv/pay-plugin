@@ -50,29 +50,4 @@ trait HasCalculatedAttributes
         $this->total = $this->final_subtotal;
         $this->total_tax = $this->tax - $this->discount_tax;
     }
-
-    /**
-     * fillFromOptions
-     */
-    public function fillFromOptions(array $options = [])
-    {
-        extract(array_merge([
-            'billingAddress' => null,
-            'paymentMethod' => null,
-            'isFinal' => true,
-        ], $options));
-
-
-        if ($billingAddress) {
-            $billingAddress->saveToInvoice($this);
-        }
-
-        if ($paymentMethod) {
-            $this->payment_method = $paymentMethod;
-        }
-
-        if (!$isFinal) {
-            $this->is_throwaway = true;
-        }
-    }
 }

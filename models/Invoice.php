@@ -78,6 +78,13 @@ class Invoice extends Model implements InvoiceContract
     ];
 
     /**
+     * @var array jsonable attribute names that are json encoded and decoded from the database
+     */
+    protected $jsonable = [
+        'taxes'
+    ];
+
+    /**
      * @var array belongsTo
      */
     public $belongsTo = [
@@ -302,6 +309,14 @@ class Invoice extends Model implements InvoiceContract
         $address = new TaxLocation;
         $address->fillFromInvoice($this);
         return $address;
+    }
+
+    /**
+     * findByInvoiceHash
+     */
+    public static function findByInvoiceHash($invoiceHash): ?static
+    {
+        return static::where('hash', $invoiceHash)->first();
     }
 
     /**

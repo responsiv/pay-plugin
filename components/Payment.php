@@ -5,6 +5,7 @@ use Redirect;
 use Cms\Classes\ComponentBase;
 use RainLab\User\Models\User;
 use Responsiv\Pay\Models\PaymentMethod;
+use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
@@ -58,7 +59,7 @@ class Payment extends ComponentBase
      */
     public function invoice()
     {
-        return $this->invoice ??= Invoice::where('hash', $this->param('hash'))->first();
+        return $this->invoice ??= InvoiceModel::findByInvoiceHash($this->param('hash'));
     }
 
     /**
