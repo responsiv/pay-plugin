@@ -50,6 +50,14 @@ class Payment extends ComponentBase
      */
     public function onRun()
     {
+        $this->prepareVars();
+    }
+
+    /**
+     * prepareVars
+     */
+    protected function prepareVars()
+    {
         $this->page['invoice'] = $this->invoice();
         $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
     }

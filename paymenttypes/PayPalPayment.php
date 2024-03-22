@@ -8,9 +8,9 @@ use ApplicationException;
 use Exception;
 
 /**
- * PayPalRestPayment
+ * PayPalPayment
  */
-class PayPalRestPayment extends GatewayBase
+class PayPalPayment extends GatewayBase
 {
     /**
      * {@inheritDoc}
@@ -18,8 +18,8 @@ class PayPalRestPayment extends GatewayBase
     public function driverDetails()
     {
         return [
-            'name' => 'PayPal REST API Method',
-            'description' => 'Accept payments using the PayPal using a dynamic payment form hosted on your server.'
+            'name' => 'PayPal',
+            'description' => 'Accept payments using the PayPal REST API.'
         ];
     }
 
@@ -36,18 +36,20 @@ class PayPalRestPayment extends GatewayBase
      */
     public function initDriverHost($host)
     {
-        $host->rules['business_email'] = ['required', 'email'];
+        $host->rules['client_id'] = ['required'];
+        $host->rules['client_secret'] = ['required'];
 
         if (!$host->exists) {
+            $host->name = 'PayPal';
             $host->test_mode = true;
-            $host->order_status = $this->createInvoiceStatusModel()->getPaidStatus();
+            $host->invoice_status = 'paid';
         }
     }
 
     /**
-     * getOrderStatusOptions for status field options.
+     * getInvoiceStatusOptions for status field options.
      */
-    public function getOrderStatusOptions()
+    public function getInvoiceStatusOptions()
     {
         return $this->createInvoiceStatusModel()->listStatuses();
     }
@@ -58,8 +60,8 @@ class PayPalRestPayment extends GatewayBase
     public function registerAccessPoints()
     {
         return [
-            'paypal_rest_orders' => 'processApiOrders',
-            'paypal_rest_order_capture' => 'processApiOrderCapture'
+            'paypal_rest_invoices' => 'processApiInvoices',
+            'paypal_rest_invoice_capture' => 'processApiInvoiceCapture'
         ];
     }
 
@@ -72,25 +74,35 @@ class PayPalRestPayment extends GatewayBase
     }
 
     /**
-     * getOrdersUrl
+     * getInvoicesUrl
      */
-    public function getOrdersUrl()
+    public function getInvoicesUrl()
     {
-        return $this->makeAccessPointLink('paypal_rest_orders');
+        return $this->makeAccessPointLink('paypal_rest_invoices');
     }
 
     /**
-     * getOrderCaptureUrl
+     * getInvoiceCaptureUrl
      */
-    public function getOrderCaptureUrl()
+    public function getInvoiceCaptureUrl()
     {
-        return $this->makeAccessPointLink('paypal_rest_order_capture');
+        return $this->makeAccessPointLink('paypal_rest_invoice_capture');
     }
 
     /**
-     * getOrderBodyFields
+     * getPayPalEndpoint
      */
-    public function getOrderBodyFields($order)
+    public function getPayPalEndpoint()
+    {
+        $this->getHostObject()->test_mode
+        ? 'https://api-m.sandbox.paypal.com'
+        : 'https://api-m.paypal.com';
+    }
+
+    /**
+     * getInvoiceBodyFields
+     */
+    public function getInvoiceBodyFields($invoice)
     {
         return [
             'cart' => [
@@ -103,22 +115,22 @@ class PayPalRestPayment extends GatewayBase
     /**
      * processPaymentForm
      */
-    public function processPaymentForm($data, $order)
+    public function processPaymentForm($data, $invoice)
     {
         // We do not need any code here since payments are processed on PayPal server.
     }
 
     /**
-     * processApiOrders
+     * processApiInvoices
      */
-    public function processApiOrders($params)
+    public function processApiInvoices($params)
     {
     }
 
     /**
-     * processApiOrderCapture
+     * processApiInvoiceCapture
      */
-    public function processApiOrderCapture($params)
+    public function processApiInvoiceCapture($params)
     {
     }
 }

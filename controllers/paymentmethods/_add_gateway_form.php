@@ -22,6 +22,6 @@
         <?php endif ?>
     </div>
     <div class="modal-footer">
-        <?= Ui::button(__("Cancel"))->dismissPopup() ?>
+        <?= Ui::button(__("Close"))->secondary()->dismissPopup() ?>
     </div>
 <?= Form::close() ?>

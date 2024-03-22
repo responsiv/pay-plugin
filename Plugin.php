@@ -108,9 +108,9 @@ class Plugin extends PluginBase
     public function registerPaymentGateways()
     {
         return [
+            \Responsiv\Pay\PaymentTypes\PayPalPayment::class => 'paypal',
+            \Responsiv\Pay\PaymentTypes\StripePayment::class => 'stripe',
             \Responsiv\Pay\PaymentTypes\CustomPayment::class => 'custom',
-            \Responsiv\Pay\PaymentTypes\PayPalStandardPayment::class => 'paypal-standard',
-            \Responsiv\Pay\PaymentTypes\PayPalRestPayment::class => 'paypal-rest',
         ];
     }
 

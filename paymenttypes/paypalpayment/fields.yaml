@@ -1,0 +1,32 @@
+# ===================================
+#  Payment Field Definitions
+# ===================================
+
+fields:
+    test_mode:
+        label: Sandbox Mode
+        type: switch
+        tab: Configuration
+        comment: Use the PayPal Sandbox Test Environment to try out payments using this gateway.
+
+    # business_email:
+    #     label: Business Email
+    #     comment: PayPal business account email address.
+    #     tab: Configuration
+
+    client_id:
+        label: Client ID
+        comment: PayPal client ID to identify your app.
+        tab: Configuration
+
+    client_secret:
+        label: Secret Key
+        comment: PayPal client secret to authenticate with the client ID. Keep this secret safe.
+        tab: Configuration
+        type: sensitive
+
+    invoice_status:
+        label: Invoice Status
+        comment: Select status to assign the invoice in case of successful payment.
+        tab: Configuration
+        type: dropdown
