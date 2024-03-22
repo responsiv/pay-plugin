@@ -40,10 +40,10 @@ abstract class GatewayBase extends DriverBehavior
      * - null: Standard redirect
      *
      * @param array $data Posted payment form data.
-     * @param \Model $order Invoice model object.
+     * @param \Model $invoice Invoice model object.
      * @return mixed
      */
-    abstract public function processPaymentForm($data, $order);
+    abstract public function processPaymentForm($data, $invoice);
 
     /**
      * getPartialPath render setup help
@@ -89,8 +89,8 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
-     * isApplicable returns true if the payment type is applicable for a specified order amount
-     * @param float $amount Specifies an order amount
+     * isApplicable returns true if the payment type is applicable for a specified invoice amount
+     * @param float $amount Specifies an invoice amount
      * @return true
      */
     public function isApplicable($amount)
@@ -99,11 +99,11 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
-     * invoiceAfterCreate is called when an order with this payment method is created
+     * invoiceAfterCreate is called when an invoice with this payment method is created
      * @param \Responsiv\Shop\Models\PaymentMethod $host
-     * @param \Responsiv\Pay\Models\Invoice $order
+     * @param \Responsiv\Pay\Models\Invoice $invoice
      */
-    public function invoiceAfterCreate($host, $order)
+    public function invoiceAfterCreate($host, $invoice)
     {
     }
 
@@ -139,10 +139,10 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
-     * allowNewInvoiceNotifications should return false to suppress the new order notification
+     * allowNewInvoiceNotifications should return false to suppress the new invoice notification
      * when this payment method is assigned
      */
-    public function allowNewInvoiceNotifications($host, $order)
+    public function allowNewInvoiceNotifications($host, $invoice)
     {
         return true;
     }
@@ -183,9 +183,9 @@ abstract class GatewayBase extends DriverBehavior
 
     /**
      * payFromProfile creates a payment transaction from an existing payment profile.
-     * @param \Responsiv\Pay\Models\Invoice $order An order object to pay
+     * @param \Responsiv\Pay\Models\Invoice $invoice An invoice object to pay
      */
-    public function payFromProfile($order)
+    public function payFromProfile($invoice)
     {
         throw new SystemException('The payFromProfile() method is not supported by the payment gateway.');
     }
@@ -195,7 +195,7 @@ abstract class GatewayBase extends DriverBehavior
     //
 
     /**
-     * createInvoiceModel creates an instance of the order model
+     * createInvoiceModel creates an instance of the invoice model
      */
     protected function createInvoiceModel()
     {
@@ -203,7 +203,7 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
-     * createInvoiceStatusModel creates an instance of the order status model
+     * createInvoiceStatusModel creates an instance of the invoice status model
      */
     protected function createInvoiceStatusModel()
     {

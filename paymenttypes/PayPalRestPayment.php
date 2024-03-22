@@ -40,7 +40,7 @@ class PayPalRestPayment extends GatewayBase
 
         if (!$host->exists) {
             $host->test_mode = true;
-            $host->order_status = $this->createOrderStatusModel()->getPaidStatus();
+            $host->order_status = $this->createInvoiceStatusModel()->getPaidStatus();
         }
     }
 
@@ -49,7 +49,7 @@ class PayPalRestPayment extends GatewayBase
      */
     public function getOrderStatusOptions()
     {
-        return $this->createOrderStatusModel()->listStatuses();
+        return $this->createInvoiceStatusModel()->listStatuses();
     }
 
     /**

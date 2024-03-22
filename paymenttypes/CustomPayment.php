@@ -38,10 +38,10 @@ class CustomPayment extends GatewayBase
     }
 
     /**
-     * allowNewOrderNotifications should return false to suppress the new order notification
+     * allowNewInvoiceNotifications should return false to suppress the new order notification
      * when this payment method is assigned
      */
-    public function allowNewOrderNotifications($host, $order)
+    public function allowNewInvoiceNotifications($host, $order)
     {
         return !$host->suppress_new_notification;
     }

@@ -109,6 +109,7 @@ class Plugin extends PluginBase
     {
         return [
             \Responsiv\Pay\PaymentTypes\CustomPayment::class => 'custom',
+            \Responsiv\Pay\PaymentTypes\PayPalStandardPayment::class => 'paypal-standard',
             \Responsiv\Pay\PaymentTypes\PayPalRestPayment::class => 'paypal-rest',
         ];
     }
