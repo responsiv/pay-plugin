@@ -1,11 +1,13 @@
 <?php namespace Responsiv\Pay\PaymentTypes;
 
+use Log;
 use Html;
 use Http;
 use Currency;
 use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use ApplicationException;
 use SystemException;
 use Exception;
@@ -103,19 +105,6 @@ class PayPalPayment extends GatewayBase
     }
 
     /**
-     * getInvoiceBodyFields
-     */
-    public function getInvoiceBodyFields($invoice)
-    {
-        return [
-            'cart' => [
-                ['id' => 1, 'quantity' => 7],
-                ['id' => 2, 'quantity' => 9],
-            ]
-        ];
-    }
-
-    /**
      * getPayPalNamespace
      */
     public function getPayPalNamespace(): string
@@ -186,7 +175,8 @@ class PayPalPayment extends GatewayBase
             return Response::json($response->json(), $response->status());
         }
         catch (Exception $ex) {
-            throw new SystemException("Failed to create order: " .$ex->getMessage());
+            Log::error($ex);
+            $this->throwResponseError('Failed to create order');
         }
     }
 
@@ -213,7 +203,8 @@ class PayPalPayment extends GatewayBase
             return Response::json($response->json(), $response->status());
         }
         catch (Exception $ex) {
-            throw new SystemException("Failed to create order: " .$ex->getMessage());
+            Log::error($ex);
+            $this->throwResponseError('Failed to create order');
         }
     }
 
@@ -236,7 +227,8 @@ class PayPalPayment extends GatewayBase
             return $response->json('access_token');
         }
         catch (Exception $ex) {
-            throw new SystemException("Failed to generate access token: " .$ex->getMessage());
+            Log::error($ex);
+            $this->throwResponseError('Failed to generate access token');
         }
     }
 
@@ -246,23 +238,31 @@ class PayPalPayment extends GatewayBase
     protected function findInvoiceFromHash($hash)
     {
         if (!$hash) {
-            throw new ApplicationException('Invoice not found');
+            $this->throwResponseError('Invoice not found');
         }
 
         $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
         if (!$invoice) {
-            throw new ApplicationException('Invoice not found');
+            $this->throwResponseError('Invoice not found');
         }
 
         $paymentMethod = $invoice->getPaymentMethod();
         if (!$paymentMethod) {
-            throw new ApplicationException('Payment method not found');
+            $this->throwResponseError('Payment method not found');
         }
 
         if ($paymentMethod->getDriverClass() !== static::class) {
-            throw new ApplicationException('Invalid payment method');
+            $this->throwResponseError('Invalid payment method');
         }
 
         return $invoice;
+    }
+
+    /**
+     * throwResponseError
+     */
+    protected function throwResponseError($message)
+    {
+        throw new HttpResponseException(Response::json(['error' => $message], 500));
     }
 }
