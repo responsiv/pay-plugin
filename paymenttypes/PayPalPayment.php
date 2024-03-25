@@ -1,10 +1,13 @@
 <?php namespace Responsiv\Pay\PaymentTypes;
 
+use Html;
 use Http;
-use Redirect;
+use Currency;
+use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
 use ApplicationException;
+use SystemException;
 use Exception;
 
 /**
@@ -94,9 +97,9 @@ class PayPalPayment extends GatewayBase
      */
     public function getPayPalEndpoint()
     {
-        $this->getHostObject()->test_mode
-        ? 'https://api-m.sandbox.paypal.com'
-        : 'https://api-m.paypal.com';
+        return $this->getHostObject()->test_mode
+            ? 'https://api-m.sandbox.paypal.com'
+            : 'https://api-m.paypal.com';
     }
 
     /**
@@ -113,6 +116,34 @@ class PayPalPayment extends GatewayBase
     }
 
     /**
+     * getPayPalNamespace
+     */
+    public function getPayPalNamespace(): string
+    {
+        return 'paypal';
+    }
+
+    /**
+     * renderPaymentScripts
+     */
+    public function renderPaymentScripts()
+    {
+        $queryParams = http_build_query([
+            'client-id' => 'test',
+            'components' => 'buttons',
+            'enable-funding' => 'venmo',
+            'disable-funding' => 'paylater,card',
+        ]);
+
+        $scriptParams = [
+            'data-sdk-integration-source' => 'integrationbuilder_sc',
+            'data-namespace' => $this->getPayPalNamespace()
+        ];
+
+        return Html::script("https://www.paypal.com/sdk/js?{$queryParams}", $scriptParams);
+    }
+
+    /**
      * processPaymentForm
      */
     public function processPaymentForm($data, $invoice)
@@ -121,16 +152,117 @@ class PayPalPayment extends GatewayBase
     }
 
     /**
-     * processApiInvoices
+     * processApiInvoices create an order to start the transaction.
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_create
      */
     public function processApiInvoices($params)
     {
+        $invoice = $this->findInvoiceFromHash($params[0] ?? '');
+
+        $paymentMethod = $invoice->getPaymentMethod();
+
+        $token = $paymentMethod->generatePayPalAccessToken();
+
+        $totals = $invoice->getTotalDetails();
+
+        $payload = [
+            'intent' => 'CAPTURE',
+            'purchase_units' => [
+                [
+                    'amount' => [
+                        'currency_code' => $totals['currency'] ?? 'USD',
+                        'value' => Currency::fromBaseValue($totals['total'])
+                    ]
+                ]
+            ],
+        ];
+
+        try {
+            $baseUrl = $paymentMethod->getPayPalEndpoint();
+
+            $response = Http::withToken($token)
+                ->post("{$baseUrl}/v2/checkout/orders", $payload);
+
+            return Response::json($response->json(), $response->status());
+        }
+        catch (Exception $ex) {
+            throw new SystemException("Failed to create order: " .$ex->getMessage());
+        }
     }
 
     /**
-     * processApiInvoiceCapture
+     * processApiInvoiceCapture captures payment for the created order to complete the transaction.
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_capture
      */
     public function processApiInvoiceCapture($params)
     {
+        $invoice = $this->findInvoiceFromHash($params[0] ?? '');
+
+        $paymentMethod = $invoice->getPaymentMethod();
+
+        $token = $paymentMethod->generatePayPalAccessToken();
+
+        $orderId = $params[1] ?? '';
+
+        try {
+            $baseUrl = $paymentMethod->getPayPalEndpoint();
+
+            $response = Http::withToken($token)
+                ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture");
+
+            return Response::json($response->json(), $response->status());
+        }
+        catch (Exception $ex) {
+            throw new SystemException("Failed to create order: " .$ex->getMessage());
+        }
+    }
+
+    /**
+     * generatePayPalAccessToken generate an OAuth 2.0 access token for authenticating with PayPal REST APIs.
+     * @see https://developer.paypal.com/api/rest/authentication/
+     */
+    public function generatePayPalAccessToken()
+    {
+        $host = $this->getHostObject();
+        $baseUrl = $this->getPayPalEndpoint();
+
+        try {
+            $response = Http::asForm()
+                ->withBasicAuth($host->client_id, $host->client_secret)
+                ->post("{$baseUrl}/v1/oauth2/token", [
+                    'grant_type' => 'client_credentials'
+                ]);
+
+            return $response->json('access_token');
+        }
+        catch (Exception $ex) {
+            throw new SystemException("Failed to generate access token: " .$ex->getMessage());
+        }
+    }
+
+    /**
+     * findInvoiceFromHash
+     */
+    protected function findInvoiceFromHash($hash)
+    {
+        if (!$hash) {
+            throw new ApplicationException('Invoice not found');
+        }
+
+        $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
+        if (!$invoice) {
+            throw new ApplicationException('Invoice not found');
+        }
+
+        $paymentMethod = $invoice->getPaymentMethod();
+        if (!$paymentMethod) {
+            throw new ApplicationException('Payment method not found');
+        }
+
+        if ($paymentMethod->getDriverClass() !== static::class) {
+            throw new ApplicationException('Invalid payment method');
+        }
+
+        return $invoice;
     }
 }

@@ -115,6 +115,14 @@ class PaymentMethod extends ExpandoModel
     }
 
     /**
+     * getDriverClass returns the driver class name
+     */
+    public function getDriverClass()
+    {
+        return $this->class_name;
+    }
+
+    /**
      * afterFetch
      */
     public function afterFetch()
@@ -197,7 +205,7 @@ class PaymentMethod extends ExpandoModel
         $paymentMethodFile = strtolower(class_basename($this->class_name));
         $partialName = 'pay/'.$paymentMethodFile;
 
-        return $controller->renderPartial($partialName);
+        return $controller->renderPartial($partialName, ['paymentMethod' => $this]);
     }
 
     /**
@@ -210,15 +218,7 @@ class PaymentMethod extends ExpandoModel
         $paymentMethodFile = strtolower(class_basename($this->class_name));
         $partialName = 'pay/'.$paymentMethodFile.'-profile';
 
-        return $controller->renderPartial($partialName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDriverClass()
-    {
-        return $this->class_name;
+        return $controller->renderPartial($partialName, ['paymentMethod' => $this]);
     }
 
     /**

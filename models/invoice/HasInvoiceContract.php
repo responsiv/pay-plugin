@@ -111,7 +111,7 @@ trait HasInvoiceContract
             'total' => $this->total,
             'subtotal' => $this->subtotal,
             'tax' => $this->tax,
-            'currency' => $this->currency,
+            'currency' => $this->currency?->code,
         ];
 
         return $details;

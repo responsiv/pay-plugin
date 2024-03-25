@@ -116,6 +116,14 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
+     * renderPaymentScripts provides an opportunity to inject global scripts to the page
+     */
+    public function renderPaymentScripts()
+    {
+        return '';
+    }
+
+    /**
      * beforeRenderPaymentForm is called before the payment form is rendered
      */
     public function beforeRenderPaymentForm()
