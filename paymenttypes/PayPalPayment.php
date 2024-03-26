@@ -158,6 +158,7 @@ class PayPalPayment extends GatewayBase
             'intent' => 'CAPTURE',
             'purchase_units' => [
                 [
+                    'reference_id' => $invoice->getUniqueId(),
                     'amount' => [
                         'currency_code' => $totals['currency'] ?? 'USD',
                         'value' => Currency::fromBaseValue($totals['total'])
@@ -194,11 +195,42 @@ class PayPalPayment extends GatewayBase
 
         $orderId = $params[1] ?? '';
 
+        $totals = $invoice->getTotalDetails();
+
+        $payload = [
+            'payment_source' => null
+        ];
+
         try {
             $baseUrl = $paymentMethod->getPayPalEndpoint();
 
             $response = Http::withToken($token)
-                ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture");
+                ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture", $payload);
+
+            if ($response->successful() && !$invoice->isPaymentProcessed(true)) {
+                if ($response->json('status') !== 'COMPLETED') {
+                    $this->throwResponseError('Invalid response');
+                }
+
+                if ($response->json('purchase_units.0.reference_id') !== $invoice->getUniqueId()) {
+                    $this->throwResponseError('Invalid invoice number');
+                }
+
+                if ($response->json('purchase_units.0.payments.captures.0.status') !== 'COMPLETED') {
+                    $this->throwResponseError('Invalid response');
+                }
+
+                if (($matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value')) !== Currency::fromBaseValue($totals['total'])) {
+                    $this->throwResponseError('Invalid invoice total - order total received is: ' . e($matchedValue));
+                }
+
+                if ($invoice->markAsPaymentProcessed()) {
+                    $transactionStatus = $response->json('status');
+                    $transactionId = $response->json('id');
+                    $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $payload, $response->json(), '');
+                    $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
+                }
+            }
 
             return Response::json($response->json(), $response->status());
         }
