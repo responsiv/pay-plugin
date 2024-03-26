@@ -53,6 +53,7 @@ class TaxLocation extends ElementBase
             'city' => 'required',
             'zip' => 'required',
             'countryId' => 'required',
+            'stateId' => 'required',
         ];
 
         Validator::validate($this->config, $rules, [
@@ -88,6 +89,7 @@ class TaxLocation extends ElementBase
             $prefix.'city' => 'required',
             $prefix.'zip' => 'required',
             $prefix.'country_id' => 'required',
+            $prefix.'state_id' => 'required',
         ];
 
         Validator::validate($data, $rules, [
