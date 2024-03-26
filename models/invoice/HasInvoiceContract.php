@@ -1,7 +1,7 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
+use Cms;
 use Event;
-use Carbon\Carbon;
 use Cms\Classes\Controller;
 use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\InvoiceLog;
@@ -49,15 +49,15 @@ trait HasInvoiceContract
      */
     public function getReceiptUrl()
     {
-        if ($this->payment_method->return_page) {
+        if ($this->payment_method->receipt_page) {
             $controller = Controller::getController() ?: new Controller;
-            return $controller->pageUrl($this->payment_method->return_page, [
+            return $controller->pageUrl($this->payment_method->receipt_page, [
                 'id' => $this->id,
                 'hash' => $this->hash,
             ]);
         }
 
-        return \Cms::entryUrl('payment', ['hash' => $this->hash]);
+        return Cms::entryUrl('payment', ['hash' => $this->hash]);
     }
 
     /**
@@ -135,7 +135,7 @@ trait HasInvoiceContract
     public function markAsPaymentProcessed()
     {
         if (!$isPaid = $this->isPaymentProcessed(true)) {
-            $now = $this->processed_at = Carbon::now();
+            $now = $this->processed_at = $this->freshTimestamp();
 
             // Instant update here in case a simultaneous request causes invalid data
             $this->newQuery()->where('id', $this->id)->update(['processed_at' => $now]);

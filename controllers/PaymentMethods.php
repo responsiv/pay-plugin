@@ -152,8 +152,8 @@ class PaymentMethods extends Controller
         }
 
         // Hide return page for unsupported drivers
-        if (!$model->hasReturnPage()) {
-            $widget->getField('return_page')?->hidden();
+        if (!$model->hasReceiptPage()) {
+            $widget->getField('receipt_page')?->hidden();
         }
     }
 

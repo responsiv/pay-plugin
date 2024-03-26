@@ -36,9 +36,10 @@ tabs:
             size: small
             commentAbove: An optional description for this payment method.
 
-        return_page:
-            label: Return Page
+        receipt_page:
+            label: Receipt Page
             commentAbove: The CMS page name used to redirect the customer after a successful payment. Leave blank to use the default page.
+            type: pagefinder
 
         code:
             label: Code

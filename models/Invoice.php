@@ -289,6 +289,9 @@ class Invoice extends Model implements InvoiceContract
         $this->save();
     }
 
+    /**
+     * submitManualPayment
+     */
     public function submitManualPayment($comment = null)
     {
         if ($comment) {

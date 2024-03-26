@@ -151,11 +151,11 @@ class Payment extends ComponentBase
         }
 
         // Standard response
-        if (!$returnPage = $invoice->getReceiptUrl()) {
+        if (!$receiptPage = $invoice->getReceiptUrl()) {
             return;
         }
 
-        return Redirect::to($returnPage);
+        return Redirect::to($receiptPage);
     }
 
     /**

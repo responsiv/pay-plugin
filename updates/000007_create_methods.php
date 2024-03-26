@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('code')->index()->nullable();
             $table->string('class_name')->nullable();
             $table->text('description')->nullable();
-            $table->text('return_page')->nullable();
+            $table->text('receipt_page')->nullable();
             $table->text('config_data')->nullable();
             $table->boolean('is_enabled')->default(false);
             $table->boolean('is_enabled_edit')->default(false);
