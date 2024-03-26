@@ -3,7 +3,7 @@
 use Event;
 use Carbon\Carbon;
 use Cms\Classes\Controller;
-use Responsiv\Pay\Models\Settings;
+use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\InvoiceLog;
 use Responsiv\Pay\Models\InvoiceStatusLog;
 
@@ -17,7 +17,7 @@ trait HasInvoiceContract
      */
     public function getUniqueId()
     {
-        return Settings::get('invoice_prefix') . $this->id;
+        return Setting::get('invoice_prefix') . $this->id;
     }
 
     /**

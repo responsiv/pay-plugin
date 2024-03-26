@@ -17,7 +17,7 @@ tabs:
     fields:
         _hint:
             type: hint
-            comment: Customize these fields using the HTML template in the next tab.
+            comment: Customize these fields using the template in the HTML tab.
             tab: Invoice
 
         content_html:

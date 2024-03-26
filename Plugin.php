@@ -164,7 +164,7 @@ class Plugin extends PluginBase
                 'label' => "Payment Settings",
                 'description' => "Manage payment configuration",
                 'icon' => 'icon-credit-card',
-                'class' => 'Responsiv\Pay\Models\Settings',
+                'class' => \Responsiv\Pay\Models\Setting::class,
                 'category' => SettingsManager::CATEGORY_SHOP,
                 'permissions' => ['responsiv.pay.access_settings'],
                 'order' => 800,

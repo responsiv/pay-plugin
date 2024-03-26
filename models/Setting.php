@@ -1,28 +1,48 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Db;
-use Model;
+use System\Models\SettingModel;
 use ValidationException;
 
-class Settings extends Model
+/**
+ * Setting configuration
+ *
+ * @property string invoice_prefix
+ * @property string new_invoice_number
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
+ */
+class Setting extends SettingModel
 {
     use \October\Rain\Database\Traits\Validation;
 
-    public $implement = ['System.Behaviors.SettingsModel'];
-
+    /**
+     * @var string settingsCode is a unique code for this object
+     */
     public $settingsCode = 'responsiv_pay_settings';
+
+    /**
+     * @var mixed settingsFields definition file
+     */
     public $settingsFields = 'fields.yaml';
 
     /**
-     * Validation rules
+     * @var array rules for validation
      */
     public $rules = [];
 
+    /**
+     * initSettingsData
+     */
     public function initSettingsData()
     {
         $this->invoice_prefix = '';
     }
 
+    /**
+     * beforeValidate
+     */
     public function beforeValidate()
     {
         if ($this->new_invoice_number) {
@@ -32,9 +52,7 @@ class Settings extends Model
     }
 
     /**
-     * Modifies the next auto increment number by creating and deleting a simple record.
-     * @param $number int
-     * @return void
+     * setInvoiceNumber modifies the next auto increment number by creating and deleting a simple record.
      */
     protected function setInvoiceNumber($number)
     {
@@ -64,13 +82,11 @@ class Settings extends Model
     }
 
     /**
-     * Returns the last used invoice identifier.
-     * @return integer Returns the last used invoice identifier.
+     * getLastInvoiceNumber returns the last used invoice identifier. Returns the last
+     * used invoice identifier.
      */
-    protected function getLastInvoiceNumber()
+    protected function getLastInvoiceNumber(): int
     {
-        $lastId = Db::table('responsiv_pay_invoices')->orderBy('id', 'desc')->value('id');
-
-        return $lastId ? $lastId : 0;
+        return (int) Db::table('responsiv_pay_invoices')->orderBy('id', 'desc')->value('id');
     }
 }
