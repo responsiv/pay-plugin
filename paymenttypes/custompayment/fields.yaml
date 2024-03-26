@@ -8,6 +8,12 @@ fields:
         type: richeditor
         tab: Configuration
 
+    payment_page:
+        label: Payment Page
+        commentAbove: Redirect to this page if this payment is selected during the purchase workflow. Leave blank to use the default payment page.
+        type: pagefinder
+        tab: Configuration
+
     suppress_new_notification:
         label: Suppress New Order Notification
         comment: Check this to disable new order notifications that use this payment method.

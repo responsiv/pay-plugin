@@ -28,14 +28,20 @@ class CustomPayment extends GatewayBase
     }
 
     /**
+     * getCustomPaymentPage
+     */
+    public function getCustomPaymentPage()
+    {
+        return $this->getHostObject()?->payment_page;
+    }
+
+    /**
      * payOfflineMessage returns the payment instructions for custom payment
      * @return string
      */
     public function payOfflineMessage()
     {
-        $host = $this->getHostObject();
-
-        return $host->payment_instructions;
+        return $this->getHostObject()?->payment_instructions;
     }
 
     /**

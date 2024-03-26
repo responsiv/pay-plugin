@@ -39,6 +39,12 @@ interface Invoice
     public function getReceiptUrl();
 
     /**
+     * getCustomPaymentPageUrl should return a URL if a custom payment page is used.
+     * @return string
+     */
+    public function getCustomPaymentPageUrl();
+
+    /**
      * getCustomerDetails returns an array with location information about the customer. Must contain:
      *
      * - first_name: First Name

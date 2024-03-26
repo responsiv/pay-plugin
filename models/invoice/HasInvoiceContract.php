@@ -49,9 +49,32 @@ trait HasInvoiceContract
      */
     public function getReceiptUrl()
     {
-        if ($this->payment_method->receipt_page) {
+        if ($link = $this->payment_method->getReceiptPage()) {
+
             $controller = Controller::getController() ?: new Controller;
-            return $controller->pageUrl($this->payment_method->receipt_page, [
+
+            // @todo this is a pagefinder link
+            // \Cms\Classes\PageManager::url($link, ...)
+            return $controller->pageUrl($link, [
+                'id' => $this->id,
+                'hash' => $this->hash,
+            ]);
+        }
+
+        return Cms::entryUrl('payment', ['hash' => $this->hash]);
+    }
+
+    /**
+     * getCustomPaymentPageUrl
+     */
+    public function getCustomPaymentPageUrl()
+    {
+        if ($link = $this->payment_method->getCustomPaymentPage()) {
+            $controller = Controller::getController() ?: new Controller;
+
+            // @todo this is a pagefinder link
+            // \Cms\Classes\PageManager::url($link, ...)
+            return $controller->pageUrl($link, [
                 'id' => $this->id,
                 'hash' => $this->hash,
             ]);

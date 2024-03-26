@@ -126,6 +126,22 @@ abstract class GatewayBase extends DriverBehavior
     }
 
     /**
+     * getReceiptPage
+     */
+    public function getReceiptPage()
+    {
+        return $this->getHostObject()?->receipt_page;
+    }
+
+    /**
+     * getCustomPaymentPage
+     */
+    public function getCustomPaymentPage()
+    {
+        return '';
+    }
+
+    /**
      * renderPaymentScripts provides an opportunity to inject global scripts to the page
      */
     public function renderPaymentScripts()
