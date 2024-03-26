@@ -29,7 +29,7 @@ tabs:
             span: auto
             placeholder: — Use Default —
 
-        invoice_template:
+        template:
             label: Invoice Template
             type: relation
             span: auto

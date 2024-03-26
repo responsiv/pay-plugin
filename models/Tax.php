@@ -31,7 +31,7 @@ class Tax extends Model
     use \System\Traits\KeyCodeModel;
 
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_taxes';
 

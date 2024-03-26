@@ -44,7 +44,7 @@ class InvoiceItem extends Model
     ];
 
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_invoice_items';
 

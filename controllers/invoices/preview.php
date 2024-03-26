@@ -70,7 +70,7 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane active">
-            <div class="py-4">
+            <div class="p-4 my-4 border">
                 <?= $this->makePartial('invoice_iframe') ?>
             </div>
         </div>

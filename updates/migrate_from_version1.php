@@ -44,7 +44,6 @@ return new class extends Migration
                 $table->bigInteger('total_tax')->nullable();
                 $table->boolean('prices_include_tax')->default(false)->nullable();
                 $table->integer('currency_id')->unsigned()->nullable()->index();
-                $table->integer('invoice_template_id')->unsigned()->nullable()->index();
                 $table->renameColumn('currency', 'currency_code');
                 $table->renameColumn('vat_id', 'tax_id_number');
                 $table->renameColumn('tax_discount', 'discount_tax');
