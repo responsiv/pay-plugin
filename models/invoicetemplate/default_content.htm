@@ -59,7 +59,7 @@ Australia
                 <tr>
                     <th class="invoice-item-description">Description</th>
                     <th class="invoice-item-quantity">Qty</th>
-                    <th class="invoice-item-price">Unit Price</th>
+                    <th class="invoice-item-price">Price</th>
                     <th class="invoice-item-tax">Tax</th>
                     <th class="invoice-item-total">Amount</th>
                 </tr>
@@ -70,7 +70,7 @@ Australia
                         <td class="invoice-item invoice-item-quantity">{{ item.quantity }}</td>
                         <td class="invoice-item invoice-item-price">{{ item.price|currency({ in: invoice.currency.code }) }}</td>
                         <td class="invoice-item invoice-item-tax">{{ item.tax|currency({ in: invoice.currency.code }) }}</td>
-                        <td class="invoice-item invoice-item-total">{{ item.total|currency({ in: invoice.currency.code }) }}</td>
+                        <td class="invoice-item invoice-item-total">{{ item.subtotal|currency({ in: invoice.currency.code }) }}</td>
                     </tr>
                 {% endfor %}
                 <tr>

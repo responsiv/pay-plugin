@@ -14,7 +14,7 @@ class SeedAllTables extends Seeder
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Void', 'code' => 'void']);
 
         InvoiceTemplate::create([
-            'name' => 'Default template',
+            'name' => 'Default Template',
             'code' => 'default',
             'is_default' => true
         ]);

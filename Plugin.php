@@ -160,23 +160,23 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
-            'settings' => [
-                'label' => "Payment settings",
-                'description' => "Manage payment configuration",
-                'icon' => 'icon-credit-card',
-                'class' => 'Responsiv\Pay\Models\Settings',
-                'category' => SettingsManager::CATEGORY_SHOP,
-                'permissions' => ['responsiv.pay.access_settings'],
-                'order' => 520,
-            ],
-            'invoice_template' => [
-                'label' => "Invoice template",
-                'description' => "Customize the template used for invoices.",
+            // 'settings' => [
+            //     'label' => "Payment Settings",
+            //     'description' => "Manage payment configuration",
+            //     'icon' => 'icon-credit-card',
+            //     'class' => 'Responsiv\Pay\Models\Settings',
+            //     'category' => SettingsManager::CATEGORY_SHOP,
+            //     'permissions' => ['responsiv.pay.access_settings'],
+            //     'order' => 520,
+            // ],
+            'invoice_settings' => [
+                'label' => "Invoice Settings",
+                'description' => "Customize invoice templates and settings.",
                 'icon' => 'icon-file-excel-o',
                 'url' => Backend::url('responsiv/pay/invoicetemplates'),
                 'category' => SettingsManager::CATEGORY_SHOP,
                 'permissions' => ['responsiv.pay.access_settings'],
-                'order' => 520,
+                'order' => 900,
             ]
         ];
     }
