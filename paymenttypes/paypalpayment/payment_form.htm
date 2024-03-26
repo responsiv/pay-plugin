@@ -61,7 +61,7 @@
         },
         async onApprove(data, actions) {
             try {
-                const response = await fetch(`{{ paymentMethod.getOrderCaptureUrl() }}/${invoiceHash}/${data.orderID}`, {
+                const response = await fetch(`{{ paymentMethod.getInvoiceCaptureUrl() }}/${invoiceHash}/${data.orderID}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -88,6 +88,10 @@
                 } else {
                     // (3) Successful transaction -> Show confirmation or thank you message
                     // Or go to another URL:  actions.redirect('thank_you.html');
+                    if (orderData.cms_redirect) {
+                        actions.redirect(orderData.cms_redirect);
+                    }
+
                     const transaction =
                         orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
                         orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];

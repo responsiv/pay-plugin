@@ -11,6 +11,7 @@ use ApplicationException;
  * @property string $code
  * @property string $class_name
  * @property string $description
+ * @property string $return_page
  * @property array $config_data
  * @property bool $is_enabled
  * @property bool $is_enabled_edit

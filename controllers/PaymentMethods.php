@@ -81,7 +81,7 @@ class PaymentMethods extends Controller
     }
 
     /**
-     * {@inheritDoc}
+     * listInjectRowClass
      */
     public function listInjectRowClass($record, $definition = null)
     {
@@ -149,6 +149,11 @@ class PaymentMethods extends Controller
                     'path' => $setupPartial,
                 ]
             ], 'primary');
+        }
+
+        // Hide return page for unsupported drivers
+        if (!$model->hasReturnPage()) {
+            $widget->getField('return_page')?->hidden();
         }
     }
 

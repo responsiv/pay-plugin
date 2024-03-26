@@ -15,6 +15,7 @@ return new class extends Migration
         if (!Schema::hasColumn('responsiv_pay_methods', 'is_enabled_edit')) {
             Schema::table('responsiv_pay_methods', function(Blueprint $table) {
                 $table->boolean('is_enabled_edit')->default(false);
+                $table->text('return_page')->nullable();
             });
         }
 

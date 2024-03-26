@@ -148,6 +148,10 @@ class PayPalPayment extends GatewayBase
     {
         $invoice = $this->findInvoiceFromHash($params[0] ?? '');
 
+        if ($invoice->isPaymentProcessed()) {
+            throw $this->newResponseError('Invoice already paid');
+        }
+
         $paymentMethod = $invoice->getPaymentMethod();
 
         $token = $paymentMethod->generatePayPalAccessToken();
@@ -177,7 +181,7 @@ class PayPalPayment extends GatewayBase
         }
         catch (Exception $ex) {
             Log::error($ex);
-            $this->throwResponseError('Failed to create order');
+            throw $this->newResponseError('Failed to create order');
         }
     }
 
@@ -209,19 +213,19 @@ class PayPalPayment extends GatewayBase
 
             if ($response->successful() && !$invoice->isPaymentProcessed(true)) {
                 if ($response->json('status') !== 'COMPLETED') {
-                    $this->throwResponseError('Invalid response');
+                    throw $this->newResponseError('Invalid response');
                 }
 
                 if ($response->json('purchase_units.0.reference_id') !== $invoice->getUniqueId()) {
-                    $this->throwResponseError('Invalid invoice number');
+                    throw $this->newResponseError('Invalid invoice number');
                 }
 
                 if ($response->json('purchase_units.0.payments.captures.0.status') !== 'COMPLETED') {
-                    $this->throwResponseError('Invalid response');
+                    throw $this->newResponseError('Invalid response');
                 }
 
                 if (($matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value')) !== Currency::fromBaseValue($totals['total'])) {
-                    $this->throwResponseError('Invalid invoice total - order total received is: ' . e($matchedValue));
+                    throw $this->newResponseError('Invalid invoice total - order total received is: ' . e($matchedValue));
                 }
 
                 if ($invoice->markAsPaymentProcessed()) {
@@ -232,11 +236,11 @@ class PayPalPayment extends GatewayBase
                 }
             }
 
-            return Response::json($response->json(), $response->status());
+            return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());
         }
         catch (Exception $ex) {
             Log::error($ex);
-            $this->throwResponseError('Failed to create order');
+            throw $this->newResponseError('Failed to create order');
         }
     }
 
@@ -260,7 +264,7 @@ class PayPalPayment extends GatewayBase
         }
         catch (Exception $ex) {
             Log::error($ex);
-            $this->throwResponseError('Failed to generate access token');
+            throw $this->newResponseError('Failed to generate access token');
         }
     }
 
@@ -270,31 +274,31 @@ class PayPalPayment extends GatewayBase
     protected function findInvoiceFromHash($hash)
     {
         if (!$hash) {
-            $this->throwResponseError('Invoice not found');
+            throw $this->newResponseError('Invoice not found');
         }
 
         $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
         if (!$invoice) {
-            $this->throwResponseError('Invoice not found');
+            throw $this->newResponseError('Invoice not found');
         }
 
         $paymentMethod = $invoice->getPaymentMethod();
         if (!$paymentMethod) {
-            $this->throwResponseError('Payment method not found');
+            throw $this->newResponseError('Payment method not found');
         }
 
         if ($paymentMethod->getDriverClass() !== static::class) {
-            $this->throwResponseError('Invalid payment method');
+            throw $this->newResponseError('Invalid payment method');
         }
 
         return $invoice;
     }
 
     /**
-     * throwResponseError
+     * newResponseError
      */
-    protected function throwResponseError($message)
+    protected function newResponseError($message)
     {
-        throw new HttpResponseException(Response::json(['error' => $message], 500));
+        return new HttpResponseException(Response::json(['error' => $message], 500));
     }
 }

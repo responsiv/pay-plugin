@@ -17,7 +17,8 @@ abstract class GatewayBase extends DriverBehavior
      * [
      *      'name' => 'Authorize.net',
      *      'description' => 'Authorize.net simple integration method with hosted payment form.',
-     *      'offline' => false,
+     *      'paymentForm' => true,
+     *      'returnPage' => true
      * ]
      *
      * @return array
@@ -27,7 +28,8 @@ abstract class GatewayBase extends DriverBehavior
         return [
             'name' => 'Unknown',
             'description' => 'Unknown payment gateway.',
-            'offline' => false
+            'paymentForm' => true,
+            'returnPage' => true
         ];
     }
 
@@ -112,7 +114,15 @@ abstract class GatewayBase extends DriverBehavior
      */
     public function hasPaymentForm()
     {
-        return !($this->driverDetails()['offline'] ?? false);
+        return $this->driverDetails()['paymentForm'] ?? true;
+    }
+
+    /**
+     * hasReturnPage
+     */
+    public function hasReturnPage()
+    {
+        return $this->driverDetails()['returnPage'] ?? true;
     }
 
     /**

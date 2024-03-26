@@ -15,7 +15,8 @@ class CustomPayment extends GatewayBase
         return [
             'name' => 'Custom Payment Method',
             'description' => 'For creating payment forms with custom payment processing, such as offline payments.',
-            'offline' => true
+            'paymentForm' => false,
+            'returnPage' => false
         ];
     }
 

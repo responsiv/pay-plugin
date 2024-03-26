@@ -30,7 +30,6 @@ return new class extends Migration
             $table->mediumText('taxes')->nullable();
             $table->boolean('is_tax_exempt')->default(false);
             $table->boolean('prices_include_tax')->default(false)->nullable();
-            $table->string('return_page')->nullable();
             $table->boolean('is_throwaway')->default(false);
             $table->integer('user_id')->unsigned()->nullable()->index();
             $table->integer('template_id')->unsigned()->nullable()->index();

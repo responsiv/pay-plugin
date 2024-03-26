@@ -33,7 +33,6 @@ use Responsiv\Currency\Models\Currency as CurrencyModel;
  * @property string $taxes
  * @property bool $is_tax_exempt
  * @property bool $prices_include_tax
- * @property string $return_page
  * @property bool $is_throwaway
  * @property int $user_id
  * @property int $template_id

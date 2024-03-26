@@ -49,15 +49,15 @@ trait HasInvoiceContract
      */
     public function getReceiptUrl()
     {
-        if ($this->return_page) {
+        if ($this->payment_method->return_page) {
             $controller = Controller::getController() ?: new Controller;
-            return $controller->pageUrl($this->return_page, [
+            return $controller->pageUrl($this->payment_method->return_page, [
                 'id' => $this->id,
                 'hash' => $this->hash,
             ]);
         }
 
-        return $this->getUrlAttribute();
+        return \Cms::entryUrl('payment', ['hash' => $this->hash]);
     }
 
     /**
@@ -170,7 +170,7 @@ trait HasInvoiceContract
         $responseText
     ) {
         if ($payMethod = $this->getPaymentMethod()) {
-            $info = $payMethod->gatewayDetails();
+            $info = $payMethod->driverDetails();
             $methodName = $info['name'];
         }
         else {
