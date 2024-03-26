@@ -23,7 +23,10 @@
                 ->loadingPopup()
                 ->primary() ?>
 
-            <?= Ui::button(__("Cancel"))->dismissPopup() ?>
+            <span class="btn-text">
+                <span class="button-separator"><?= __("or") ?></span>
+                <?= Ui::button(__("Cancel"))->dismissPopup()->textLink() ?>
+            </span>
         </div>
 
     <?php else: ?>

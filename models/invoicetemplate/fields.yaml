@@ -2,32 +2,34 @@
 #  Form Field Definitions
 # ===================================
 
+fields:
+    name:
+        label: Name
+        tab: Invoice
+        span: left
+
+    code:
+        label: Code
+        tab: Invoice
+        span: right
+
 tabs:
     fields:
-
-        # Reserved for future use
-        name:
-            label: Name
+        _hint:
+            type: hint
+            comment: Customize these fields using the HTML template in the next tab.
             tab: Invoice
-            span: left
-            cssClass: hidden
-
-        # Reserved for future use
-        code:
-            label: Code
-            tab: Invoice
-            span: right
-            hidden: true
-            cssClass: hidden
 
         content_html:
             type: codeeditor
             size: giant
             tab: HTML
             language: html
+            stretch: true
 
         content_css:
             type: codeeditor
             size: giant
             tab: CSS
             language: css
+            stretch: true

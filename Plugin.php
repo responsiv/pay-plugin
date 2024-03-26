@@ -160,15 +160,15 @@ class Plugin extends PluginBase
     public function registerSettings()
     {
         return [
-            // 'settings' => [
-            //     'label' => "Payment Settings",
-            //     'description' => "Manage payment configuration",
-            //     'icon' => 'icon-credit-card',
-            //     'class' => 'Responsiv\Pay\Models\Settings',
-            //     'category' => SettingsManager::CATEGORY_SHOP,
-            //     'permissions' => ['responsiv.pay.access_settings'],
-            //     'order' => 520,
-            // ],
+            'settings' => [
+                'label' => "Payment Settings",
+                'description' => "Manage payment configuration",
+                'icon' => 'icon-credit-card',
+                'class' => 'Responsiv\Pay\Models\Settings',
+                'category' => SettingsManager::CATEGORY_SHOP,
+                'permissions' => ['responsiv.pay.access_settings'],
+                'order' => 800,
+            ],
             'invoice_settings' => [
                 'label' => "Invoice Settings",
                 'description' => "Customize invoice templates and settings.",
