@@ -23,16 +23,17 @@ tabs:
             mode: date
             span: auto
 
-        # currency:
-        #     label: Currency
-        #     type: relation
-        #     span: auto
-        #     emptyOption: — Use Default —
-
-        items:
-            label: Items
+        currency:
+            label: Currency
             type: relation
-            changeHandler: onUpdateTotals
+            span: auto
+            placeholder: — Use Default —
+
+        invoice_template:
+            label: Invoice Template
+            type: relation
+            span: auto
+            placeholder: — Use Default —
 
         is_tax_exempt:
             label: Tax Exempt
@@ -51,6 +52,11 @@ tabs:
                 action: disable|empty
                 field: is_tax_exempt
                 condition: checked
+
+        items:
+            label: Items
+            type: relation
+            changeHandler: onUpdateTotals
 
         user:
             label: User

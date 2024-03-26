@@ -91,6 +91,7 @@ class Invoice extends Model implements InvoiceContract
         'status' => InvoiceStatus::class,
         'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
+        'invoice_template' => InvoiceTemplate::class,
         'user' => \RainLab\User\Models\User::class,
         'currency' => \Responsiv\Currency\Models\Currency::class,
     ];

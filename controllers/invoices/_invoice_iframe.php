@@ -14,10 +14,14 @@
                 invoiceFrame = $('#<?= $this->getId('invoiceIframe') ?>')
 
             $(document).render(function(){
-                var frameContents = invoiceFrame.contents().find('html')
-                invoiceContents = $('#<?= $this->getId('invoiceContents') ?>').html()
-                frameContents.html(invoiceContents)
-                invoiceFrame.height(frameContents.height() + 100)
+                if (!invoiceFrame.is(':visible')) {
+                    return;
+                }
+
+                var frameContents = invoiceFrame.contents().find('html');
+                invoiceContents = $('#<?= $this->getId('invoiceContents') ?>').html();
+                frameContents.html(invoiceContents);
+                invoiceFrame.height(frameContents.height() + 100);
             })
 
             invoiceFrame.on('print.invoice', function(){

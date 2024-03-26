@@ -13,6 +13,7 @@ use Responsiv\Currency\Models\Currency;
  * @property string $currency_code
  * @property string $street_address
  * @property string $status_code
+ * @property string $tax_mode
  */
 trait HasModelAttributes
 {
