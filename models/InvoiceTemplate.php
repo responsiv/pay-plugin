@@ -5,10 +5,25 @@ use Twig;
 use Model;
 
 /**
- * InvoiceStatus Model
+ * InvoiceTemplate Model
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string $content_html
+ * @property string $content_css
+ * @property string $syntax_data
+ * @property string $syntax_fields
+ * @property bool $is_default
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class InvoiceTemplate extends Model
 {
+    use \October\Rain\Database\Traits\Defaultable;
     use \October\Rain\Parse\Syntax\SyntaxModelTrait;
 
     /**

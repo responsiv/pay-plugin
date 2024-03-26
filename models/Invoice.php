@@ -6,6 +6,7 @@ use Request;
 use Carbon\Carbon;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
+use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * Invoice Model
@@ -92,7 +93,7 @@ class Invoice extends Model implements InvoiceContract
         'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
         'user' => \RainLab\User\Models\User::class,
-        'currency' => \Responsiv\Currency\Models\Currency::class,
+        'currency' => CurrencyModel::class,
     ];
 
     /**
@@ -171,7 +172,11 @@ class Invoice extends Model implements InvoiceContract
     public function beforeSave()
     {
         if (!$this->template_id) {
-            $this->template_id = InvoiceTemplate::value('id');
+            $this->template_id = InvoiceTemplate::getDefault()?->id;
+        }
+
+        if (!$this->currency_id) {
+            $this->currency_id = CurrencyModel::getPrimary()?->id;
         }
     }
 

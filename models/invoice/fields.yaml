@@ -14,8 +14,8 @@ tabs:
             label: Sent At
             type: datepicker
             mode: date
-            span: left
-            context: update
+            span: auto
+            default: now
 
         due_at:
             label: Due At
