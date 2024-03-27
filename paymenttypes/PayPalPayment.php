@@ -8,8 +8,6 @@ use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use ApplicationException;
-use SystemException;
 use Exception;
 
 /**
@@ -44,7 +42,6 @@ class PayPalPayment extends GatewayBase
         if (!$host->exists) {
             $host->name = 'PayPal';
             $host->test_mode = true;
-            $host->invoice_status = 'paid';
         }
     }
 

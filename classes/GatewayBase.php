@@ -172,15 +172,6 @@ abstract class GatewayBase extends DriverBehavior
         return '';
     }
 
-    /**
-     * allowNewInvoiceNotifications should return false to suppress the new invoice notification
-     * when this payment method is assigned
-     */
-    public function allowNewInvoiceNotifications($host, $invoice)
-    {
-        return true;
-    }
-
     //
     // Payment Profiles
     //

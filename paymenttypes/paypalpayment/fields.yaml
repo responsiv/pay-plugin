@@ -24,9 +24,3 @@ fields:
         comment: PayPal client secret to authenticate with the client ID. Keep this secret safe.
         tab: Configuration
         type: sensitive
-
-    invoice_status:
-        label: Invoice Status
-        comment: Select status to assign the invoice in case of successful payment.
-        tab: Configuration
-        type: dropdown

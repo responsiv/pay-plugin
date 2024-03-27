@@ -144,12 +144,10 @@ class PaymentMethods extends Controller
         // Add the set up help partial
         $setupPartial = $model->getPartialPath().'/_setup_help.php';
         if (File::exists($setupPartial)) {
-            $widget->addTabField([
-                'setup_help' => [
-                    'type' => 'partial',
-                    'tab' => "Help",
-                    'path' => $setupPartial,
-                ]
+            $widget->addTabField('setup_help', [
+                'type' => 'partial',
+                'tab' => "Help",
+                'path' => $setupPartial
             ]);
         }
 
