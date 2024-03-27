@@ -222,12 +222,10 @@ class PayPalPayment extends GatewayBase
                     throw $this->newResponseError('Invalid invoice total - order total received is: ' . e($matchedValue));
                 }
 
-                if ($invoice->markAsPaymentProcessed()) {
-                    $transactionStatus = $response->json('status');
-                    $transactionId = $response->json('id');
-                    $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $payload, $response->json(), '');
-                    $invoice->updateInvoiceStatus($paymentMethod->invoice_status);
-                }
+                $transactionStatus = $response->json('status');
+                $transactionId = $response->json('id');
+                $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $payload, $response->json(), '');
+                $invoice->markAsPaymentProcessed();
             }
 
             return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());

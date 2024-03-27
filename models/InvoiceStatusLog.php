@@ -93,17 +93,7 @@ class InvoiceStatusLog extends Model
             'status_updated_at' => Carbon::now()
         ]);
 
-        $statusPaid = InvoiceStatus::getPaidStatus();
-        if (!$statusPaid) {
-            return traceLog('Unable to find payment status with paid code');
-        }
-
-        // Invoice is paid
-        if ($statusId == $statusPaid->id) {
-            $invoice->markAsPaymentProcessed();
-        }
-
-        if ($status = InvoiceStatus::find($statusId)) {
+        if ($status = InvoiceStatus::findByKey($statusId)) {
             Event::fire('pay.invoice.updateStatus', [$invoice, $status, $previousStatus]);
         }
 

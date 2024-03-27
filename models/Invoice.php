@@ -3,7 +3,6 @@
 use Event;
 use Model;
 use Request;
-use Carbon\Carbon;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
 use Responsiv\Currency\Models\Currency as CurrencyModel;
@@ -290,9 +289,7 @@ class Invoice extends Model implements InvoiceContract
      */
     public function submitManualPayment($comment = null)
     {
-        InvoiceLog::createManualPayment($this);
-
-        $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID, $comment);
+        InvoiceLog::createManualPayment($this, $comment);
 
         return $this->markAsPaymentProcessed();
     }

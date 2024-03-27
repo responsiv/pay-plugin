@@ -5,6 +5,7 @@ use Event;
 use Cms\Classes\Controller;
 use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\InvoiceLog;
+use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
 
 /**
@@ -169,6 +170,8 @@ trait HasInvoiceContract
             $this->is_throwaway = false;
 
             $this->save();
+
+            $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
         }
 
         return !$isPaid;
