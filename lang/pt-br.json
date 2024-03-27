@@ -1,0 +1,15 @@
+{
+  "Pay": "Pay",
+  "Invoicing and Accounting": "Pedido e Contabilidade",
+  "Payments": "Pagamentos",
+  "Invoices": "Pedidos",
+  "Tax Rules": "Tabela de taxas",
+  "Gateways": "Gateways",
+  "Payment Settings": "Configurações de pagamento",
+  "Manage payment configuration": "Gerenciar configuração de pagamento",
+  "Invoice Template": "Pedidos template",
+  "Customize the template used for invoices.": "Customize o template usado para os pedidos.",
+  "Change Invoice Status": "Alterar status do pedido",
+  "Current status: :name": "Status atual: :name",
+  "Add Payment Method": "Adicionar método de pagamento"
+}

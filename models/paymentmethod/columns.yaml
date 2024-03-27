@@ -4,20 +4,16 @@
 
 columns:
     name:
-        label: responsiv.pay::lang.payment_method.name
+        label: Name
         searchable: true
 
-    gateway_name:
-        label: responsiv.pay::lang.payment_method.gateway_name
+    driver_name:
+        label: Gateway Name
 
     description:
-        label: responsiv.pay::lang.payment_method.description
+        label: Description
         searchable: true
 
     is_enabled:
-        label: responsiv.pay::lang.payment_method.is_enabled
-        type: switch
-
-    is_default:
-        label: responsiv.pay::lang.payment_method.is_default
+        label: Enabled
         type: switch

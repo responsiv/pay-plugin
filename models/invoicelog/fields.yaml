@@ -1,0 +1,28 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+tabs:
+    defaultTab: General
+    fields:
+        payment_method_name:
+            label: Gateway
+
+        message:
+            label: Message
+
+        request_data:
+            label: Request Data
+            tab: Request Values
+            type: partial
+            path: field_array_value
+
+        response_data:
+            label: Response Data
+            tab: Response Values
+            type: partial
+            path: field_array_value
+
+        raw_response:
+            label: Response Text
+            tab: Response Text

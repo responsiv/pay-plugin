@@ -4,17 +4,11 @@
 
 fields:
     status:
-        label: responsiv.pay::lang.invoice_status_log.status
+        label: Status
         type: dropdown
-        emptyOption: responsiv.pay::lang.invoice_status_log.status_empty
+        placeholder: -- select --
 
     comment:
-        label: responsiv.pay::lang.invoice_status_log.comment
+        label: Comment
         type: textarea
         size: small
-
-    mark_paid:
-        label: responsiv.pay::lang.invoice_status_log.mark_paid
-        comment: responsiv.pay::lang.invoice_status_log.mark_paid_comment
-        type: checkbox
-        context: create

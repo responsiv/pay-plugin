@@ -26,7 +26,8 @@
                         <div class="invoice-client-details">
                             {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
                             Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                            {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                            {% if invoice.address_line1 %}{{ invoice.address_line1 }}<br />{% endif %}
+                            {% if invoice.address_line2 %}{{ invoice.address_line2 }}<br />{% endif %}
                             {% if invoice.city %}{{ invoice.city }}, {% endif %}
                             {{ invoice.state.name }} {{ invoice.zip }}<br />
                             {{ invoice.country.name }}
@@ -57,39 +58,39 @@ Australia
             <table class="invoice-table invoice-items">
                 <tr>
                     <th class="invoice-item-description">Description</th>
+                    <th class="invoice-item-price">Price</th>
+                    <th class="invoice-item-tax">Discount</th>
                     <th class="invoice-item-quantity">Qty</th>
-                    <th class="invoice-item-price">Unit Price</th>
-                    <th class="invoice-item-tax">Tax</th>
                     <th class="invoice-item-total">Amount</th>
                 </tr>
 
                 {% for item in invoice.items %}
                     <tr>
                         <td class="invoice-item invoice-item-description">{{ item.description }}</td>
+                        <td class="invoice-item invoice-item-price">{{ item.price|currency({ in: invoice.currency.code }) }}</td>
+                        <td class="invoice-item invoice-item-tax">{{ item.discount|currency({ in: invoice.currency.code }) }}</td>
                         <td class="invoice-item invoice-item-quantity">{{ item.quantity }}</td>
-                        <td class="invoice-item invoice-item-price">{{ item.price|currency({'in': invoice.currency}) }}</td>
-                        <td class="invoice-item invoice-item-tax">{{ item.tax|currency({'in': invoice.currency}) }}</td>
-                        <td class="invoice-item invoice-item-total">{{ item.total|currency({'in': invoice.currency}) }}</td>
+                        <td class="invoice-item invoice-item-total">{{ item.subtotal|currency({ in: invoice.currency.code }) }}</td>
                     </tr>
                 {% endfor %}
                 <tr>
                     <td colspan="4" class="invoice-end-label invoice-subtotal-label">Subtotal</td>
-                    <td class="invoice-end-amount invoice-subtotal-amount">{{ invoice.subtotal|currency({'in': invoice.currency}) }}</td>
+                    <td class="invoice-end-amount invoice-subtotal-amount">{{ invoice.subtotal|currency({ in: invoice.currency.code }) }}</td>
                 </tr>
-                {% for tax in invoice.listSalesTaxes %}
+                {% for tax in invoice.taxes %}
                     <tr>
                         <td colspan="4" class="invoice-end-label invoice-tax-label">Sales tax ({{ tax.name }})</td>
-                        <td class="invoice-end-amount invoice-tax-amount">{{ tax.total|currency({'in': invoice.currency}) }}</td>
+                        <td class="invoice-end-amount invoice-tax-amount">{{ tax.total|currency({ in: invoice.currency.code }) }}</td>
                     </tr>
                 {% endfor %}
                 <tr>
                     <td colspan="4" class="invoice-end-label invoice-tax-label">Total Tax</td>
-                    <td class="invoice-end-amount invoice-tax-amount">{{ invoice.tax|currency({'in': invoice.currency}) }}</td>
+                    <td class="invoice-end-amount invoice-tax-amount">{{ invoice.tax|currency({ in: invoice.currency.code }) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">&nbsp;</td>
                     <td class="invoice-end-label invoice-total-label">Total</td>
-                    <td class="invoice-end-amount invoice-total-amount">{{ invoice.total|currency({'in': invoice.currency}) }}</td>
+                    <td class="invoice-end-amount invoice-total-amount">{{ invoice.total|currency({ in: invoice.currency.code }) }}</td>
                 </tr>
             </table>
 
@@ -103,10 +104,10 @@ Australia
                     </td>
                     <td>
                         {% if invoice.isPaid %}
-                            <div class="invoice-payment-label">Amount due: {{ 0|currency({'in': invoice.currency}) }}</div>
+                            <div class="invoice-payment-label">Amount due: {{ 0|currency({ in: invoice.currency.code }) }}</div>
                             <div class="invoice-payment-advice">This invoice has been paid</div>
                         {% else %}
-                            <div class="invoice-payment-label">Amount due: {{ invoice.total|currency({'in': invoice.currency}) }}</div>
+                            <div class="invoice-payment-label">Amount due: {{ invoice.total|currency({ in: invoice.currency.code }) }}</div>
                             <div class="invoice-payment-advice">
                                 {textarea name="payment_advice" label="Payment advice" size="small"}
                                     Please send full amount to via any of our accepted Payment methods

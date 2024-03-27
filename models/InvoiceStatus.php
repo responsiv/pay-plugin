@@ -1,90 +1,78 @@
 <?php namespace Responsiv\Pay\Models;
 
 use Model;
-use Responsiv\Pay\Interfaces\InvoiceStatus as InvoiceStatusInterface;
 
 /**
- * InvoiceStatus Model
+ * InvoiceStatus record
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property bool $is_enabled
+ * @property bool $notify_user
+ * @property string $user_message_template
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
-class InvoiceStatus extends Model implements InvoiceStatusInterface
+class InvoiceStatus extends Model
 {
+    use \System\Traits\KeyCodeModel;
+    use \October\Rain\Database\Traits\Validation;
+
     const STATUS_DRAFT = 'draft';
     const STATUS_APPROVED = 'approved';
     const STATUS_PAID = 'paid';
     const STATUS_VOID = 'void';
 
-    protected static $codeCache = [];
-
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_invoice_statuses';
 
     /**
-     * @var array Guarded fields
+     * @var array rules for validation
      */
-    protected $guarded = ['*'];
+    public $rules = [
+        'name' => 'required',
+    ];
 
     /**
-     * @var array Fillable fields
+     * getNewStatus
      */
-    protected $fillable = [];
-
-    public $timestamps = false;
-
-    /**
-     * @var array Relations
-     */
-    public $hasOne = [];
-    public $hasMany = [];
-    public $belongsTo = [];
-    public $belongsToMany = [];
-    public $morphTo = [];
-    public $morphOne = [];
-    public $morphMany = [];
-    public $attachOne = [];
-    public $attachMany = [];
-
-    /**
-     * Returns a code, cached.
-     */
-    public static function findByCode($code)
+    public static function getNewStatus()
     {
-        if (array_key_exists($code, static::$codeCache)) {
-            return static::$codeCache[$code];
-        }
-
-        $status = static::whereCode($code)->first();
-
-        return static::$codeCache[$code] = $status;
-    }
-
-    //
-    // InvoiceStatusInterface obligations
-    //
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPaidStatus()
-    {
-        return static::STATUS_PAID;
+        return static::findByCode(static::STATUS_DRAFT);
     }
 
     /**
-     * {@inheritDoc}
+     * getPaidStatus
      */
-    public function getNewStatus()
+    public static function getPaidStatus()
     {
-        return static::STATUS_NEW;
+        return static::findByCode(static::STATUS_PAID);
     }
 
     /**
-     * {@inheritDoc}
+     * listStatuses
      */
-    public function listStatuses()
+    public static function listStatuses()
     {
         return static::lists('name', 'code');
     }
 
+    /**
+     * getStatusNameOptions
+     */
+    public function getStatusCodeOptions()
+    {
+        return [
+            'draft' => ['Draft', '#98a0a0'],
+            'approved' => ['Approved', 'var(--bs-info)'],
+            'void' => ['Void', 'var(--bs-danger)'],
+            'paid' => ['Paid', 'var(--bs-success)'],
+        ];
+    }
 }

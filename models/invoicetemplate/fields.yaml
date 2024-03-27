@@ -2,33 +2,34 @@
 #  Form Field Definitions
 # ===================================
 
+fields:
+    name:
+        label: Name
+        tab: Invoice
+        span: left
+
+    code:
+        label: Code
+        tab: Invoice
+        span: right
+
 tabs:
     fields:
-
-        # Reserved for future use
-        name:
-            label: responsiv.pay::lang.invoice_template.name
-            tab: responsiv.pay::lang.invoice_template.invoice_tab
-            span: left
-            cssClass: hidden
-
-        # Reserved for future use
-        code:
-            label: responsiv.pay::lang.invoice_template.code
-            tab: responsiv.pay::lang.invoice_template.invoice_tab
-            span: right
-            hidden: true
-            cssClass: hidden
+        _hint:
+            type: hint
+            comment: Customize these fields using the template in the HTML tab.
+            tab: Invoice
 
         content_html:
             type: codeeditor
             size: giant
-            tab: responsiv.pay::lang.invoice_template.html_tab
+            tab: HTML
             language: html
+            stretch: true
 
         content_css:
             type: codeeditor
             size: giant
-            tab: responsiv.pay::lang.invoice_template.css_tab
+            tab: CSS
             language: css
-
+            stretch: true

@@ -6,13 +6,18 @@
 name: Tax Table
 
 # Model Form Field configuration
-form: ~/plugins/responsiv/pay/models/tax/fields.yaml
+form: $/responsiv/pay/models/tax/fields.yaml
 
 # Model Class name
 modelClass: Responsiv\Pay\Models\Tax
 
 # Default redirect location
 defaultRedirect: responsiv/pay/taxes
+
+# Form Design
+design:
+    displayMode: basic
+    size: 950
 
 # Create page
 create:

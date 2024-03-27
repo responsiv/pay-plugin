@@ -1,0 +1,14 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    payment_method_name:
+        label: Gateway
+
+    message:
+        label: Message
+
+    created_at:
+        label: Recorded
+        type: datetime

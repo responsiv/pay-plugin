@@ -1,59 +1,79 @@
 <?php namespace Responsiv\Pay\Models;
 
-use App;
 use File;
 use Twig;
 use Model;
-use October\Rain\Parse\Syntax\Parser;
 
 /**
- * InvoiceStatus Model
+ * InvoiceTemplate Model
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string $content_html
+ * @property string $content_css
+ * @property string $syntax_data
+ * @property string $syntax_fields
+ * @property bool $is_default
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class InvoiceTemplate extends Model
 {
+    use \October\Rain\Database\Traits\Defaultable;
     use \October\Rain\Parse\Syntax\SyntaxModelTrait;
 
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_invoice_templates';
 
     /**
-     * @var array Guarded fields
+     * @var array jsonable attribute names that are json encoded and decoded from the database
      */
-    protected $guarded = [];
+    protected $jsonable = [
+        'syntax_data',
+        'syntax_fields'
+    ];
 
     /**
-     * @var array Fillable fields
+     * beforeSave
      */
-    protected $fillable = [];
-
-    /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
-     */
-    protected $jsonable = ['syntax_data', 'syntax_fields'];
-
-    public function getContentCssAttribute($content)
-    {
-        if (!$this->exists || !strlen($content))
-            return File::get(__DIR__ . '/invoicetemplate/default_content.css');
-
-        return $content;
-    }
-
-    public function getContentHtmlAttribute($content)
-    {
-        if (!$this->exists || !strlen($content))
-            return File::get(__DIR__ . '/invoicetemplate/default_content.htm');
-
-        return $content;
-    }
-
     public function beforeSave()
     {
         $this->makeSyntaxFields($this->content_html);
     }
 
+    /**
+     * getContentCssAttribute
+     */
+    public function getContentCssAttribute($content)
+    {
+        if (!$this->exists || !strlen($content)) {
+            return File::get(__DIR__ . '/invoicetemplate/default_content.css');
+        }
+
+        return $content;
+    }
+
+    /**
+     * getContentHtmlAttribute
+     */
+    public function getContentHtmlAttribute($content)
+    {
+        if (!$this->exists || !strlen($content)) {
+            return File::get(__DIR__ . '/invoicetemplate/default_content.htm');
+        }
+
+        return $content;
+    }
+
+    /**
+     * renderInvoice
+     */
     public function renderInvoice($invoice)
     {
         $parser = $this->getSyntaxParser($this->content_html);
@@ -68,5 +88,4 @@ class InvoiceTemplate extends Model
         $twigTemplate = Twig::parse($invoiceTemplate, $twigData);
         return $twigTemplate;
     }
-
 }

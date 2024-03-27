@@ -3,32 +3,56 @@
 # ===================================
 
 tabs:
+    defaultTab: General
     fields:
         is_enabled:
-            label: responsiv.pay::lang.payment_method.is_enabled
+            label: Enabled
+            comment: Disabled payment methods are not shown on the frontend.
             type: checkbox
-            tab: responsiv.pay::lang.payment_method.general_tab
+            span: auto
+            default: true
+
+        is_enabled_edit:
+            label: Enabled in the Admin Panel
+            comment: Use this to enable this method in the admin panel only.
+            type: checkbox
+            span: auto
+            default: true
+            trigger:
+                action: disable|fill
+                field: is_enabled
+                condition: checked
+
+        _ruler1:
+            type: ruler
 
         name:
-            label: responsiv.pay::lang.payment_method.name
-            tab: responsiv.pay::lang.payment_method.general_tab
-            span: auto
-            comment: responsiv.pay::lang.payment_method.name_comment
-
-        code:
-            label: responsiv.pay::lang.payment_method.code
-            span: auto
-            tab: responsiv.pay::lang.payment_method.general_tab
-            comment: responsiv.pay::lang.payment_method.code_comment
+            label: Name
+            commentAbove: The name to display this payment method on the frontend.
 
         description:
-            label: responsiv.pay::lang.payment_method.description
+            label: Description
             type: textarea
             size: small
-            tab: responsiv.pay::lang.payment_method.general_tab
-            comment: responsiv.pay::lang.payment_method.description_comment
+            commentAbove: An optional description for this payment method.
+
+        receipt_page:
+            label: Receipt Page
+            commentAbove: The CMS page name used to redirect the customer after a successful payment. Leave blank to use the default page.
+            type: pagefinder
+
+        code:
+            label: Code
+            commentAbove: The unique code as an identifier of this payment method.
 
         countries:
             type: relation
-            commentAbove: responsiv.pay::lang.payment_method.countries_comment
-            tab: responsiv.pay::lang.payment_method.countries_tab
+            label: Countries
+            commentAbove: Restrict payment method to selected countries. If none are selected the payment gateway is applicable to all countries.
+            tab: Countries
+
+        user_groups:
+            type: relation
+            label: User Groups
+            commentAbove: Select the user groups this payment method is available for. If no groups are selected, the payment method will be available for all user groups.
+            tab: Visibility

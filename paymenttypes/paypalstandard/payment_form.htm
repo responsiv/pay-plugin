@@ -1,9 +1,0 @@
-{% set hiddenFields = paymentMethod.getHiddenFields(invoice) %}
-
-<p>Click the button below to pay using PayPal</p>
-<form action="{{ paymentMethod.getFormAction() }}" method="post">
-    {% for name, value in hiddenFields %}
-        <input type="hidden" name="{{ name }}" value="{{ value }}"/>
-    {% endfor %}
-    <input type="submit" class="btn" value="Pay with PayPal" />
-</form>
