@@ -112,10 +112,15 @@ class InvoiceStatusLog extends Model
             return traceLog('Unable to find payment status with paid code');
         }
 
-        // @todo Send email notifications
-
+        // Invoice is paid
         if ($statusId == $statusPaid->id) {
-            // Invoice is paid
+            $invoice->markAsPaymentProcessed();
         }
+
+        if ($status = InvoiceStatus::find($statusId)) {
+            Event::fire('pay.invoice.updateStatus', [$invoice, $status, $previousStatus]);
+        }
+
+        return true;
     }
 }

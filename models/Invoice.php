@@ -280,7 +280,7 @@ class Invoice extends Model implements InvoiceContract
     //
 
     /**
-     * Converts a throwaway invoice to a permanent one.
+     * convertToPermanent converts a temporary/throwaway invoice to a permanent one.
      * @return void
      */
     public function convertToPermanent()
@@ -294,16 +294,9 @@ class Invoice extends Model implements InvoiceContract
      */
     public function submitManualPayment($comment = null)
     {
-        if ($comment) {
-            InvoiceLog::createManualPayment($this, $comment);
-        }
+        InvoiceLog::createManualPayment($this, $comment);
 
-        if ($this->payment_method && $this->payment_method->invoice_status) {
-            $this->updateInvoiceStatus($this->payment_method->invoice_status);
-        }
-        else {
-            $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
-        }
+        $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
 
         $this->markAsPaymentProcessed();
     }
