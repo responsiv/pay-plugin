@@ -2,4 +2,15 @@
 #  Payment Field Definitions
 # ===================================
 
-fields: []
+fields:
+    test_mode:
+        label: Test Mode
+        type: switch
+        tab: Configuration
+        comment: Use Stripe Test Mode to try out payments using this gateway.
+
+    secret_key:
+        label: Secret Key
+        comment: Stripe secret key to authenticate requests. Keep this secret safe.
+        tab: Configuration
+        type: sensitive

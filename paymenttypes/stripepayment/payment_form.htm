@@ -1,0 +1,48 @@
+{% set hiddenFields = paymentMethod.getHiddenFields(invoice) %}
+
+<p>Click the button below to pay using Stripe</p>
+
+<form id="stripe-payment-form" method="post" data-request="onPay" data-request-flash>
+    {% for name, value in hiddenFields %}
+        <input type="hidden" name="{{ name }}" value="{{ value }}"/>
+    {% endfor %}
+    <input type="submit" class="btn btn-lg btn-primary w-100" value="Pay with Stripe" />
+</form>
+
+<script>
+oc.pageReady().then(function() {
+    const payForm = document.querySelector('#stripe-payment-form');
+    const invoiceHash = payForm.querySelector('input[name="invoice_hash"]');
+
+    // This function requests the invoice hash from an external source, usually
+    // a checkout form, and provides an opportunity to validate the form
+    async function fetchInvoiceHash() {
+        const detail = { fetchFunc: null };
+        const event = new CustomEvent('pay:fetch-invoice', { detail });
+        window.dispatchEvent(event);
+        if (detail.fetchFunc) {
+            try {
+                invoiceHash.value = await detail.fetchFunc();
+            } catch (error) {
+            }
+        }
+    }
+
+    // This event halts the form submission if the invoice_hash input is empty.
+    // It will then request the invoice hash from the `pay:fetch-invoice` event,
+    // and then resubmit the form using `oc.request` once it has the input value.
+    payForm.addEventListener('ajax:setup', (event) => {
+        if (!invoiceHash.value) {
+            event.preventDefault();
+
+            fetchInvoiceHash().then(function() {
+                if (invoiceHash.value) {
+                    oc.request(payForm);
+                }
+            });
+
+            return false;
+        }
+    })
+});
+</script>

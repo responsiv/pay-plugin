@@ -125,7 +125,7 @@ class Payment extends ComponentBase
         }
 
         // Pay from profile
-        if (post('pay_from_profile') && post('pay_from_profile') == 1) {
+        if (post('pay_from_profile')) {
             $redirect = true;
 
             if (!$user = $this->user()) {

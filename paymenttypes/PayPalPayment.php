@@ -36,8 +36,8 @@ class PayPalPayment extends GatewayBase
      */
     public function initDriverHost($host)
     {
-        $host->rules['client_id'] = ['required'];
-        $host->rules['client_secret'] = ['required'];
+        $host->rules['client_id'] = 'required';
+        $host->rules['client_secret'] = 'required';
 
         if (!$host->exists) {
             $host->name = 'PayPal';
