@@ -43,15 +43,17 @@ trait HasInvoiceStatus
             throw new ValidationException(['status' => __("Please select a new status for the invoice.")]);
         }
 
+        $isPaid = (int) InvoiceStatus::getPaidStatus()?->getKey() === (int) $statusId;
+        $comment = post('InvoiceStatusLog[comment]');
+
         $processed = 0;
         $invoices = $this->getInvoiceStatusInvoicesFromPost();
         foreach ($invoices as $invoice) {
             try {
-                if (InvoiceStatusLog::createRecord(
-                    $statusId,
-                    $invoice,
-                    post('InvoiceStatusLog[comment]')
-                )) {
+                if ($isPaid && $invoice->submitManualPayment($comment)) {
+                    $processed++;
+                }
+                elseif ($invoice->updateInvoiceStatus($statusId, $comment)) {
                     $processed++;
                 }
             }

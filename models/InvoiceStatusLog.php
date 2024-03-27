@@ -115,6 +115,11 @@ class InvoiceStatusLog extends Model
      */
     protected static function checkStatusTransition($fromStatusId, $toStatusId): bool
     {
+        // New record, allow everything to start
+        if (!$fromStatusId) {
+            return true;
+        }
+
         $fromStatus = InvoiceStatus::findByKey($fromStatusId);
         $toStatus = InvoiceStatus::findByKey($toStatusId);
 

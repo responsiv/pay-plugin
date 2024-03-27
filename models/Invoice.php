@@ -203,7 +203,7 @@ class Invoice extends Model implements InvoiceContract
 
         $invoiceCopy = static::find($this->getKey());
 
-        InvoiceStatusLog::createRecord($statusId, $invoiceCopy);
+        $invoiceCopy->updateInvoiceStatus($statusId);
 
         /**
          * @event responsiv.pay.newInvoice
@@ -290,11 +290,11 @@ class Invoice extends Model implements InvoiceContract
      */
     public function submitManualPayment($comment = null)
     {
-        InvoiceLog::createManualPayment($this, $comment);
+        InvoiceLog::createManualPayment($this);
 
-        $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
+        $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID, $comment);
 
-        $this->markAsPaymentProcessed();
+        return $this->markAsPaymentProcessed();
     }
 
     /**

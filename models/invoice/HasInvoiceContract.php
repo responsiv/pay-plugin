@@ -214,8 +214,8 @@ trait HasInvoiceContract
     /**
      * updateInvoiceStatus
      */
-    public function updateInvoiceStatus($statusCode)
+    public function updateInvoiceStatus($statusCode, $comment = null)
     {
-        InvoiceStatusLog::createRecord($statusCode, $this);
+        return InvoiceStatusLog::createRecord($statusCode, $this, $comment);
     }
 }

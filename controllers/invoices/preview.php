@@ -23,7 +23,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a href="#invoiceTemplate"><?= __("Invoice") ?></a></li>
         <li><a href="#statusLog"><?= __("Status History") ?></a></li>
-        <li><a href="#typeLog"><?= __("Pay Attempts") ?></a></li>
+        <li><a href="#typeLog"><?= __("Payment Attempts") ?></a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active">

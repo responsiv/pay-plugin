@@ -128,7 +128,8 @@ interface Invoice
     /**
      * updateInvoiceStatus updates the invoice status to the supplied code.
      * @param  string $statusCode
-     * @return void
+     * @param  string $comment
+     * @return bool
      */
-    public function updateInvoiceStatus($statusCode);
+    public function updateInvoiceStatus($statusCode, $comment = null);
 }

@@ -34,7 +34,10 @@ class InvoiceLog extends Model
     /**
      * @var array jsonable attribute names that are json encoded and decoded from the database
      */
-    protected $jsonable = ['request_data', 'response_data'];
+    protected $jsonable = [
+        'request_data',
+        'response_data'
+    ];
 
     /**
      * @var array belongsTo
