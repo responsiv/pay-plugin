@@ -64,6 +64,16 @@ class StripePayment extends GatewayBase
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function registerAccessPoints()
+    {
+        return [
+            'stripe_autoreturn' => 'processAutoreturn',
+        ];
+    }
+
+    /**
      * getHiddenFields
      */
     public function getHiddenFields($invoice)
@@ -86,27 +96,26 @@ class StripePayment extends GatewayBase
      */
     public function processPaymentForm($data, $order)
     {
-        $invoice = $this->findInvoiceFromHash(post('invoice_hash'));
-
-        $totals = $invoice->getTotalDetails();
-
-        if ($invoice->isPaymentProcessed()) {
-            throw new ApplicationException('Invoice already paid');
-        }
-
         try {
+            $invoice = $this->findInvoiceFromHash(post('invoice_hash'));
+            if ($invoice->isPaymentProcessed()) {
+                throw new ApplicationException('Invoice already paid');
+            }
+
             $host = $this->getHostObject();
             $baseUrl = $this->getStripeEndpoint();
-            $receiptUrl = $invoice->getReceiptUrl();
+            $totals = $invoice->getTotalDetails();
+            $successUrl = $this->makeAccessPointLink('stripe_autoreturn');
 
             $payload = [
                 'mode' => 'payment',
+                'client_reference_id' => $invoice->getUniqueId(),
                 'line_items' => [
                     [
                         'quantity' => 1,
                         'price_data' => [
                             'product_data' => [
-                                'name' => 'Invoice ' .$invoice->getUniqueId(),
+                                'name' => 'Invoice ' . $invoice->getUniqueId(),
                                 'description' => $this->getInvoiceDescription($invoice)
                             ],
                             'unit_amount' => (int) $totals['total'],
@@ -114,8 +123,8 @@ class StripePayment extends GatewayBase
                         ]
                     ]
                 ],
-                'success_url' => $receiptUrl,
-                'cancel_url' => $receiptUrl
+                'success_url' => "{$successUrl}/{$invoice->hash}/{CHECKOUT_SESSION_ID}",
+                'cancel_url' => $invoice->getReceiptUrl()
             ];
 
             $response = Http::asForm()
@@ -129,16 +138,74 @@ class StripePayment extends GatewayBase
             else {
                 $errorMessage = $response->json('error.message');
                 $invoice->logPaymentAttempt($errorMessage, false, $payload, $response->json(), '');
-                throw new Exception($errorMessage);
+                throw new ApplicationException($errorMessage);
             }
 
             return Redirect::to($response->json('url'));
+        }
+        catch (ApplicationException $ex) {
+            throw $ex;
         }
         catch (Exception $ex) {
             Log::error($ex);
             throw new ApplicationException('Failed to create order');
         }
     }
+
+    /**
+     * processAutoreturn
+     */
+    public function processAutoreturn($params)
+    {
+        try {
+            $invoice = $this->findInvoiceFromHash($params[0] ?? '');
+            $sessionId = $params[1] ?? '';
+            if ($invoice->isPaymentProcessed() || !$sessionId) {
+                return Redirect::to($invoice->getReceiptUrl());
+            }
+
+            $paymentMethod = $invoice->getPaymentMethod();
+            $totals = $invoice->getTotalDetails();
+            $baseUrl = $this->getStripeEndpoint();
+
+            $response = Http::withBasicAuth($paymentMethod->secret_key, '')
+                ->get("{$baseUrl}/v1/checkout/sessions/{$sessionId}");
+
+            if (!$response->successful()) {
+                $errorMessage = $response->json('error.message');
+                $invoice->logPaymentAttempt($errorMessage, false, $params, $response->json(), '');
+                throw new ApplicationException($errorMessage);
+            }
+            elseif (!$invoice->isPaymentProcessed(true)) {
+                if ($response->json('status') !== 'complete') {
+                    throw new ApplicationException('Invalid response');
+                }
+
+                if ($response->json('client_reference_id') !== $invoice->getUniqueId()) {
+                    throw new ApplicationException('Invalid invoice number');
+                }
+
+                if (($matchedValue = $response->json('amount_total')) !== (int) $totals['total']) {
+                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue));
+                }
+
+                $transactionStatus = $response->json('status');
+                $transactionId = $response->json('id');
+                $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $params, $response->json(), '');
+                $invoice->markAsPaymentProcessed();
+            }
+
+            return Redirect::to($invoice->getReceiptUrl());
+        }
+        catch (ApplicationException $ex) {
+            throw $ex;
+        }
+        catch (Exception $ex) {
+            Log::error($ex);
+            throw new ApplicationException('Failed to capture a valid order');
+        }
+    }
+
 
     /**
      * getInvoiceDescription returns a basic invoice description

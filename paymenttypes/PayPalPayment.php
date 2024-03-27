@@ -8,6 +8,7 @@ use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use ApplicationException;
 use Exception;
 
 /**
@@ -140,32 +141,29 @@ class PayPalPayment extends GatewayBase
      */
     public function processApiInvoices($params)
     {
-        $invoice = $this->findInvoiceFromHash($params[0] ?? '');
-
-        if ($invoice->isPaymentProcessed()) {
-            throw $this->newResponseError('Invoice already paid');
-        }
-
-        $paymentMethod = $invoice->getPaymentMethod();
-
-        $token = $paymentMethod->generatePayPalAccessToken();
-
-        $totals = $invoice->getTotalDetails();
-
-        $payload = [
-            'intent' => 'CAPTURE',
-            'purchase_units' => [
-                [
-                    'reference_id' => $invoice->getUniqueId(),
-                    'amount' => [
-                        'currency_code' => $totals['currency'] ?? 'USD',
-                        'value' => Currency::fromBaseValue($totals['total'])
-                    ]
-                ]
-            ],
-        ];
-
         try {
+            $invoice = $this->findInvoiceFromHash($params[0] ?? '');
+            if ($invoice->isPaymentProcessed()) {
+                throw new ApplicationException('Invoice already paid');
+            }
+
+            $paymentMethod = $invoice->getPaymentMethod();
+            $token = $paymentMethod->generatePayPalAccessToken();
+            $totals = $invoice->getTotalDetails();
+
+            $payload = [
+                'intent' => 'CAPTURE',
+                'purchase_units' => [
+                    [
+                        'reference_id' => $invoice->getUniqueId(),
+                        'amount' => [
+                            'currency_code' => $totals['currency'] ?? 'USD',
+                            'value' => Currency::fromBaseValue($totals['total'])
+                        ]
+                    ]
+                ],
+            ];
+
             $baseUrl = $paymentMethod->getPayPalEndpoint();
 
             $response = Http::withToken($token)
@@ -183,6 +181,9 @@ class PayPalPayment extends GatewayBase
 
             return Response::json($response->json(), $response->status());
         }
+        catch (ApplicationException $ex) {
+            throw $this->newResponseError($ex->getMessage());
+        }
         catch (Exception $ex) {
             Log::error($ex);
             throw $this->newResponseError('Failed to create order');
@@ -195,41 +196,42 @@ class PayPalPayment extends GatewayBase
      */
     public function processApiInvoiceCapture($params)
     {
-        $invoice = $this->findInvoiceFromHash($params[0] ?? '');
-
-        $paymentMethod = $invoice->getPaymentMethod();
-
-        $token = $paymentMethod->generatePayPalAccessToken();
-
-        $orderId = $params[1] ?? '';
-
-        $totals = $invoice->getTotalDetails();
-
-        $payload = [
-            'payment_source' => null
-        ];
-
         try {
+            $invoice = $this->findInvoiceFromHash($params[0] ?? '');
+            $paymentMethod = $invoice->getPaymentMethod();
+            $token = $paymentMethod->generatePayPalAccessToken();
+            $orderId = $params[1] ?? '';
+            $totals = $invoice->getTotalDetails();
             $baseUrl = $paymentMethod->getPayPalEndpoint();
+
+            $payload = [
+                'payment_source' => null
+            ];
 
             $response = Http::withToken($token)
                 ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture", $payload);
 
-            if ($response->successful() && !$invoice->isPaymentProcessed(true)) {
+            if (!$response->successful()) {
+                $errorIssue = $response->json('details.0.issue');
+                $errorDescription = $response->json('details.0.description');
+                $invoice->logPaymentAttempt("{$errorIssue} {$errorDescription}", false, $payload, $response->json(), '');
+                throw new Exception("{$errorIssue} {$errorDescription}");
+            }
+            elseif (!$invoice->isPaymentProcessed(true)) {
                 if ($response->json('status') !== 'COMPLETED') {
-                    throw $this->newResponseError('Invalid response');
+                    throw new ApplicationException('Invalid response');
                 }
 
                 if ($response->json('purchase_units.0.reference_id') !== $invoice->getUniqueId()) {
-                    throw $this->newResponseError('Invalid invoice number');
+                    throw new ApplicationException('Invalid invoice number');
                 }
 
                 if ($response->json('purchase_units.0.payments.captures.0.status') !== 'COMPLETED') {
-                    throw $this->newResponseError('Invalid response');
+                    throw new ApplicationException('Invalid response');
                 }
 
                 if (($matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value')) !== Currency::fromBaseValue($totals['total'])) {
-                    throw $this->newResponseError('Invalid invoice total - order total received is: ' . e($matchedValue));
+                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue));
                 }
 
                 $transactionStatus = $response->json('status');
@@ -240,9 +242,12 @@ class PayPalPayment extends GatewayBase
 
             return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());
         }
+        catch (ApplicationException $ex) {
+            throw $this->newResponseError($ex->getMessage());
+        }
         catch (Exception $ex) {
             Log::error($ex);
-            throw $this->newResponseError('Failed to create order');
+            throw $this->newResponseError('Failed to capture a valid order');
         }
     }
 
@@ -255,19 +260,13 @@ class PayPalPayment extends GatewayBase
         $host = $this->getHostObject();
         $baseUrl = $this->getPayPalEndpoint();
 
-        try {
-            $response = Http::asForm()
-                ->withBasicAuth($host->client_id, $host->client_secret)
-                ->post("{$baseUrl}/v1/oauth2/token", [
-                    'grant_type' => 'client_credentials'
-                ]);
+        $response = Http::asForm()
+            ->withBasicAuth($host->client_id, $host->client_secret)
+            ->post("{$baseUrl}/v1/oauth2/token", [
+                'grant_type' => 'client_credentials'
+            ]);
 
-            return $response->json('access_token');
-        }
-        catch (Exception $ex) {
-            Log::error($ex);
-            throw $this->newResponseError('Failed to generate access token');
-        }
+        return $response->json('access_token');
     }
 
     /**
@@ -276,21 +275,21 @@ class PayPalPayment extends GatewayBase
     protected function findInvoiceFromHash($hash)
     {
         if (!$hash) {
-            throw $this->newResponseError('Invoice not found');
+            throw new ApplicationException('Invoice not found');
         }
 
         $invoice = $this->createInvoiceModel()->findByUniqueHash($hash);
         if (!$invoice) {
-            throw $this->newResponseError('Invoice not found');
+            throw new ApplicationException('Invoice not found');
         }
 
         $paymentMethod = $invoice->getPaymentMethod();
         if (!$paymentMethod) {
-            throw $this->newResponseError('Payment method not found');
+            throw new ApplicationException('Payment method not found');
         }
 
         if ($paymentMethod->getDriverClass() !== static::class) {
-            throw $this->newResponseError('Invalid payment method');
+            throw new ApplicationException('Invalid payment method');
         }
 
         return $invoice;
