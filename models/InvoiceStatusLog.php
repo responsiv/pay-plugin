@@ -11,7 +11,8 @@ use October\Rain\Database\Model;
  * @property int $invoice_id
  * @property int $status_id
  * @property string $comment
- * @property int $admin_id
+ * @property int $updated_user_id
+ * @property int $created_user_id
  * @property \Illuminate\Support\Carbon $updated_at
  * @property \Illuminate\Support\Carbon $created_at
  *
@@ -21,6 +22,7 @@ use October\Rain\Database\Model;
 class InvoiceStatusLog extends Model
 {
     use \October\Rain\Database\Traits\Validation;
+    use \October\Rain\Database\Traits\UserFootprints;
 
     /**
      * @var string table used by the model
@@ -51,28 +53,9 @@ class InvoiceStatusLog extends Model
     }
 
     /**
-     * filterFields
-     */
-    public function filterFields($fields, $context = null)
-    {
-        if (isset($fields->status) && $this->invoice) {
-            $fields->status->value = $this->invoice->status_id;
-        }
-
-        if (
-            isset($fields->mark_paid) &&
-            $this->invoice &&
-            $this->invoice->isPaymentProcessed()
-        ) {
-            $fields->mark_paid->disabled = true;
-            $fields->mark_paid->value = true;
-        }
-    }
-
-    /**
      * createRecord
      */
-    public static function createRecord($statusId, $invoice, $comment = null, $sendNotifications = true)
+    public static function createRecord($statusId, $invoice, $comment = null)
     {
         if (is_string($statusId) && !is_numeric($statusId)) {
             $statusId = InvoiceStatus::findByCode($statusId);
@@ -82,11 +65,14 @@ class InvoiceStatusLog extends Model
             $statusId = $statusId->getKey();
         }
 
-        if (!$statusId || $invoice->status_id == $statusId) {
+        $previousStatus = $invoice->status_id;
+        if (!$statusId || $previousStatus == $statusId) {
             return false;
         }
 
-        $previousStatus = $invoice->status_id;
+        if (!static::checkStatusTransition($previousStatus, $statusId)) {
+            return false;
+        }
 
         // Create record
         $record = new static;
@@ -122,5 +108,38 @@ class InvoiceStatusLog extends Model
         }
 
         return true;
+    }
+
+    /**
+     * checkStatusTransition ensures invoice status can be moved in a specific direction
+     */
+    protected static function checkStatusTransition($fromStatusId, $toStatusId): bool
+    {
+        $fromStatus = InvoiceStatus::findByKey($fromStatusId);
+        $toStatus = InvoiceStatus::findByKey($toStatusId);
+
+        if (!$toStatus || !$fromStatus) {
+            return false;
+        }
+
+        $statusMap = [
+            InvoiceStatus::STATUS_DRAFT => [
+                InvoiceStatus::STATUS_APPROVED,
+                InvoiceStatus::STATUS_PAID,
+                InvoiceStatus::STATUS_VOID,
+            ],
+            InvoiceStatus::STATUS_APPROVED => [
+                InvoiceStatus::STATUS_PAID,
+                InvoiceStatus::STATUS_VOID,
+            ],
+            InvoiceStatus::STATUS_PAID => [
+                InvoiceStatus::STATUS_VOID,
+            ],
+            InvoiceStatus::STATUS_VOID => [],
+        ];
+
+        $allowTransitions = $statusMap[$fromStatus->code] ?? [];
+
+        return in_array($toStatus->code, $allowTransitions);
     }
 }

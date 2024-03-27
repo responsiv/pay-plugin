@@ -61,6 +61,13 @@ return new class extends Migration
                 $table->bigInteger('discount_with_tax')->nullable();
             });
         }
+
+        if (!Schema::hasColumn('responsiv_pay_invoice_status_logs', 'updated_user_id')) {
+            Schema::table('responsiv_pay_invoice_status_logs', function(Blueprint $table) {
+                $table->bigInteger('updated_user_id')->unsigned()->nullable();
+                $table->bigInteger('created_user_id')->unsigned()->nullable();
+            });
+        }
     }
 
     public function down()

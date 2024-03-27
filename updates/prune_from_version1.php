@@ -18,6 +18,18 @@ return new class extends Migration
                 });
             }
         }
+
+        $columnsToPrune = [
+            'admin_id',
+        ];
+
+        foreach ($columnsToPrune as $column) {
+            if (Schema::hasColumn('responsiv_pay_invoice_status_logs', $column)) {
+                Schema::table('responsiv_pay_invoice_status_logs', function(Blueprint $table) use ($column) {
+                    $table->dropColumn($column);
+                });
+            }
+        }
     }
 
     public function down()
