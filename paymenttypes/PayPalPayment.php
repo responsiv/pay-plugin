@@ -171,6 +171,16 @@ class PayPalPayment extends GatewayBase
             $response = Http::withToken($token)
                 ->post("{$baseUrl}/v2/checkout/orders", $payload);
 
+            if ($response->successful()) {
+                $transactionId = $response->json('id');
+                $invoice->logPaymentAttempt("Checkout Initiated: {$transactionId}", true, $payload, $response->json(), '');
+            }
+            else {
+                $errorIssue = $response->json('details.0.issue');
+                $errorDescription = $response->json('details.0.description');
+                $invoice->logPaymentAttempt("{$errorIssue} {$errorDescription}", false, $payload, $response->json(), '');
+            }
+
             return Response::json($response->json(), $response->status());
         }
         catch (Exception $ex) {

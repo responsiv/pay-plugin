@@ -66,7 +66,7 @@ class InvoiceStatusLog extends Model
         }
 
         $previousStatus = $invoice->status_id;
-        if (!$statusId || $previousStatus == $statusId) {
+        if (!$statusId || (int) $previousStatus === (int) $statusId) {
             return false;
         }
 

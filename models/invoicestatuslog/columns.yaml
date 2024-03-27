@@ -19,3 +19,7 @@ columns:
 
     comment:
         label: Comment
+
+    created_user[full_name]:
+        label: User
+        relationWith: created_user
