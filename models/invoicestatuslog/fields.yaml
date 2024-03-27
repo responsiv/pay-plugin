@@ -12,7 +12,3 @@ fields:
         label: Comment
         type: textarea
         size: small
-
-    send_notifications:
-        label: Send Notifications
-        type: checkbox

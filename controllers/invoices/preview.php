@@ -16,50 +16,7 @@
 </div>
 
 <div class="loading-indicator-container mb-3">
-    <div class="control-toolbar form-toolbar" data-control="toolbar">
-        <?= Ui::button("Back", 'responsiv/pay/invoices')
-            ->icon('icon-arrow-left')
-            ->outline() ?>
-
-        <div class="toolbar-divider"></div>
-
-        <?= Ui::popupButton("Change Status", 'onLoadChangeInvoiceStatusForm')
-            ->ajaxData(['order_id' => $formModel->id])
-            ->size(500)
-            ->icon('ph ph-arrow-fat-lines-right')
-            ->outline() ?>
-
-        <?= Ui::button("Edit", 'responsiv/pay/invoices/update/'.$formModel->id)
-            ->icon('icon-pencil')
-            ->outline()
-            ->primary() ?>
-
-        <div class="toolbar-divider"></div>
-
-        <a
-            href="javascript:;"
-            onclick="$('#<?= $this->getId('invoiceIframe') ?>').trigger('print.invoice')"
-            class="btn btn-outline-default">
-            <i class="icon-print"></i>
-            Print Invoice
-        </a>
-        <? /* @todo
-        <a
-            href="#"
-            class="btn btn-default">
-            Email invoice
-        </a>
-        */ ?>
-
-        <div class="toolbar-divider"></div>
-
-        <?= Ui::ajaxButton("Delete", 'onDelete')
-            ->icon('icon-delete')
-            ->confirmMessage("Are you sure?")
-            ->loadingMessage("Deleting invoice...")
-            ->outline()
-            ->danger() ?>
-    </div>
+    <?= $this->makePartial('preview_toolbar') ?>
 </div>
 
 <div class="control-tabs content-tabs tabs-inset" data-control="tab">

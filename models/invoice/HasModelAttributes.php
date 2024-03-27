@@ -14,9 +14,18 @@ use Responsiv\Currency\Models\Currency;
  * @property string $street_address
  * @property string $status_code
  * @property string $tax_mode
+ * @property \Illuminate\Support\Carbon $invoiced_at
  */
 trait HasModelAttributes
 {
+    /**
+     * getInvoicedAtAttribute returns the `invoiced_at` attribute
+     */
+    public function getInvoicedAtAttribute()
+    {
+        return $this->sent_at ?: $this->created_at;
+    }
+
     /**
      * getInvoiceNumberAttribute
      */
@@ -74,7 +83,7 @@ trait HasModelAttributes
     }
 
     /**
-     * getCurrencyAttribute
+     * getCurrencyCodeAttribute returns `currency_code`
      */
     public function getCurrencyCodeAttribute()
     {
@@ -82,11 +91,11 @@ trait HasModelAttributes
     }
 
     /**
-     * getStatusCodeAttribute
+     * getStatusCodeAttribute returns `status_code`
      */
     public function getStatusCodeAttribute()
     {
-        return $this->status ? $this->status->code : null;
+        return $this->status?->code;
     }
 
     /**

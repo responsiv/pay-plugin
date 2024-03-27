@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h2>Invoice {{ invoice.getUniqueId }}</h2>
-                    <p>Date: {{ invoice.sent_at ? invoice.sent_at.toFormattedDateString }}</p>
+                    <p>Date: {{ invoice.invoiced_at.toFormattedDateString }}</p>
                 </div>
             </div>
         </div>

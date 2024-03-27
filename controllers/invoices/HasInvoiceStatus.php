@@ -3,8 +3,8 @@
 use Flash;
 use Redirect;
 use Responsiv\Pay\Models\Invoice;
+use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
-use Backend\Models\UserPreference;
 use ApplicationException;
 use ValidationException;
 use Exception;
@@ -20,9 +20,11 @@ trait HasInvoiceStatus
     public function onLoadChangeInvoiceStatusForm()
     {
         try {
+            $this->vars['popupTitle'] = $this->getInvoiceStatusPopupTitle();
             $this->vars['formWidget'] = $this->getInvoiceStatusFormWidget();
             $this->vars['invoiceIds'] = (array) post('checked');
             $this->vars['invoiceId'] = post('invoice_id');
+            $this->vars['statusPreset'] = post('status_preset');
         }
         catch (Exception $ex) {
             $this->handleError($ex);
@@ -37,7 +39,6 @@ trait HasInvoiceStatus
     public function onChangeInvoiceStatus($productId = null)
     {
         $statusId = post('InvoiceStatusLog[status]');
-        $sendNotifications = (bool) post('InvoiceStatusLog[send_notifications]');
         if (!$statusId) {
             throw new ValidationException(['status' => __("Please select a new status for the invoice.")]);
         }
@@ -46,18 +47,13 @@ trait HasInvoiceStatus
         $invoices = $this->getInvoiceStatusInvoicesFromPost();
         foreach ($invoices as $invoice) {
             try {
-                if ($invoice->status_id == $statusId) {
-                    throw new ApplicationException(__("Invoice #:id new status matches the current status", ['id' => $invoice->id]));
-                }
-
-                InvoiceStatusLog::createRecord(
+                if (InvoiceStatusLog::createRecord(
                     $statusId,
                     $invoice,
-                    post('InvoiceStatusLog[comment]'),
-                    $sendNotifications
-                );
-
-                $processed++;
+                    post('InvoiceStatusLog[comment]')
+                )) {
+                    $processed++;
+                }
             }
             catch (Exception $ex) {
                 Flash::error($ex->getMessage());
@@ -66,7 +62,6 @@ trait HasInvoiceStatus
         }
 
         if ($processed) {
-            UserPreference::forUser()->set('pay::invoices.change_status_notify', $sendNotifications);
             Flash::success(__("Updated the invoice status successfully"));
         }
 
@@ -102,7 +97,6 @@ trait HasInvoiceStatus
         $fields = '$/responsiv/pay/models/invoicestatuslog/fields.yaml';
 
         $statusLog = new InvoiceStatusLog;
-        $statusLog->send_notifications = UserPreference::forUser()->get('pay::invoices.change_status_notify', false);
 
         $config = $this->makeConfig($fields);
         $config->arrayName = 'InvoiceStatusLog';
@@ -110,6 +104,27 @@ trait HasInvoiceStatus
         $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
         $widget->bindToController();
 
+        if (($preset = post('status_preset')) && ($statusObj = InvoiceStatus::findByCode($preset))) {
+            $widget->getField('status')->value($statusObj->id)->readOnly();
+        }
+
         return $widget;
+    }
+
+    /**
+     * getInvoiceStatusPopupTitle returns a unique title for a status preset
+     */
+    protected function getInvoiceStatusPopupTitle()
+    {
+        switch (post('status_preset')) {
+            case 'paid':
+                return "Add Payment";
+            case 'approved':
+                return "Approve Invoice";
+            case 'void':
+                return "Void Invoice";
+            default:
+                return "Change Invoice Status";
+        }
     }
 }

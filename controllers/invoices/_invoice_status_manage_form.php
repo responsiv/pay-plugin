@@ -2,12 +2,12 @@
 
 
     <div class="modal-header">
-        <h4 class="modal-title"><?= __("Change Invoice Status") ?></h4>
+        <h4 class="modal-title"><?= e(__($popupTitle)) ?></h4>
         <button type="button" class="btn-close" data-dismiss="popup"></button>
     </div>
 
     <?php if (!$this->fatalError): ?>
-
+        <input type="hidden" name="status_preset" value="<?= e($statusPreset) ?>" />
         <?php foreach ($invoiceIds as $id): ?>
             <input type="hidden" name="checked[]" value="<?= e($id) ?>" />
         <?php endforeach ?>

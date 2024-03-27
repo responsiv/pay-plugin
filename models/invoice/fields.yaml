@@ -10,12 +10,11 @@ tabs:
         #     type: relation
         #     span: left
 
-        sent_at:
-            label: Sent At
-            type: datepicker
-            mode: date
-            span: auto
-            default: now
+        template:
+            label: Invoice Template
+            type: relation
+            span: full
+            placeholder: — Use Default —
 
         due_at:
             label: Due At
@@ -25,12 +24,6 @@ tabs:
 
         currency:
             label: Currency
-            type: relation
-            span: auto
-            placeholder: — Use Default —
-
-        template:
-            label: Invoice Template
             type: relation
             span: auto
             placeholder: — Use Default —

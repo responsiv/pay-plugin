@@ -12,7 +12,6 @@
         ->icon('ph ph-arrow-fat-lines-right')
         ->secondary() ?>
 
-
      <?= Ui::ajaxButton("Delete", 'onDelete')
         ->listCheckedTrigger()
         ->listCheckedRequest()

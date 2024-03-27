@@ -7,7 +7,6 @@ use BackendMenu;
 use Responsiv\Pay\Models\Tax;
 use Backend\Classes\Controller;
 use Responsiv\Pay\Models\Invoice;
-use Responsiv\Pay\Models\InvoiceStatusLog;
 use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**

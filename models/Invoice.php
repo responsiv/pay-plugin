@@ -145,10 +145,6 @@ class Invoice extends Model implements InvoiceContract
     {
         $this->generateHash();
 
-        if (!$this->sent_at) {
-            $this->sent_at = Carbon::now();
-        }
-
         $this->user_ip = Request::getClientIp();
 
         /**
