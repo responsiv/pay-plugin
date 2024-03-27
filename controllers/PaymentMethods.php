@@ -135,20 +135,22 @@ class PaymentMethods extends Controller
      */
     public function formExtendFields($widget)
     {
-        $model = $widget->model;
-        $config = $model->getFieldConfig();
-        $widget->addFields($config->fields, 'primary');
+        $model = $widget->getModel();
+
+        $widget->inActiveTabSection('primary', function() use ($widget, $model) {
+            $model->defineDriverFormFields($widget);
+        });
 
         // Add the set up help partial
         $setupPartial = $model->getPartialPath().'/_setup_help.php';
         if (File::exists($setupPartial)) {
-            $widget->addFields([
+            $widget->addTabField([
                 'setup_help' => [
                     'type' => 'partial',
-                    'tab'  => 'Help',
+                    'tab' => "Help",
                     'path' => $setupPartial,
                 ]
-            ], 'primary');
+            ]);
         }
 
         // Hide return page for unsupported drivers

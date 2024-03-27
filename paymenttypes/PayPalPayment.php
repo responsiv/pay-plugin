@@ -18,6 +18,11 @@ use Exception;
 class PayPalPayment extends GatewayBase
 {
     /**
+     * @var string driverFields defines form fields for this driver
+     */
+    public $driverFields = 'fields.yaml';
+
+    /**
      * {@inheritDoc}
      */
     public function driverDetails()
@@ -26,14 +31,6 @@ class PayPalPayment extends GatewayBase
             'name' => 'PayPal',
             'description' => 'Accept payments using the PayPal REST API.'
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function defineFormFields()
-    {
-        return 'fields.yaml';
     }
 
     /**

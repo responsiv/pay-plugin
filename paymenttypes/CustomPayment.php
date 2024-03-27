@@ -8,6 +8,11 @@ use Responsiv\Pay\Classes\GatewayBase;
 class CustomPayment extends GatewayBase
 {
     /**
+     * @var string driverFields defines form fields for this driver
+     */
+    public $driverFields = 'fields.yaml';
+
+    /**
      * {@inheritDoc}
      */
     public function driverDetails()

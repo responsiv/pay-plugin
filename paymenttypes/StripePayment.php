@@ -13,6 +13,11 @@ use Exception;
 class StripePayment extends GatewayBase
 {
     /**
+     * @var string driverFields defines form fields for this driver
+     */
+    public $driverFields = 'fields.yaml';
+
+    /**
      * {@inheritDoc}
      */
     public function driverDetails()
@@ -21,14 +26,6 @@ class StripePayment extends GatewayBase
             'name' => 'Stripe',
             'description' => 'Accept payments using Stripe.'
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function defineFormFields()
-    {
-        return 'fields.yaml';
     }
 
     /**
