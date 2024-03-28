@@ -93,21 +93,23 @@ oc.pageReady().then(function() {
                 } else {
                     // (3) Successful transaction -> Show confirmation or thank you message
                     // Or go to another URL:  actions.redirect('thank_you.html');
-                    if (orderData.cms_redirect) {
-                        actions.redirect(orderData.cms_redirect);
-                    }
+                    oc.ajax('onPay');
 
-                    const transaction =
-                        orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
-                        orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
-                    resultMessage(
-                        `Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`,
-                    );
-                    console.log(
-                        "Capture result",
-                        orderData,
-                        JSON.stringify(orderData, null, 2),
-                    );
+                    // if (orderData.cms_redirect) {
+                    //     actions.redirect(orderData.cms_redirect);
+                    // }
+
+                    // const transaction =
+                    //     orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
+                    //     orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
+                    // resultMessage(
+                    //     `Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`,
+                    // );
+                    // console.log(
+                    //     "Capture result",
+                    //     orderData,
+                    //     JSON.stringify(orderData, null, 2),
+                    // );
                 }
             } catch (error) {
                 console.error(error);

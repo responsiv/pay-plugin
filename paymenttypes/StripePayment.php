@@ -94,7 +94,7 @@ class StripePayment extends GatewayBase
     /**
      * processPaymentForm
      */
-    public function processPaymentForm($data, $order)
+    public function processPaymentForm($data, $invoice)
     {
         try {
             $invoice = $this->findInvoiceFromHash(post('invoice_hash'));
