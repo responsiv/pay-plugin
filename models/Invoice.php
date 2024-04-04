@@ -100,7 +100,7 @@ class Invoice extends Model implements InvoiceContract
     public $hasMany = [
         'items' => [InvoiceItem::class, 'delete' => true],
         'status_log' => [InvoiceStatusLog::class, 'delete' => true],
-        'payment_log' => [InvoiceLog::class, 'delete' => true],
+        'payment_log' => [InvoicePaymentLog::class, 'delete' => true],
     ];
 
     /**
@@ -289,7 +289,7 @@ class Invoice extends Model implements InvoiceContract
      */
     public function submitManualPayment($comment = null)
     {
-        InvoiceLog::createManualPayment($this, $comment);
+        InvoicePaymentLog::createManualPayment($this, $comment);
 
         return $this->markAsPaymentProcessed();
     }

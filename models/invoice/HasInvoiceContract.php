@@ -4,9 +4,9 @@ use Cms;
 use Event;
 use Cms\Classes\Controller;
 use Responsiv\Pay\Models\Setting;
-use Responsiv\Pay\Models\InvoiceLog;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
+use Responsiv\Pay\Models\InvoicePaymentLog;
 
 /**
  * HasInvoiceContract
@@ -211,7 +211,7 @@ trait HasInvoiceContract
             'responseText' => $responseText
         ];
 
-        InvoiceLog::createRecord($this, $message, $options);
+        InvoicePaymentLog::createRecord($this, $message, $options);
     }
 
     /**

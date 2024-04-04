@@ -3,7 +3,7 @@
 use Model;
 
 /**
- * InvoiceLog Model
+ * InvoicePaymentLog Model
  *
  * @property int $id
  * @property string $payment_method_name
@@ -22,7 +22,7 @@ use Model;
  * @package responsiv/pay
  * @author Alexey Bobkov, Samuel Georges
  */
-class InvoiceLog extends Model
+class InvoicePaymentLog extends Model
 {
     use \October\Rain\Database\Traits\UserFootprints;
 
