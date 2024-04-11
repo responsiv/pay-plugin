@@ -47,8 +47,6 @@ class PaymentMethod extends ExpandoModel
         'description',
         'is_enabled',
         'is_enabled_edit',
-        'updated_at',
-        'created_at',
     ];
 
     /**

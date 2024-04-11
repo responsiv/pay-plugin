@@ -11,7 +11,7 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('invoice_id')->unsigned()->nullable()->index();
             $table->integer('status_id')->unsigned()->nullable()->index();
-            $table->text('comment')->nullable();
+            $table->mediumText('comment')->nullable();
             $table->bigInteger('updated_user_id')->unsigned()->nullable();
             $table->bigInteger('created_user_id')->unsigned()->nullable();
             $table->timestamps();
