@@ -32,11 +32,11 @@
             </div>
         </div>
         <div class="tab-pane">
-            <h4 class="my-3 fw-normal">Status Log</h4>
+            <h4 class="my-3 fw-normal"><?= __("Status Log") ?></h4>
             <?= $this->relationRender('status_log') ?>
         </div>
         <div class="tab-pane">
-            <h4 class="my-3 fw-normal">Payment Log</h4>
+            <h4 class="my-3 fw-normal"><?= __("Payment Log") ?></h4>
             <?= $this->relationRender('payment_log') ?>
         </div>
     </div>
