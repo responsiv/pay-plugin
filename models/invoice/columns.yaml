@@ -9,6 +9,7 @@ columns:
         select: name
         sortable: false
         type: selectable
+        width: 130px
 
     id:
         label: ID
