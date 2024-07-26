@@ -32,7 +32,7 @@ meta_title = "Viewing Invoice %s"
 url = "/account/invoice/:id"
 
 [invoice]
-isPrimary = "1"
+isDefault = 1
 ==
 {% component 'invoice' %}
 ```
@@ -46,6 +46,7 @@ title = "Payment"
 url = "/payment/:hash"
 
 [payment]
+isDefault = 1
 ==
 {% component 'payment' %}
 ```

@@ -65,8 +65,8 @@ class Plugin extends PluginBase
             \Responsiv\Pay\Components\Payment::class  => 'payment',
             \Responsiv\Pay\Components\Invoice::class  => 'invoice',
             \Responsiv\Pay\Components\Invoices::class => 'invoices',
-            \Responsiv\Pay\Components\Profile::class  => 'payProfile',
-            \Responsiv\Pay\Components\Profiles::class => 'payProfiles',
+            \Responsiv\Pay\Components\PayProfile::class  => 'payProfile',
+            \Responsiv\Pay\Components\PayProfiles::class => 'payProfiles',
         ];
     }
 

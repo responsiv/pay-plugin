@@ -1,62 +1,72 @@
 <?php namespace Responsiv\Pay\Components;
 
+use Cms;
 use Auth;
 use Flash;
-use Request;
-use Redirect;
 use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
-use Responsiv\Pay\Models\UserProfile as UserProfileModel;
 use Responsiv\Pay\Models\PaymentMethod as TypeModel;
 use Illuminate\Http\RedirectResponse;
 use ApplicationException;
 
-class Profile extends ComponentBase
+/**
+ * PayProfile component
+ */
+class PayProfile extends ComponentBase
 {
+    /**
+     * componentDetails
+     */
     public function componentDetails()
     {
         return [
-            'name'        => 'Payment Profile',
+            'name' => 'Payment Profile',
             'description' => 'Allow an owner to view their payment profile by its identifier'
         ];
     }
 
+    /**
+     * defineProperties
+     */
     public function defineProperties()
     {
         return [
             'id' => [
-                'title'       => 'Profile ID',
+                'title' => 'Profile ID',
                 'description' => 'The URL route parameter used for looking up the profile by its identifier.',
-                'default'     => '{{ :id }}',
-                'type'        => 'string'
-            ],
-            'returnPage' => [
-                'title'       => 'Return page',
-                'description' => 'Name of the page file to redirect the user after saving or deleting their profile.',
-                'type'        => 'dropdown',
+                'default' => '{{ :id }}',
+                'type' => 'string'
             ],
             'isPrimary' => [
-                'title'       => 'Primary page',
+                'title' => 'Primary page',
                 'description' => 'Link to this page when sending mail notifications.',
-                'type'        => 'checkbox',
-                'default'     => true,
+                'type' => 'checkbox',
+                'default' => true,
                 'showExternalParam' => false
             ],
         ];
     }
 
+    /**
+     * getReturnPageOptions
+     */
     public function getReturnPageOptions()
     {
         return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
+    /**
+     * onRun
+     */
     public function onRun()
     {
-        $this->page['returnPage'] = $this->returnPage();
-        $this->page['paymentMethod'] = $method = $this->paymentMethod();
-        $this->page['profile'] = $profile = $this->profile();
+        $this->page['paymentMethod'] = $this->paymentMethod();
+        $this->page['profile'] = $this->profile();
     }
 
+    /**
+     * profile
+     */
     protected function profile()
     {
         if (!$user = $this->user()) {
@@ -70,6 +80,9 @@ class Profile extends ComponentBase
         return $method->findUserProfile($user);
     }
 
+    /**
+     * paymentMethod
+     */
     protected function paymentMethod()
     {
         if (!$id = $this->property('id')) {
@@ -93,6 +106,9 @@ class Profile extends ComponentBase
         return $user;
     }
 
+    /**
+     * onUpdatePaymentProfile
+     */
     public function onUpdatePaymentProfile()
     {
         if (!$user = $this->user()) {
@@ -105,9 +121,7 @@ class Profile extends ComponentBase
 
         $result = $paymentMethod->updateUserProfile($user, post());
 
-        /*
-         * Custom response
-         */
+        // Custom response
         if ($result instanceof RedirectResponse) {
             return $result;
         }
@@ -115,16 +129,19 @@ class Profile extends ComponentBase
             return;
         }
 
-        /*
-         * Standard response
-         */
-        if (!post('no_flash')) {
-            Flash::success(post('message', 'Payment profile updated.'));
+        // Standard response
+        if ($flash = Cms::flashFromPost(__("Payment profile updated."))) {
+            Flash::success($flash);
         }
 
-        return Redirect::to($this->returnPageUrl());
+        if ($redirect = Cms::redirectFromPost()) {
+            return $redirect;
+        }
     }
 
+    /**
+     * onDeletePaymentProfile
+     */
     public function onDeletePaymentProfile()
     {
         if (!$user = $this->user()) {
@@ -137,31 +154,13 @@ class Profile extends ComponentBase
 
         $paymentMethod->deleteUserProfile($user);
 
-        if (!post('no_flash')) {
-            Flash::success(post('message', 'Payment profile deleted.'));
+        // Standard response
+        if ($flash = Cms::flashFromPost(__("Payment profile deleted."))) {
+            Flash::success($flash);
         }
 
-        return Redirect::to($this->returnPageUrl());
-    }
-
-    /**
-     * Returns the return page name as per configuration.
-     * @return string
-     */
-    protected function returnPage()
-    {
-        return $this->property('returnPage');
-    }
-
-    /**
-     * Returns a profile page URL for a payment method
-     */
-    public function returnPageUrl()
-    {
-        if ($redirect = post('redirect')) {
+        if ($redirect = Cms::redirectFromPost()) {
             return $redirect;
         }
-
-        return $this->pageUrl($this->returnPage());
     }
 }

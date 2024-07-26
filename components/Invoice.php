@@ -38,27 +38,13 @@ class Invoice extends ComponentBase
                 'default' => '{{ :id }}',
                 'type' => 'string'
             ],
-            'payPage' => [
-                'title' => 'Payment page',
-                'description' => 'Name of the payment page file for the "Pay this invoice" links.',
-                'type' => 'dropdown'
-            ],
-            'isPrimary' => [
-                'title' => 'Primary page',
-                'description' => 'Link to this page when sending mail notifications.',
+            'isDefault' => [
+                'title' => 'Default View',
                 'type' => 'checkbox',
-                'default' => true,
+                'description' => 'Used as default entry point when viewing an invoice.',
                 'showExternalParam' => false
             ],
         ];
-    }
-
-    /**
-     * getPropertyOptions
-     */
-    public function getPropertyOptions($property)
-    {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     /**
@@ -66,7 +52,6 @@ class Invoice extends ComponentBase
      */
     public function onRun()
     {
-        $this->page['payPage'] = $this->payPage();
         $this->page['invoice'] = $invoice = $this->invoice();
 
         if ($invoice) {
@@ -102,14 +87,6 @@ class Invoice extends ComponentBase
         }
 
         return $this->invoice = $invoice;
-    }
-
-    /**
-     * payPage
-     */
-    protected function payPage()
-    {
-        return $this->property('payPage');
     }
 
     /**

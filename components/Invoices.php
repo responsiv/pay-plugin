@@ -33,19 +33,10 @@ class Invoices extends ComponentBase
     }
 
     /**
-     * getInvoicePageOptions
-     */
-    public function getInvoicePageOptions()
-    {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
-    }
-
-    /**
      * onRun
      */
     public function onRun()
     {
-        $this->page['invoicePage'] = $this->invoicePage();
         $this->page['invoices'] = $this->invoices();
     }
 
@@ -69,13 +60,5 @@ class Invoices extends ComponentBase
         ;
 
         return $this->invoices = $invoices;
-    }
-
-    /**
-     * invoicePage
-     */
-    protected function invoicePage()
-    {
-        return $this->property('invoicePage');
     }
 }
