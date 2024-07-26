@@ -38,7 +38,7 @@
 
         <!-- Invoice table -->
         <div id="partialPaymentInvoice" class="payment-invoice">
-            {% partial '@invoice_table' %}
+            {% partial '@invoice-table' %}
         </div>
 
         <div class="payment-methods">
@@ -59,7 +59,7 @@
                                         type="radio"
                                         {{ type.id == invoice.payment_method_id ? 'checked' }}
                                         data-request="onUpdatePaymentType"
-                                        data-request-update="'@payment_form': '#partialPaymentForm'"
+                                        data-request-update="'@payment-form': '#partialPaymentForm'"
                                         />
                                     {{ type.name }}
                                 </label>
@@ -70,7 +70,7 @@
                 {% endif %}
 
                 <!-- Payment form -->
-                <div id="partialPaymentForm">{% partial '@payment_form' %}</div>
+                <div id="partialPaymentForm">{% partial '@payment-form' %}</div>
             {% else %}
                 <p>Whoops! There are not payment methods set up, please contact site support.</p>
             {% endif %}
