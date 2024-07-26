@@ -12,10 +12,10 @@
         <tbody>
             {% for invoice in invoices %}
                 <tr class="invoice-status-{{ invoice.status.code }}">
-                    <td><a href="{{ invoice.url }}">{{ invoice.getUniqueId }}</a></td>
-                    <td><a href="{{ invoice.url }}">{{ invoice.invoiced_at }}</a></td>
-                    <td><a href="{{ invoice.url }}"><strong>{{ invoice.status.name }}</strong> since {{ invoice.status_updated_at }}</a></td>
-                    <td class="total text-right"><a href="{{ invoice.url }}">{{ invoice.total|currency({ in: invoice.currency.code }) }}</a></td>
+                    <td>{{ invoice.getUniqueId }}</td>
+                    <td>{{ invoice.invoiced_at }}</td>
+                    <td><strong>{{ invoice.status.name }}</strong> since {{ invoice.status_updated_at }}</td>
+                    <td class="total text-right">{{ invoice.total|currency({ in: invoice.currency.code }) }}</td>
                 </tr>
             {% endfor %}
         </tbody>

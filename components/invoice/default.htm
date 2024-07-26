@@ -38,7 +38,7 @@
                 <p>Thank you for your business.</p>
             {% else %}
                 <h4>This invoice has not been paid</h4>
-                <a class="btn btn-success btn-lg" href="{{ invoice.url }}">
+                <a class="btn btn-success btn-lg" href="{{ invoice.getReceiptUrl() }}">
                     Pay this Invoice
                 </a>
             {% endif %}
@@ -55,7 +55,7 @@
         <script>
             function printInvoice() {
                var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0');
-               printWindow.document.write($('#invoiceTemplateContents').html());
+               printWindow.document.write(document.getElementById('invoiceTemplateContents').innerHTML);
                printWindow.document.close();
                printWindow.focus();
                printWindow.print();
