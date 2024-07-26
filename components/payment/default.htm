@@ -1,16 +1,16 @@
+{% put scripts %}
+    {% for method in paymentMethods %}
+        {{ method.renderPaymentScripts()|raw }}
+    {% endfor %}
+{% endput %}
 {% if invoice %}
 
-    {% if invoice.isPaid %}
-
+    {% if invoice.is_paid %}
         <div class="payment-invoice-success">
             <h4 class="text-success">
                 This invoice has been paid. Thank-you!
             </h4>
-            <p>
-                View <a href="{{ invoice.url }}">invoice {{ invoice.getUniqueId }}</a>
-            </p>
         </div>
-
     {% else %}
 
         <!-- Invoice header -->
@@ -42,13 +42,13 @@
         </div>
 
         <div class="payment-methods">
-            {% if paymentMethods|length %}
+            {% if paymentMethods is not empty %}
 
                 <!-- Payment method -->
                 {% if paymentMethods|length > 1 %}
                     <h5>Please choose a payment method</h5>
 
-                    {{ form_open() }}
+                    <form>
                         {% for type in paymentMethods %}
                             <div class="radio">
                                 <label for="type{{ type.id }}">
@@ -58,18 +58,19 @@
                                         value="{{ type.id }}"
                                         type="radio"
                                         {{ type.id == invoice.payment_method_id ? 'checked' }}
-                                        data-request="onUpdatePaymentType"
+                                        data-request="onUpdatePaymentMethod"
                                         data-request-update="'@payment-form': '#partialPaymentForm'"
-                                        />
+                                    />
                                     {{ type.name }}
                                 </label>
                             </div>
                         {% endfor %}
-                    {{ form_close() }}
+                    </form>
 
                 {% endif %}
 
                 <!-- Payment form -->
+                <hr />
                 <div id="partialPaymentForm">{% partial '@payment-form' %}</div>
             {% else %}
                 <p>Whoops! There are not payment methods set up, please contact site support.</p>
