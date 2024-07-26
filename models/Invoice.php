@@ -225,6 +225,20 @@ class Invoice extends Model implements InvoiceContract
     }
 
     /**
+     * scopeApplyInvoiceNumber scope
+     */
+    public function scopeApplyInvoiceNumber($query, $number)
+    {
+        $prefix = Setting::get('invoice_prefix');
+
+        if (str_starts_with($number, $prefix)) {
+            $number = substr($number, strlen($prefix));
+        }
+
+        return $query->where('id', $number);
+    }
+
+    /**
      * scopeApplyRelated scope
      */
     public function scopeApplyRelated($query, $object)

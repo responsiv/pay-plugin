@@ -26,7 +26,11 @@ trait HasInvoiceContract
      */
     public function findByUniqueId($id = null)
     {
-        return static::find($id);
+        if (!$id) {
+            return null;
+        }
+
+        return static::applyInvoiceNumber($id)->first();
     }
 
     /**

@@ -20,7 +20,7 @@
                 <?= e($formModel->user->full_name) ?>
             </a>
         </p>
-        <p class="description"><?= __("Email") ?>: <?= Html::mailto($formModel->user->email) ?></a></p>
+        <p class="description"><?= __("Email") ?>: <?= Html::mailto($formModel->email ?: $formModel->user->email) ?></a></p>
     </div>
 <?php endif ?>
 
