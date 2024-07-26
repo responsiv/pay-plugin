@@ -1,98 +1,66 @@
 <?php namespace Responsiv\Pay\Classes;
 
+use App;
 use File;
 use Response;
 use Cms\Classes\Theme;
 use Cms\Classes\Partial;
 use System\Classes\PluginManager;
 use October\Rain\Support\Collection;
-use Responsiv\Pay\Models\PaymentMethod as TypeModel;
+use Responsiv\Pay\Models\PaymentMethod;
 
 /**
- * Manages payment gateways
+ * GatewayManager class manages payment gateways
  *
- * @package Responsiv.Pay
- * @author Responsiv Internet
+ * @package responsiv/pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class GatewayManager
 {
-    use \October\Rain\Support\Traits\Singleton;
-
     /**
-     * @var array Cache of registration callbacks.
-     */
-    protected $callbacks = [];
-
-    /**
-     * @var array List of registered gateways.
-     */
-    protected $gateways;
-
-    /**
-     * @var System\Classes\PluginManager
+     * @var PluginManager pluginManager
      */
     protected $pluginManager;
 
     /**
-     * Initialize this singleton.
+     * @var array gateways of registered payment gateways.
      */
-    protected function init()
+    protected $gateways;
+
+    /**
+     * __construct this class
+     */
+    public function __construct()
     {
         $this->pluginManager = PluginManager::instance();
     }
 
     /**
-     * Loads the menu items from modules and plugins
-     * @return void
+     * instance creates a new instance of this singleton
+     */
+    public static function instance(): static
+    {
+        return App::make('pay.gateways');
+    }
+
+    /**
+     * loadGateways registered in the system
      */
     protected function loadGateways()
     {
-        /*
-         * Load module items
-         */
-        foreach ($this->callbacks as $callback) {
-            $callback($this);
+        if (!$this->gateways) {
+            $this->gateways = [];
         }
 
-        /*
-         * Load plugin items
-         */
-        $plugins = $this->pluginManager->getPlugins();
+        $methodValues = $this->pluginManager->getRegistrationMethodValues('registerPaymentGateways');
 
-        foreach ($plugins as $id => $plugin) {
-            if (!method_exists($plugin, 'registerPaymentGateways')) {
-                continue;
-            }
-
-            $gateways = $plugin->registerPaymentGateways();
-            if (!is_array($gateways)) {
-                continue;
-            }
-
-            $this->registerGateways($id, $gateways);
+        foreach ($methodValues as $id => $types) {
+            $this->registerGateways($id, $types);
         }
     }
 
     /**
-     * Registers a callback function that defines a payment gateway.
-     * The callback function should register gateways by calling the manager's
-     * registerGateways() function. The manager instance is passed to the
-     * callback function as an argument. Usage:
-     *
-     *     GatewayManager::registerCallback(function($manager) {
-     *         $manager->registerGateways([...]);
-     *     });
-     *
-     * @param callable $callback A callable function.
-     * @return void
-     */
-    public function registerCallback(callable $callback)
-    {
-        $this->callbacks[] = $callback;
-    }
-
-    /**
-     * Registers the payment gateways.
+     * registerGateways registers the payment gateways.
      * The argument is an array of the gateway classes.
      * @param string $owner Specifies the menu items owner plugin or module in the format Author.Plugin.
      * @param array $classes An array of the payment gateway classes.
@@ -100,10 +68,6 @@ class GatewayManager
      */
     public function registerGateways($owner, array $classes)
     {
-        if (!$this->gateways) {
-            $this->gateways = [];
-        }
-
         foreach ($classes as $class => $alias) {
             $gateway = (object) [
                 'owner' => $owner,
@@ -116,11 +80,10 @@ class GatewayManager
     }
 
     /**
-     * Returns a list of the payment gateway classes.
-     * @param boolean $asObject As a collection with extended information found in the class object.
-     * @return array
+     * listGateways returns a list of the payment gateway classes. As object of a
+     * collection with extended information found in the class object.
      */
-    public function listGateways($asObject = true)
+    public function listGateways(bool $asObject = true)
     {
         if ($this->gateways === null) {
             $this->loadGateways();
@@ -130,9 +93,7 @@ class GatewayManager
             return $this->gateways;
         }
 
-        /*
-         * Enrich the collection with gateway objects
-         */
+        // Bless the collection with gateway objects
         $collection = [];
         foreach ($this->gateways as $gateway) {
             if (!class_exists($gateway->class)) {
@@ -140,14 +101,14 @@ class GatewayManager
             }
 
             $gatewayObj = new $gateway->class;
-            $gatewayDetails = $gatewayObj->gatewayDetails();
+            $driverDetails = $gatewayObj->driverDetails();
             $collection[$gateway->alias] = (object) [
-                'owner'       => $gateway->owner,
-                'class'       => $gateway->class,
-                'alias'       => $gateway->alias,
-                'object'      => $gatewayObj,
-                'name'        => array_get($gatewayDetails, 'name', 'Undefined'),
-                'description' => array_get($gatewayDetails, 'description', 'Undefined'),
+                'owner' => $gateway->owner,
+                'class' => $gateway->class,
+                'alias' => $gateway->alias,
+                'object' => $gatewayObj,
+                'name' => array_get($driverDetails, 'name', 'Undefined'),
+                'description' => array_get($driverDetails, 'description', 'Undefined'),
             ];
         }
 
@@ -155,7 +116,7 @@ class GatewayManager
     }
 
     /**
-     * Returns a list of the payment gateway objects
+     * listGatewayObjects returns a list of the payment gateway objects
      * @return array
      */
     public function listGatewayObjects()
@@ -171,7 +132,7 @@ class GatewayManager
     }
 
     /**
-     * Returns a gateway based on its unique alias.
+     * findByAlias returns a gateway based on its unique alias.
      */
     public function findByAlias($alias)
     {
@@ -185,7 +146,7 @@ class GatewayManager
     }
 
     /**
-     * Executes an entry point for registered gateways, defined in routes.php file.
+     * runAccessPoint executes an entry point for registered gateways, defined in routes.php file.
      * @param  string $code Access point code
      * @param  string $uri  Remaining uri parts
      */
@@ -210,27 +171,27 @@ class GatewayManager
     //
 
     /**
-     * Loops over each payment type and ensures the editing theme has a payment form partial,
+     * createPartials loops over each payment type and ensures the editing theme has a payment form partial,
      * if the partial does not exist, it will create one.
      * @return void
      */
     public static function createPartials()
     {
         $partials = Partial::lists('baseFileName', 'baseFileName');
-        $paymentMethods = TypeModel::all();
+        $paymentMethods = PaymentMethod::all();
 
         foreach ($paymentMethods as $paymentMethod) {
             $class = $paymentMethod->class_name;
 
-            if (!$class || get_parent_class($class) != 'Responsiv\Pay\Classes\GatewayBase') {
+            if (!is_a($class, \Responsiv\Pay\Classes\GatewayBase::class, true)) {
                 continue;
             }
 
             $paymentCode = strtolower(class_basename($class));
 
             $partialNames = [
-                'payment_form.htm' => 'pay-gateway/'.$paymentCode,
-                'profile_form.htm' => 'pay-gateway/'.$paymentCode.'-profile'
+                'payment_form.htm' => 'pay/'.$paymentCode,
+                'profile_form.htm' => 'pay/'.$paymentCode.'-profile'
             ];
 
             foreach ($partialNames as $sourceFile => $partialName) {
@@ -245,7 +206,7 @@ class GatewayManager
     }
 
     /**
-     * Creates a partial using the contents of a specified file.
+     * createPartialFromFile creates a partial using the contents of a specified file.
      * @param  string $name      New Partial name
      * @param  string $filePath  File containing partial contents
      * @param  string $themeCode Theme to create the partial

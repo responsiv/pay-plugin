@@ -1,0 +1,130 @@
+{% set namespace = paymentMethod.getPayPalNamespace() %}
+
+<p>Click the button below to pay using PayPal</p>
+
+<div id="paypal-button-container"></div>
+
+<p id="result-message"></p>
+
+<script>
+oc.pageReady().then(function() {
+    // This function requests the invoice hash from an external source, usually
+    // a checkout form, and provides an opportunity to validate the form
+    async function fetchInvoiceHash() {
+        const detail = { fetchFunc: null };
+        const event = new CustomEvent('pay:fetch-invoice', { detail });
+        window.dispatchEvent(event);
+        if (detail.fetchFunc) {
+            try {
+                invoiceHash.value = await detail.fetchFunc();
+            } catch (error) {
+            }
+        }
+    }
+
+    // Data store for the invoice hash
+    const invoiceHash = { value: '{{ invoice.hash }}' };
+
+    // Create PayPal button
+    window.{{ namespace }}.Buttons({
+        style: {
+            shape: "rect",
+            layout: "horizontal",
+        },
+        onClick(data, actions) {
+            if (!invoiceHash.value) {
+                return fetchInvoiceHash().then(function() {
+                    return invoiceHash.value ? actions.resolve() : actions.reject();
+                });
+            }
+        },
+        async createOrder() {
+            try {
+                const response = await fetch(`{{ paymentMethod.getInvoicesUrl() }}/${invoiceHash.value}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                const orderData = await response.json();
+
+                if (orderData.id) {
+                    return orderData.id;
+                } else {
+                    const errorDetail = orderData?.details?.[0];
+                    const errorMessage = errorDetail
+                        ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+                        : JSON.stringify(orderData);
+
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                console.error(error);
+                resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+            }
+        },
+        async onApprove(data, actions) {
+            try {
+                const response = await fetch(`{{ paymentMethod.getInvoiceCaptureUrl() }}/${invoiceHash.value}/${data.orderID}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                const orderData = await response.json();
+                // Three cases to handle:
+                //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                //   (2) Other non-recoverable errors -> Show a failure message
+                //   (3) Successful transaction -> Show confirmation or thank you message
+
+                const errorDetail = orderData?.details?.[0];
+
+                if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+                    // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                    // recoverable state, per https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
+                    return actions.restart();
+                } else if (errorDetail) {
+                    // (2) Other non-recoverable errors -> Show a failure message
+                    throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+                } else if (!orderData.purchase_units) {
+                    throw new Error(JSON.stringify(orderData));
+                } else {
+                    // (3) Successful transaction -> Show confirmation or thank you message
+                    // Or go to another URL:  actions.redirect('thank_you.html');
+                    oc.ajax('onPay');
+
+                    // if (orderData.cms_redirect) {
+                    //     actions.redirect(orderData.cms_redirect);
+                    // }
+
+                    // const transaction =
+                    //     orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
+                    //     orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
+                    // resultMessage(
+                    //     `Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`,
+                    // );
+                    // console.log(
+                    //     "Capture result",
+                    //     orderData,
+                    //     JSON.stringify(orderData, null, 2),
+                    // );
+                }
+            } catch (error) {
+                console.error(error);
+                resultMessage(
+                    `Sorry, your transaction could not be processed...<br><br>${error}`,
+                );
+            }
+        },
+    })
+    .render("#paypal-button-container");
+
+    // Example function to show a result to the user. Your site's UI library can be used instead.
+    function resultMessage(message) {
+        const container = document.querySelector("#result-message");
+        container.innerHTML = message;
+    }
+});
+</script>

@@ -3,117 +3,122 @@
 # ===================================
 
 tabs:
+    defaultTab: Invoice Details
     fields:
         # payment_method:
-        #     label: responsiv.pay::lang.invoice.payment_method
+        #     label: Payment Method
         #     type: relation
-        #     tab: responsiv.pay::lang.invoice.invoice_details_tab
         #     span: left
 
-        # is_tax_exempt:
-        #     label: responsiv.pay::lang.invoice.is_tax_exempt
-        #     comment: Tick this checkbox if the tax should not be applied to this invoice
-        #     type: checkbox
-        #     tab: responsiv.pay::lang.invoice.invoice_details_tab
-        #     span: auto
-
-        sent_at:
-            label: responsiv.pay::lang.invoice.sent_at
-            type: datepicker
-            mode: date
-            span: left
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
-            context: update
+        template:
+            label: Invoice Template
+            type: relation
+            span: full
+            placeholder: — Use Default —
 
         due_at:
-            label: responsiv.pay::lang.invoice.due_at
+            label: Due At
             type: datepicker
             mode: date
             span: auto
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
 
         currency:
-            label: responsiv.pay::lang.invoice.currency
-            type: dropdown
+            label: Currency
+            type: relation
             span: auto
-            tab: responsiv.pay::lang.invoice.invoice_details_tab
+            placeholder: — Use Default —
+
+        is_tax_exempt:
+            label: Tax Exempt
+            comment: Check this if tax should not be applied to the invoice.
+            type: checkbox
+            span: auto
+            changeHandler: onUpdateTotals
+
+        prices_include_tax:
+            label: Prices Include Tax
+            comment: Tick this checkbox if the tax is included in the quoted prices for this line item.
+            type: checkbox
+            span: auto
+            changeHandler: onUpdateTotals
+            trigger:
+                action: disable|empty
+                field: is_tax_exempt
+                condition: checked
+
+        items:
+            label: Items
+            type: relation
+            changeHandler: onUpdateTotals
 
         user:
-            label: responsiv.pay::lang.invoice.user
+            label: User
             type: recordfinder
             list: ~/plugins/rainlab/user/models/user/columns.yaml
-            prompt: responsiv.pay::lang.invoice.user_prompt
-            nameFrom: name
+            prompt: Click the %s button to find a user
+            changeHandler: onUpdateUser
+            nameFrom: full_name
             descriptionFrom: email
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            tab: Customer Details
             span: full
 
         first_name:
-            label: responsiv.pay::lang.invoice.first_name
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: First Name
+            tab: Customer Details
             span: left
-            dependsOn: user
 
         last_name:
-            label: responsiv.pay::lang.invoice.last_name
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Last Name
+            tab: Customer Details
             span: right
-            dependsOn: user
 
         email:
-            label: responsiv.pay::lang.invoice.email
-            tab: responsiv.pay::lang.invoice.customer_details_tab
-            dependsOn: user
+            label: Email
+            tab: Customer Details
             span: left
 
         phone:
-            label: responsiv.pay::lang.invoice.phone
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Phone
+            tab: Customer Details
             span: right
-            dependsOn: user
 
         company:
-            label: responsiv.pay::lang.invoice.company
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+            label: Company
+            tab: Customer Details
             span: left
-            dependsOn: user
 
-        vat_id:
-            label: responsiv.pay::lang.invoice.vat_id
-            tab: responsiv.pay::lang.invoice.customer_details_tab
+        tax_id_number:
+            label: Vat ID
+            tab: Customer Details
             span: right
-            dependsOn: user
 
         city:
-            label: responsiv.pay::lang.invoice.city
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            label: City
+            tab: Customer Details
             span: left
-            dependsOn: user
 
         zip:
-            label: responsiv.pay::lang.invoice.zip
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            label: Zip
+            tab: Customer Details
             span: right
-            dependsOn: user
 
-        street_addr:
-            label: responsiv.pay::lang.invoice.street_addr
-            tab: responsiv.pay::lang.invoice.billing_address_tab
-            dependsOn: user
+        street_address:
+            label: Street Address
+            tab: Customer Details
+            type: textarea
+            size: tiny
 
         country:
-            label: responsiv.pay::lang.invoice.country
+            label: Country
             type: dropdown
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            tab: Customer Details
             span: left
-            dependsOn: user
-            placeholder: responsiv.pay::lang.invoice.country_placeholder
+            placeholder: -- select country --
 
         state:
-            label: responsiv.pay::lang.invoice.state
+            label: State
             type: dropdown
-            tab: responsiv.pay::lang.invoice.billing_address_tab
+            tab: Customer Details
             span: right
-            dependsOn: [country, user]
-            placeholder: responsiv.pay::lang.invoice.state_placeholder
-
+            dependsOn: country
+            placeholder: -- select state --

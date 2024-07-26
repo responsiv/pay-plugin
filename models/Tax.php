@@ -1,91 +1,62 @@
 <?php namespace Responsiv\Pay\Models;
 
+use App;
+use Auth;
 use Model;
 use RainLab\Location\Models\State;
 use RainLab\Location\Models\Country;
-use Responsiv\Pay\Classes\TaxLocation;
+use Responsiv\Pay\Models\InvoiceItem;
+use Responsiv\Pay\Classes\TaxItem;
 
 /**
  * Tax Model
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string $description
+ * @property array $rates
+ * @property bool $is_default
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
 class Tax extends Model
 {
+    use \Responsiv\Pay\Models\Tax\HasGlobalContext;
+    use \October\Rain\Database\Traits\Validation;
+    use \October\Rain\Database\Traits\Defaultable;
+    use \System\Traits\KeyCodeModel;
+
     /**
-     * @var string The database table used by the model.
+     * @var string table used by the model
      */
     public $table = 'responsiv_pay_taxes';
 
     /**
-     * @var array Guarded fields
+     * @var array jsonable attribute names that are json encoded and decoded from the database
      */
-    protected $guarded = [];
+    protected $jsonable = [
+        'rates'
+    ];
 
     /**
-     * @var array Fillable fields
+     * @var array rules for validation
      */
-    protected $fillable = [];
+    public $rules = [
+        'name' => 'required',
+    ];
 
     /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
+     * @var int roundPrecision
      */
-    protected $jsonable = ['rates'];
+    protected $roundPrecision = 2;
 
     /**
-     * @var array Object cache of self.
-     */
-    protected static $cache = [];
-
-    /**
-     * @var self Default tax class cache.
-     */
-    protected static $defaultCache;
-
-    /**
-     * @var Responsiv\Pay\Classes\TaxLocation
-     */
-    protected $locationInfo;
-
-    /**
-     * Returns the default locale defined.
-     * @return self
-     */
-    public static function getDefault()
-    {
-        if (self::$defaultCache !== null) {
-            return self::$defaultCache;
-        }
-
-        return self::$defaultCache = self::where('is_default', true)->first();
-    }
-
-    /**
-     * Locate a tax table by its identifier, cached.
-     * @param  int $id
-     * @return Model
-     */
-    public static function findById($id)
-    {
-        if (isset(self::$cache[$id])) {
-            return self::$cache[$id];
-        }
-
-        return self::$cache[$id] = self::find($id);
-    }
-
-    /**
-     * Sets the location information used for calculations
-     * @param TaxLocation $locationInfo
-     * @return void
-     */
-    public function setLocationInfo(TaxLocation $locationInfo)
-    {
-        $this->locationInfo = $locationInfo;
-    }
-
-    /**
-     * Returns total tax on an amount, based on a location.
-     * @param  float  $amount
-     * @return float
+     * getTotalTax adds tax to an untaxed amount. Return value is the tax amount
+     * to add to the final price.
      */
     public function getTotalTax($amount)
     {
@@ -94,43 +65,68 @@ class Tax extends Model
         $taxes = $this->getTaxRates($amount);
 
         foreach ($taxes as $tax) {
-            $result += $tax->tax_rate * $amount;
+            $result += ($tax['taxRate'] * $amount) / (1 + $tax['taxRate']);
         }
 
-        return $result;
+        return round($result, $this->roundPrecision);
+    }
+
+    /**
+     * getTotalUntax removes the tax from an already taxed amount. Return value
+     * is the tax amount to remove from the final price.
+     */
+    public function getTotalUntax($amount)
+    {
+        $result = 0;
+
+        $taxes = $this->getTaxRates($amount);
+
+        foreach ($taxes as $tax) {
+            $result += ($tax['taxRate'] * $amount) / (1 + $tax['taxRate']);
+        }
+
+        return round($result, $this->roundPrecision);
     }
 
     /**
      * Returns tax rates for a specified amount based on location information.
      * @param  int   $amount
-     * @param  array $locationInfo
      * @return array
      */
-    public function getTaxRates($amount)
+    public function getTaxRates($amount, array $options = [])
     {
+        if (static::isTaxExemptContext()) {
+            return [];
+        }
+
+        extract(array_merge([
+            'pricesIncludeTax' => null,
+        ], $options));
+
+        if ($pricesIncludeTax === null) {
+            $pricesIncludeTax = static::doPricesIncludeTax();
+        }
+
         $maxTaxNum = 2;
         $addedTaxes = [];
         $compoundTaxes = [];
         $ignoredPriorities = [];
 
-        /*
-         * Loop each rate and compound if necessary.
-         */
+        // Loop each rate and compound if necessary
         for ($index = 1; $index <= $maxTaxNum; $index++) {
-
-            $taxInfo = $this->getRate($ignoredPriorities);
+            $taxInfo = $this->getRate(['ignoredPriorities' => $ignoredPriorities] + $options);
             if (!$taxInfo) {
                 break;
             }
 
-            if (!$taxInfo->compound) {
-                $addedTaxes[] = $taxInfo;
-            }
-            else {
+            if ($taxInfo['compound']) {
                 $compoundTaxes[] = $taxInfo;
             }
+            else {
+                $addedTaxes[] = $taxInfo;
+            }
 
-            $ignoredPriorities[] = $taxInfo->priority;
+            $ignoredPriorities[] = $taxInfo['priority'];
         }
 
         $addedResult = $amount;
@@ -138,51 +134,51 @@ class Tax extends Model
 
         foreach ($addedTaxes as $addedTax) {
             $taxInfo = [];
-            $taxInfo['name'] = $addedTax->name;
-            $taxInfo['tax_rate'] = $addedTax->rate / 100;
-            $addedResult += $taxInfo['rate'] = round($amount * ($addedTax->rate / 100), 2);
+            $taxInfo['name'] = $addedTax['name'];
+            $taxInfo['taxRate'] = $addedTax['rate'] / 100;
+            $taxInfo['addedTax'] = true;
+            $taxInfo['compoundTax'] = false;
+            $taxInfo['rate'] = $pricesIncludeTax
+                ? round(($amount * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']), $this->roundPrecision)
+                : round($amount * $taxInfo['taxRate'], $this->roundPrecision);
             $taxInfo['total'] = $taxInfo['rate'];
-            $taxInfo['added_tax'] = true;
-            $taxInfo['compound_tax'] = false;
-            $result[] = (object) $taxInfo;
+            $result[] = $taxInfo;
+            $addedResult += $taxInfo['rate'];
         }
 
         foreach ($compoundTaxes as $compoundTax) {
             $taxInfo = [];
             $taxInfo['name'] = $compoundTax->name;
-            $taxInfo['tax_rate'] = $compoundTax->rate / 100;
-            $taxInfo['rate'] = round($addedResult * ($compoundTax->rate / 100), 2);
+            $taxInfo['taxRate'] = $compoundTax->rate / 100;
+            $taxInfo['compoundTax'] = true;
+            $taxInfo['addedTax'] = false;
+            $taxInfo['rate'] = $pricesIncludeTax
+                ? round(($addedResult * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']), $this->roundPrecision)
+                : round($addedResult * $taxInfo['taxRate'], $this->roundPrecision);
             $taxInfo['total'] = $taxInfo['rate'];
-            $taxInfo['compound_tax'] = true;
-            $taxInfo['added_tax'] = false;
-            $result[] = (object) $taxInfo;
+            $result[] = $taxInfo;
         }
 
         return $result;
     }
 
     /**
-     * Returns rate information for a given location, optionally ignoring by priority.
-     * @param  array $ignoredPriorities
-     * @return object
+     * getRate returns rate information for a given location, optionally ignoring by priority.
+     * @return array|null
      */
-    protected function getRate($ignoredPriorities = [])
+    protected function getRate(array $options = [])
     {
-        $location = $this->locationInfo ?: TaxLocation::makeDefault();
+        extract(array_merge([
+            'ignoredPriorities' => [],
+        ], $options));
 
-        if (!$country = $location->getCountryModel()) {
+        $location = static::$locationContext;
+        if (!$location || !$location->countryCode) {
             return null;
         }
 
-        $state = $location->getStateModel();
-
-        $countryCode = $country->code;
-        $stateCode = $state ? mb_strtoupper($state->code) : '*';
-        $zipCode = $location->getZipCode();
-        $cityCode = $location->getCityCode();
-
         $rate = null;
-        foreach ($this->rates as $row) {
+        foreach ((array) $this->rates as $row) {
             // Minimum requirements, need to see a country at least
             if (!array_key_exists('country', $row)) {
                 continue;
@@ -193,159 +189,207 @@ class Tax extends Model
                 continue;
             }
 
-            if ($row['country'] != $countryCode && $row['country'] != '*') {
+            if (!$location->matchesCountry($row['country'] ?? '*')) {
                 continue;
             }
 
-            if (mb_strtoupper($row['state']) != $stateCode && $row['state'] != '*') {
+            if (!$location->matchesState($row['state'] ?? '*')) {
                 continue;
             }
 
-            $rowZip = isset($row['zip']) && strlen($row['zip'])
-                ? str_replace(' ', '', $row['zip'])
-                : '*';
-
-            if ($rowZip != $zipCode && $rowZip != '*') {
+            if (!$location->matchesZip($row['zip'] ?? '*')) {
                 continue;
             }
 
-            $rowCity = isset($row['city']) && strlen($row['city'])
-                ? str_replace('-', '', str_replace(' ', '', mb_strtoupper($row['city'])))
-                : '*';
-
-            if ($rowCity != $cityCode && $rowCity != '*') {
+            if (!$location->matchesCity($row['city'] ?? '*')) {
                 continue;
             }
 
-            $compound = isset($row['compound']) ? $row['compound'] : 0;
-
-            if (preg_match('/^[0-9]+$/', $compound)) {
-                $compound = (int) $compound;
+            $isCompound = isset($row['compound']) ? $row['compound'] : 0;
+            if (preg_match('/^[0-9]+$/', $isCompound)) {
+                $isCompound = (int) $isCompound;
             }
             else {
-                $compound = ($compound == 'Y' || $compound == 'YES');
+                $isCompound = ($isCompound == 'Y' || $isCompound == 'YES');
             }
 
-            $rateObj = [
-                'rate'     => $row['rate'],
+            $rate = [
+                'rate' => $row['rate'],
                 'priority' => $taxPriority,
-                'name'     => isset($row['tax_name']) ? $row['tax_name'] : 'TAX',
-                'compound' => $compound
+                'name' => isset($row['tax_name']) ? $row['tax_name'] : 'TAX',
+                'compound' => $isCompound
             ];
 
-            $rate = (object) $rateObj;
             break;
         }
 
         return $rate;
     }
 
-    //
-    // Invoice specific
-    //
-
     /**
-     * Calculates taxes for invoice line items based on location information.
-     * @param  Invoice $invoice
-     * @param  array $items
-     * @return array
+     * combineTotalTax
      */
-    public static function calculateInvoiceTaxes($invoice, $items)
+    public static function combineTotalTax(array $taxes)
     {
-        $result = (object)[
-            'tax_total'  => 0,
-            'taxes'      => [],
-            'item_taxes' => []
-        ];
+        $result = 0;
 
-        $taxes = [];
-        $itemTaxes = [];
-        $taxTotal = 0;
-
-        foreach ($items as $itemIndex => $item) {
-            $taxClass = static::findById($item->tax_class_id);
-            if (!$taxClass) {
-                continue;
-            }
-
-            $taxClass->setLocationInfo($invoice->getLocationInfo());
-
-            $itemDiscount = $item->price * $item->discount;
-            $itemPrice = $item->price - $itemDiscount;
-            $itemTaxes[$itemIndex] = $_itemTaxes = $taxClass->getTaxRates($itemPrice);
-
-            foreach ($_itemTaxes as $tax) {
-
-                $key = $tax->name.'.'.$taxClass->id;
-                if (!array_key_exists($key, $taxes)) {
-
-                    $effectiveRate = $tax->tax_rate;
-
-                    if ($tax->compound_tax) {
-                        $addedTax = self::findAddedTax($_itemTaxes);
-                        if ($addedTax) {
-                            $effectiveRate = $tax->tax_rate * (1 + $addedTax->tax_rate);
-                        }
-                    }
-
-                    $taxes[$key] = [
-                        'total'          => 0,
-                        'rate'           => $tax->rate,
-                        'effective_rate' => $effectiveRate,
-                        'name'           => $tax->name,
-                    ];
-                }
-
-                $itemTaxValue = $itemPrice * $item->quantity;
-                $taxes[$key]['total'] += $itemTaxValue;
-            }
+        if (!$taxes) {
+            return $result;
         }
 
-        $compoundTaxes = [];
-
-        foreach ($taxes as $taxTotalInfo) {
-            if (!array_key_exists($taxTotalInfo['name'], $compoundTaxes)) {
-                $taxData = ['name' => $taxTotalInfo['name'], 'total' => 0];
-                $compoundTaxes[$taxTotalInfo['name']] = (object) $taxData;
-            }
-
-            $taxValue = $taxTotalInfo['total'] * $taxTotalInfo['effective_rate'];
-            $compoundTaxes[$taxTotalInfo['name']]->total += $taxValue;
-
-            $taxTotal += $taxValue;
+        foreach ($taxes as $tax) {
+            $result += $tax['rate'];
         }
-
-        foreach ($compoundTaxes as $name => &$taxData) {
-            $taxData->total = round($taxData->total, 2);
-        }
-
-        $result->tax_total = round($taxTotal, 2);
-        $result->taxes = $compoundTaxes;
-        $result->item_taxes = $itemTaxes;
 
         return $result;
     }
 
     /**
-     * Internal helper, find the nearest added tax item in the collection.
-     * @param  array $taxList
-     * @return mixed
+     * combineTaxes combines two sets of taxes using their name
      */
-    protected static function findAddedTax($taxList)
+    public static function combineTaxesByName(array $taxes1, array $taxes2): array
     {
-        foreach ($taxList as $tax) {
-            if ($tax->added_tax) {
-                return $tax;
+        $result = [];
+        $taxes = array_merge(array_values($taxes1), array_values($taxes2));
+
+        foreach ($taxes as $taxInfo) {
+            if (!isset($taxInfo['name'])) {
+                continue;
+            }
+
+            $name = $taxInfo['name'];
+            if (!isset($result[$name])) {
+                $result[$name] = ['name' => $name, 'total' => 0];
+            }
+
+            $result[$name]['total'] += $taxInfo['total'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * calculateInvoiceTaxes
+     */
+    public static function calculateInvoiceTaxes($invoiceItems)
+    {
+        $items = [];
+
+        foreach ($invoiceItems as $invoiceItem) {
+            if ($invoiceItem instanceof InvoiceItem) {
+                $item = new TaxItem;
+                $item->taxClassId = $invoiceItem->tax_class_id;
+                $item->quantity = $invoiceItem->quantity;
+                $item->unitPrice = $invoiceItem->price;
+                $items[] = $item;
             }
         }
 
-        return null;
+        return static::calculateTaxes($items);
     }
 
-    //
-    // Options
-    //
+    /**
+     * calculateTaxes for an array of TaxItems
+     * @see Responsiv\Pay\Classes\TaxItem
+     */
+    public static function calculateTaxes($items, $options = []): array
+    {
+        if (static::isTaxExemptContext()) {
+            return [
+                'taxes' => [],
+                'itemTaxes' => [],
+                'taxTotal' => 0,
+            ];
+        }
 
+        extract(array_merge([
+            'pricesIncludeTax' => null,
+        ], $options));
+
+        if ($pricesIncludeTax === null) {
+            $pricesIncludeTax = static::doPricesIncludeTax();
+        }
+
+        $taxes = [];
+        $itemTaxes = [];
+        $taxTotal = 0;
+
+        $findAddedTax = function ($taxes) {
+            foreach ($taxes as $tax) {
+                if ($tax['addedTax']) {
+                    return $tax;
+                }
+            }
+            return null;
+        };
+
+        // Process cart items
+        foreach ($items as $index => $item) {
+            $taxClass = $item->getTaxModel();
+            if (!$taxClass) {
+                continue;
+            }
+
+            $iPrice = $item->unitPrice;
+            $iTaxes = $taxClass->getTaxRates($iPrice, $options);
+            $itemTaxes[$index] = $iTaxes;
+            foreach ($iTaxes as $tax) {
+                if (!isset($tax['name'])) {
+                    continue;
+                }
+
+                $iKey = "{$taxClass->id}||{$tax['name']}";
+
+                if (!isset($taxes[$iKey])) {
+                    $effectiveRate = $tax['taxRate'];
+                    if ($tax['compoundTax']) {
+                        if ($addedTax = $findAddedTax($iTaxes)) {
+                            $effectiveRate = $tax['taxRate'] * (1 + $addedTax['taxRate']);
+                        }
+                    }
+
+                    $taxes[$iKey] = [
+                        'name' => $tax['name'],
+                        'rate' => $tax['rate'],
+                        'effectiveRate' => $effectiveRate,
+                        'total' => 0,
+                    ];
+                }
+
+                $taxes[$iKey]['total'] += $item->quantity * $iPrice;
+            }
+        }
+
+        // Process compounding taxes
+        $compoundTaxes = [];
+        foreach ($taxes as $taxInfo) {
+            $name = $taxInfo['name'];
+
+            if ($pricesIncludeTax) {
+                $taxValue = ($taxInfo['total'] * $taxInfo['effectiveRate']) / (1 + $taxInfo['effectiveRate']);
+            }
+            else {
+                $taxValue = $taxInfo['total'] * $taxInfo['effectiveRate'];
+            }
+
+            if (!isset($compoundTaxes[$name])) {
+                $compoundTaxes[$name] = ['name' => $name, 'total' => 0];
+            }
+
+            $compoundTaxes[$name]['total'] = $taxValue;
+            $taxTotal += $taxValue;
+        }
+
+        return [
+            'taxes' => $compoundTaxes,
+            'itemTaxes' => $itemTaxes,
+            'taxTotal' => $taxTotal,
+        ];
+    }
+
+    /**
+     * getDataTableOptions
+     */
     public function getDataTableOptions($attribute, $field, $data)
     {
         if ($field == 'country') {
@@ -357,15 +401,18 @@ class Tax extends Model
         }
     }
 
+    /**
+     * getCountryList
+     */
     protected function getCountryList($term)
     {
-        $result = ['*' => 'responsiv.pay::lang.options.any_country'];
+        $result = ['*' => "* - Any Country"];
 
         // The search term functionality is disabled as it's not supported
         // by the Table widget's drop-down processor -ab 2015-01-03
         //$countries = Country::searchWhere($term, ['name', 'code'])
 
-        $countries = Country::isEnabled()->lists('name', 'code');
+        $countries = Country::applyEnabled()->lists('name', 'code');
 
         foreach ($countries as $code => $name) {
             $result[$code] = $code .' - ' . $name;
@@ -374,9 +421,12 @@ class Tax extends Model
         return $result;
     }
 
+    /**
+     * getStateList
+     */
     protected function getStateList($countryCode, $term)
     {
-        $result = ['*' => 'responsiv.pay::lang.options.any_state'];
+        $result = ['*' => "* - Any State"];
 
         if (!$countryCode || $countryCode == '*') {
             return $result;
@@ -402,13 +452,33 @@ class Tax extends Model
     }
 
     /**
-     * Clears the model cache on attributes.
-     *
-     * @return void
+     * isTaxExemptContext
      */
-    public static function clearCache(): void
+    protected static function isTaxExemptContext(): bool
     {
-        self::$defaultCache = null;
-        self::$cache = [];
+        if (static::$taxExempt) {
+            return true;
+        }
+
+        $user = static::$userContext;
+
+        if (!$user && App::runningInFrontend()) {
+            $user = Auth::getUser();
+        }
+
+        // @todo swap for event
+        if ($user) {
+            return (bool) $user->primary_group?->is_tax_exempt;
+        }
+
+        return false;
+    }
+
+    /**
+     * doPricesIncludeTax
+     */
+    protected static function doPricesIncludeTax(): bool
+    {
+        return static::$pricesIncludeTax;
     }
 }

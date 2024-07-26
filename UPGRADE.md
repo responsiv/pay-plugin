@@ -1,45 +1,25 @@
-# Upgrade guide
+# Upgrading from PAy v1 to v2
 
-- [Upgrading to 1.1 from 1.0](#upgrade-1.1)
+This guide can be used to help migrate from Responsiv.Pay v1 to v2. Some theme changes are required to since there are new components.
 
-<a name="upgrade-1.1"></a>
-## Upgrading To 1.1
+## Upgrade Instructions
 
-There are some housekeeping items that have been addressed in this version.
+1. Run `php artisan plugin:install responsiv.pay` to request the latest version (you do not need to uninstall v1 first).
 
-The payment gateway partials folder has been renamed from `pay` to `pay-gateway`.
+1. Migrate user data using `php artisan pay:migratev1` (one-way function).
 
-The `InvoiceStatus::getByCode` method has been renamed to `InvoiceStatus::findByCode`.
+1. Continue using this plugin as normal.
 
-These methods have been removed from the `InvoiceStatus` model:
+## Key Differences
 
-- getStatusDraft
-- getStatusApproved
-- getStatusPaid
-- getStatusVoid
+- All amounts are now stored in cents rather than decimals, this means `$1.00` is stored as `100`.
 
-Use the `findByCode` method instead, eg:
+- Invoice item discount are no longer stored as percentage, but as a fixed amount.
 
-    InvoiceStatus::findByCode(InvoiceStatus::STATUS_DRAFT)
+## Key Similarities
 
-##### Updates to Offline, Skrill and Paypal Standard gateway partials
+- ...
 
-The `getFormAction`, `getHiddenFields` and `getPaymentInstructions` methods no longer take the host as the first name as this argument is redundant. Perform these replacements in your theme:
+## Breaking Changes
 
-    // Replace
-    paymentMethod.getFormAction(paymentMethod)
-
-    // With
-    paymentMethod.getFormAction()
-
-    // Replace
-    paymentMethod.getHiddenFields(paymentMethod, invoice)
-
-    // With
-    paymentMethod.getHiddenFields(invoice)
-
-    // Replace
-    paymentMethod.getPaymentInstructions(paymentMethod, invoice)
-
-    // With
-    paymentMethod.getPaymentInstructions(invoice)
+- ...

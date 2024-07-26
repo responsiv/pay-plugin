@@ -13,36 +13,36 @@ class Invoices extends ComponentBase
      */
     protected $invoices;
 
+    /**
+     * componentDetails
+     */
     public function componentDetails()
     {
         return [
-            'name'        => 'Invoices',
+            'name' => 'Invoices',
             'description' => 'Displays a list of invoices belonging to a user'
         ];
     }
 
+    /**
+     * defineProperties
+     */
     public function defineProperties()
     {
-        return [
-            'invoicePage' => [
-                'title'       => 'Invoice page',
-                'description' => 'Name of the invoice page file for the invoice links. This property is used by the default component partial.',
-                'type'        => 'dropdown',
-            ],
-        ];
+        return [];
     }
 
-    public function getInvoicePageOptions()
-    {
-        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
-    }
-
+    /**
+     * onRun
+     */
     public function onRun()
     {
-        $this->page['invoicePage'] = $this->invoicePage();
         $this->page['invoices'] = $this->invoices();
     }
 
+    /**
+     * invoices
+     */
     protected function invoices()
     {
         if ($this->invoices !== null) {
@@ -53,21 +53,12 @@ class Invoices extends ComponentBase
             throw new ApplicationException('You must be logged in');
         }
 
-        $invoices = InvoiceModel::orderBy('sent_at', 'desc')
+        $invoices = InvoiceModel::orderBy('created_at', 'desc')
             ->applyUser($user)
             ->applyNotThrowaway()
             ->get()
         ;
 
-        $invoices->each(function($invoice) {
-            $invoice->setUrlPageName($this->invoicePage);
-        });
-
         return $this->invoices = $invoices;
-    }
-
-    protected function invoicePage()
-    {
-        return $this->property('invoicePage');
     }
 }

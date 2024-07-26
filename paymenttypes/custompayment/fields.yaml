@@ -1,0 +1,15 @@
+# ===================================
+#  Payment Field Definitions
+# ===================================
+
+fields:
+    payment_instructions:
+        label: Payment Instructions
+        type: richeditor
+        tab: Configuration
+
+    payment_page:
+        label: Payment Page
+        commentAbove: Redirect to this page if this payment is selected during the purchase workflow. Leave blank to use the default payment page.
+        type: pagefinder
+        tab: Configuration

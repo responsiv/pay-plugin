@@ -13,33 +13,44 @@ This plugin requires the following plugins:
 
 The invoices page is used to list all the invoices owned by the logged in user. It displays a table with each invoice and provides a link to the invoice page.
 
-    title = "My Invoices"
-    url = "/account/invoices"
+```
+title = "My Invoices"
+url = "/account/invoices"
 
-    [invoices]
-    ==
-    {% component 'invoices' %}
+[invoices]
+==
+{% component 'invoices' %}
+```
 
 ### Invoice page
 
 The invoice page is used to display a single invoice. It displays a table containing a breakdown of the invoice items, along with a total and any tax applied. If the invoice is unpaid, it will link to the payment page.
 
-    title = "Viewing Invoice"
-    meta_title = "Viewing Invoice %s"
-    url = "/account/invoice/:id"
+```
+title = "Viewing Invoice"
+meta_title = "Viewing Invoice %s"
+url = "/account/invoice/:id"
 
-    [invoice]
-    isPrimary = "1"
-    ==
-    {% component 'invoice' %}
+[invoice]
+isDefault = 1
+==
+{% component 'invoice' %}
+```
 
 ### Payment page
 
 The payment page is used for submitting payment against an invoice. Like the invoice, it will display a payment summary, but it also provides a list of payment gateways that can be used for paying.
 
-    title = "Payment"
-    url = "/payment/:hash"
+```
+title = "Payment"
+url = "/payment/:hash"
 
-    [payment]
-    ==
-    {% component 'payment' %}
+[payment]
+isDefault = 1
+==
+{% component 'payment' %}
+```
+
+### License
+
+This plugin is an official extension of the October CMS platform and is free to use if you have a platform license. See [EULA license](LICENSE.md) for more details.

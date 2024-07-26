@@ -14,6 +14,11 @@ modelClass: Responsiv\Pay\Models\Invoice
 # Default redirect location
 defaultRedirect: responsiv/pay/invoices
 
+# Form Design
+design:
+    displayMode: basic
+    size: 950
+
 # Create page
 create:
     title: Create Invoice
@@ -28,4 +33,4 @@ update:
 
 # Preview page
 preview:
-    title: Preview Invoice
+    title: View Invoice

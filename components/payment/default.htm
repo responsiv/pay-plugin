@@ -1,16 +1,16 @@
+{% put scripts %}
+    {% for method in paymentMethods %}
+        {{ method.renderPaymentScripts()|raw }}
+    {% endfor %}
+{% endput %}
 {% if invoice %}
 
-    {% if invoice.isPaid %}
-
+    {% if invoice.is_paid %}
         <div class="payment-invoice-success">
             <h4 class="text-success">
                 This invoice has been paid. Thank-you!
             </h4>
-            <p>
-                View <a href="{{ invoice.url }}">invoice {{ invoice.getUniqueId }}</a>
-            </p>
         </div>
-
     {% else %}
 
         <!-- Invoice header -->
@@ -21,7 +21,8 @@
                     <p>
                         {% if invoice.company %}<strong>{{ invoice.company }}</strong>{% endif %}<br />
                         Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                        {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                        {% if invoice.address_line1 %}{{ invoice.address_line1 }}<br />{% endif %}
+                        {% if invoice.address_line2 %}{{ invoice.address_line2 }}<br />{% endif %}
                         {% if invoice.city or invoice.zip %}{{ invoice.city }} {{ invoice.zip }}<br />{% endif %}
                         {% if invoice.state %}{{ invoice.state.name }}, {% endif %}
                         {% if invoice.country %}{{ invoice.country.name }}{% endif %}
@@ -30,24 +31,24 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h2>Invoice {{ invoice.getUniqueId }}</h2>
-                    <p>Date: {{ invoice.sent_at ? invoice.sent_at.toFormattedDateString }}</p>
+                    <p>Date: {{ invoice.invoiced_at.toFormattedDateString }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Invoice table -->
         <div id="partialPaymentInvoice" class="payment-invoice">
-            {% partial '@invoice_table' %}
+            {% partial '@invoice-table' %}
         </div>
 
         <div class="payment-methods">
-            {% if paymentMethods|length %}
+            {% if paymentMethods is not empty %}
 
                 <!-- Payment method -->
                 {% if paymentMethods|length > 1 %}
                     <h5>Please choose a payment method</h5>
 
-                    {{ form_open() }}
+                    <form>
                         {% for type in paymentMethods %}
                             <div class="radio">
                                 <label for="type{{ type.id }}">
@@ -57,19 +58,20 @@
                                         value="{{ type.id }}"
                                         type="radio"
                                         {{ type.id == invoice.payment_method_id ? 'checked' }}
-                                        data-request="onUpdatePaymentType"
-                                        data-request-update="'@payment_form': '#partialPaymentForm'"
-                                        />
+                                        data-request="onUpdatePaymentMethod"
+                                        data-request-update="'@payment-form': '#partialPaymentForm'"
+                                    />
                                     {{ type.name }}
                                 </label>
                             </div>
                         {% endfor %}
-                    {{ form_close() }}
+                    </form>
 
                 {% endif %}
 
                 <!-- Payment form -->
-                <div id="partialPaymentForm">{% partial '@payment_form' %}</div>
+                <hr />
+                <div id="partialPaymentForm">{% partial '@payment-form' %}</div>
             {% else %}
                 <p>Whoops! There are not payment methods set up, please contact site support.</p>
             {% endif %}

@@ -1,68 +1,86 @@
 <?php namespace Responsiv\Pay\Models;
 
-use Model;
-use Responsiv\Pay\Interfaces\PaymentMethod as PaymentMethodInterface;
+use October\Rain\Database\ExpandoModel;
 use ApplicationException;
-use ValidationException;
 
 /**
- * Payment Method Model
+ * PaymentMethod Model
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string $class_name
+ * @property string $description
+ * @property string $receipt_page
+ * @property array $config_data
+ * @property bool $is_enabled
+ * @property bool $is_enabled_edit
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ *
+ * @package responsiv\pay
+ * @author Alexey Bobkov, Samuel Georges
  */
-class PaymentMethod extends Model implements PaymentMethodInterface
+class PaymentMethod extends ExpandoModel
 {
+    use \System\Traits\KeyCodeModel;
     use \October\Rain\Database\Traits\Purgeable;
     use \October\Rain\Database\Traits\Validation;
 
     /**
-     * @var string The database table used by the model.
+     * @var string table associated with the model
      */
     public $table = 'responsiv_pay_methods';
 
     /**
-     * @var array Guarded fields
+     * @var string expandoColumn name to store the data
      */
-    protected $guarded = ['config_data'];
+    protected $expandoColumn = 'config_data';
 
     /**
-     * @var array Fillable fields
+     * @var array expandoPassthru attributes that should not be serialized
      */
-    protected $fillable = [];
+    protected $expandoPassthru = [
+        'name',
+        'code',
+        'class_name',
+        'description',
+        'is_enabled',
+        'is_enabled_edit',
+    ];
 
     /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
+     * @var array purgeable list of attribute names which should not be saved to the database
      */
-    protected $jsonable = ['config_data'];
+    protected $purgeable = ['driver_name'];
 
     /**
-     * @var array List of attribute names which should not be saved to the database.
-     */
-    protected $purgeable = ['gateway_name'];
-
-    /**
-     * @var array Validation rules
+     * @var array rules for validation
      */
     public $rules = [
         'name' => 'required'
     ];
 
     /**
-     * @var array Relations
+     * @var array belongsToMany
      */
     public $belongsToMany = [
-        'countries' => ['RainLab\Location\Models\Country', 'table' => 'responsiv_pay_methods_countries']
+        'countries' => [
+            \RainLab\Location\Models\Country::class,
+            'table' => 'responsiv_pay_methods_countries'
+        ],
+        'user_groups' => [
+            \RainLab\User\Models\UserGroup::class,
+            'table' => 'responsiv_pay_methods_user_groups'
+        ]
     ];
 
     /**
-     * @var self Default method cache.
-     */
-    protected static $defaultMethod;
-
-    /**
-     * Extends this class with the gateway class
+     * applyDriverClass extends this class with the driver class
      * @param  string $class Class name
      * @return boolean
      */
-    public function applyGatewayClass($class = null)
+    public function applyDriverClass($class = null)
     {
         if (!$class) {
             $class = $this->class_name;
@@ -77,16 +95,16 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         }
 
         $this->class_name = $class;
-        $this->gateway_name = array_get($this->gatewayDetails(), 'name', 'Unknown');
+        $this->driver_name = array_get($this->driverDetails(), 'name', 'Unknown');
         return true;
     }
 
     /**
-     * Returns the gateway class extension object.
+     * getDriverObject returns the gateway class extension object.
      * @param  string $class Class name
      * @return \Responsiv\Pay\Classes\GatewayBase
      */
-    public function getGatewayObject($class = null)
+    public function getDriverObject($class = null)
     {
         if (!$class) {
             $class = $this->class_name;
@@ -95,59 +113,79 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         return $this->asExtension($class);
     }
 
+    /**
+     * getDriverClass returns the driver class name
+     */
+    public function getDriverClass()
+    {
+        return $this->class_name;
+    }
+
+    /**
+     * afterFetch
+     */
     public function afterFetch()
     {
-        $this->applyGatewayClass();
-
-        $this->attributes = array_merge($this->config_data, $this->attributes);
+        $this->applyDriverClass();
     }
 
+    /**
+     * beforeValidate
+     */
     public function beforeValidate()
     {
-        if (!$this->applyGatewayClass()) {
-            return;
+        if ($this->applyDriverClass()) {
+            $this->getDriverObject()->validateDriverHost($this);
         }
     }
 
-    public function beforeSave()
+    /**
+     * scopeApplyEnabled
+     */
+    public function scopeApplyEnabled($query, $isEdit = false)
     {
-        $configData = [];
-        $fieldConfig = $this->getFieldConfig();
-        $fields = isset($fieldConfig->fields) ? $fieldConfig->fields : [];
-
-        foreach ($fields as $name => $config) {
-            if (!array_key_exists($name, $this->attributes)) {
-                continue;
-            }
-
-            $configData[$name] = $this->attributes[$name];
-            unset($this->attributes[$name]);
+        if ($isEdit) {
+            return $query->where('is_enabled_edit', true);
         }
 
-        $this->config_data = $configData;
-    }
-
-    public function scopeIsEnabled($query)
-    {
         return $query
-            ->whereNotNull('is_enabled')
-            ->where('is_enabled', 1)
+            ->where('is_enabled', true)
         ;
     }
 
-    public function scopeApplyCountry($query, $countryId = null)
+    /**
+     * scopeApplyCountry
+     */
+    public function scopeApplyCountry($query, $countryId)
     {
         return $query->where(function($q) use ($countryId) {
-            $q->has('countries', '=', 0);
-            $q->orWhereHas('countries', function($q) use ($countryId) {
-                $q->where('id', $countryId);
-            });
+            $q->doesntHave('countries');
+            $q->orWhereRelation('countries', 'id', $countryId);
         });
     }
 
-    public static function listApplicable($countryId = null)
+    /**
+     * scopeApplyUserGroup
+     */
+    public function scopeApplyUserGroup($query, $userGroupId)
     {
-        $query = self::isEnabled();
+        return $query->where(function($q) use ($userGroupId) {
+            $q->doesntHave('user_groups');
+            $q->orWhereRelation('user_groups', 'id', $userGroupId);
+        });
+    }
+
+    /**
+     * listApplicable payment methods
+     */
+    public static function listApplicable(array $options = [])
+    {
+        extract(array_merge([
+            'countryId' => null,
+            'totalPrice' => null,
+        ], $options));
+
+        $query = self::applyEnabled();
 
         if ($countryId) {
             $query = $query->applyCountry($countryId);
@@ -156,69 +194,38 @@ class PaymentMethod extends Model implements PaymentMethodInterface
         return $query->get();
     }
 
+    /**
+     * renderPaymentForm
+     */
     public function renderPaymentForm($controller)
     {
         $this->beforeRenderPaymentForm();
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
-        $partialName = 'pay-gateway/'.$paymentMethodFile;
+        $partialName = 'pay/'.$paymentMethodFile;
 
-        return $controller->renderPartial($partialName);
+        return $controller->renderPartial($partialName, ['paymentMethod' => $this]);
     }
 
+    /**
+     * renderPaymentProfileForm
+     */
     public function renderPaymentProfileForm($controller)
     {
         $this->beforeRenderPaymentProfileForm();
 
         $paymentMethodFile = strtolower(class_basename($this->class_name));
-        $partialName = 'pay-gateway/'.$paymentMethodFile.'-profile';
+        $partialName = 'pay/'.$paymentMethodFile.'-profile';
 
-        return $controller->renderPartial($partialName);
-    }
-
-    public function makeDefault()
-    {
-        if (!$this->is_enabled) {
-            throw new ValidationException(['is_enabled' => sprintf('"%s" is disabled and cannot be set as default.', $this->name)]);
-        }
-
-        $this->newQuery()->where('id', $this->id)->update(['is_default' => true]);
-        $this->newQuery()->where('id', '<>', $this->id)->update(['is_default' => false]);
+        return $controller->renderPartial($partialName, ['paymentMethod' => $this]);
     }
 
     /**
-     * Returns the default payment gateway.
-     * @param  int $countryId
-     * @return self
-     * @todo Apply a filter for country.
+     * getDataTableOptions
      */
-    public static function getDefault($countryId = null)
+    public function getDataTableOptions($attribute, $field, $data)
     {
-        if (self::$defaultMethod !== null) {
-            return self::$defaultMethod;
-        }
-
-        $defaultMethod = self::isEnabled()->where('is_default', true)->first();
-
-        /*
-         * If no default is found, find the first method and make it the default.
-         */
-        if (!$defaultMethod) {
-            $defaultMethod = self::isEnabled()->first();
-            if ($defaultMethod) {
-                $defaultMethod->makeDefault();
-            }
-        }
-
-        return self::$defaultMethod = $defaultMethod;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getGatewayClass()
-    {
-        return $this->class_name;
+        return $this->getDriverObject()->getDataTableOptions($attribute, $field, $data);
     }
 
     //
@@ -226,9 +233,9 @@ class PaymentMethod extends Model implements PaymentMethodInterface
     //
 
     /**
-     * Finds and returns a user payment profile for this payment method.
+     * findUserProfile finds and returns a user payment profile for this payment method.
      * @param \RainLab\User\Models\User $user Specifies user to find a profile for.
-     * @return \RainLab\Pay\Models\UserProfile Returns the user profile object. Returns NULL if the payment profile doesn't exist.
+     * @return \Responsiv\Shop\Models\UserProfile Returns the user profile object. Returns NULL if the payment profile doesn't exist.
      */
     public function findUserProfile($user)
     {
@@ -241,12 +248,12 @@ class PaymentMethod extends Model implements PaymentMethodInterface
             ->first()
         ;
     }
-    
+
     /**
-     * Initializes a new empty user payment profile. 
-     * This method should be used by payment methods internally. 
+     * initUserProfile initializes a new empty user payment profile.
+     * This method should be used by payment methods internally.
      * @param \RainLab\User\Models\User Specifies a user object to initialize a profile for.
-     * @return \RainLab\Pay\Models\UserProfile Returns the user payment profile object.
+     * @return \Responsiv\Shop\Models\UserProfile Returns the user payment profile object.
      */
     public function initUserProfile($user)
     {
@@ -257,7 +264,7 @@ class PaymentMethod extends Model implements PaymentMethodInterface
     }
 
     /**
-     * Checks whether a user profile for this payment method and a given user exists.
+     * profileExists checks whether a user profile for this payment method and a given user exists.
      * @param \RainLab\User\Models\User $user A user object to find a profile for.
      * @return boolean Returns TRUE if a profile exists. Returns FALSE otherwise.
      */
@@ -267,13 +274,13 @@ class PaymentMethod extends Model implements PaymentMethodInterface
     }
 
     /**
-     * Deletes a user payment profile.
+     * deleteUserProfile deletes a user payment profile.
      * The method deletes the payment profile from the database and from the payment gateway.
      * @param \RainLab\User\Models\User $user Specifies a user object to delete a profile for.
      */
     public function deleteUserProfile($user)
     {
-        $gatewayObj = $this->getGatewayObject();
+        $gatewayObj = $this->getDriverObject();
 
         $profile = $this->findUserProfile($user);
 

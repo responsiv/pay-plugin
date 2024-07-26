@@ -14,6 +14,10 @@ modelClass: Responsiv\Pay\Models\PaymentMethod
 # Default redirect location
 defaultRedirect: responsiv/pay/paymentmethods
 
+# Form Design
+design:
+    size: 750
+
 # Create page
 create:
     title: Create Payment Type

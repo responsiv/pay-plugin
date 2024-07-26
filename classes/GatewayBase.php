@@ -1,117 +1,54 @@
 <?php namespace Responsiv\Pay\Classes;
 
-use Str;
 use Url;
-use File;
-use System\Classes\ModelBehavior;
+use System\Classes\DriverBehavior;
 use SystemException;
 
 /**
- * Represents the generic payment type.
+ * GatewayBase represents the generic payment type.
  * All other payment types must be derived from this class
  */
-class GatewayBase extends ModelBehavior
+abstract class GatewayBase extends DriverBehavior
 {
-    use \System\Traits\ConfigMaker;
-
-    protected $invoiceModel = 'Responsiv\Pay\Models\Invoice';
-
-    protected $invoiceStatusModel = 'Responsiv\Pay\Models\InvoiceStatus';
-
     /**
-     * Returns information about the payment type
+     * driverDetails returns information about the payment type
      * Must return array:
-     * 
+     *
      * [
-     *      'name'        => 'Authorize.net',
-     *      'description' => 'Authorize.net simple integration method with hosted payment form.'
+     *      'name' => 'Authorize.net',
+     *      'description' => 'Authorize.net simple integration method with hosted payment form.',
+     *      'paymentForm' => true,
+     *      'receiptPage' => true
      * ]
      *
      * @return array
      */
-    public function gatewayDetails()
+    public function driverDetails()
     {
         return [
-            'name'        => 'Unknown',
-            'description' => 'Unknown payment gateway.'
+            'name' => 'Unknown',
+            'description' => 'Unknown payment gateway.',
+            'paymentForm' => true,
+            'receiptPage' => true
         ];
     }
 
     /**
-     * @var mixed Extra field configuration for the payment type.
+     * processPaymentForm processes payment using passed data.
+     *
+     * Supported return values:
+     * - Redirect object
+     * - false: Prevent a redirect
+     * - null: Standard redirect
+     *
+     * @param array $data Posted payment form data.
+     * @param \Model $invoice Invoice model object.
+     * @return mixed
      */
-    protected $fieldConfig;
+    abstract public function processPaymentForm($data, $invoice);
 
     /**
-     * Constructor
-     */
-    public function __construct($model = null)
-    {
-        parent::__construct($model);
-
-        /*
-         * Parse the config
-         */
-        $this->configPath = $this->guessConfigPathFrom($this);
-        $this->fieldConfig = $this->makeConfig($this->defineFormFields());
-
-        if (!$model) {
-            return;
-        }
-
-        $this->boot($model);
-    }
-
-    /**
-     * Boot method called when the payment gateway is first loaded
-     * with an existing model.
-     * @return array
-     */
-    public function boot($host)
-    {
-        // Set default data
-        if (!$host->exists) {
-            $this->initConfigData($host);
-        }
-
-        // Apply validation rules
-        $host->rules = array_merge($host->rules, $this->defineValidationRules());
-    }
-
-    /**
-     * Returns the host object with configuration.
-     * @return Responsiv\Pay\Models\PaymentMethod
-     */
-    public function getHostObject()
-    {
-        return $this->model;
-    }
-
-    /**
-     * Extra field configuration for the payment type.
-     */
-    public function defineFormFields()
-    {
-        return 'fields.yaml';
-    }
-
-    /**
-     * Initializes configuration data when the payment method is first created.
-     * @param  Model $host
-     */
-    public function initConfigData($host){}
-
-    /**
-     * Defines validation rules for the custom fields.
-     * @return array
-     */
-    public function defineValidationRules()
-    {
-        return [];
-    }
-
-    /**
-     * Render setup help
+     * getPartialPath render setup help
      * @return string
      */
     public function getPartialPath()
@@ -120,7 +57,7 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Registers a hidden page with specific URL. Use this method for cases when you
+     * registerAccessPoints registers a hidden page with specific URL. Use this method for cases when you
      * need to have a hidden landing page for a specific payment gateway. For example,
      * PayPal needs a landing page for the auto-return feature.
      * Important! Payment gateway access point names should have a prefix.
@@ -136,15 +73,15 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Returns the field configuration used by this model.
+     * getDataTableOptions is used for datatable form fields used in the field configuration
      */
-    public function getFieldConfig()
+    public function getDataTableOptions($attribute, $field, $data)
     {
-        return $this->fieldConfig;
+        return [];
     }
 
     /**
-     * Utility function, creates a link to a registered access point.
+     * makeAccessPointLink is a utility function, creates a link to a registered access point.
      * @param  string $code Key used to define the access point
      * @return string
      */
@@ -154,7 +91,7 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Returns true if the payment type is applicable for a specified invoice amount
+     * isApplicable returns true if the payment type is applicable for a specified invoice amount
      * @param float $amount Specifies an invoice amount
      * @return true
      */
@@ -164,47 +101,95 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Processes payment using passed data.
-     *
-     * Supported return values:
-     * - Redirect object
-     * - false: Prevent a redirect
-     * - null: Standard redirect
-     *
-     * @param array $data Posted payment form data.
-     * @param Model $invoice Invoice model object.
-     * @return mixed
+     * invoiceAfterCreate is called when an invoice with this payment method is created
+     * @param \Responsiv\Shop\Models\PaymentMethod $host
+     * @param \Responsiv\Pay\Models\Invoice $invoice
      */
-    public function processPaymentForm($data, $invoice) { }
+    public function invoiceAfterCreate($host, $invoice)
+    {
+    }
 
     /**
-     * This method is called before the payment form is rendered
+     * hasPaymentForm
      */
-    public function beforeRenderPaymentForm() { }
+    public function hasPaymentForm()
+    {
+        return $this->driverDetails()['paymentForm'] ?? true;
+    }
 
     /**
-     * This method is called before the payment profile form is rendered
+     * hasReceiptPage
      */
-    public function beforeRenderPaymentProfileForm() { }
+    public function hasReceiptPage()
+    {
+        return $this->driverDetails()['receiptPage'] ?? true;
+    }
+
+    /**
+     * getReceiptPage
+     */
+    public function getReceiptPage()
+    {
+        return $this->getHostObject()?->receipt_page;
+    }
+
+    /**
+     * getCustomPaymentPage
+     */
+    public function getCustomPaymentPage()
+    {
+        return '';
+    }
+
+    /**
+     * renderPaymentScripts provides an opportunity to inject global scripts to the page
+     */
+    public function renderPaymentScripts()
+    {
+        return '';
+    }
+
+    /**
+     * beforeRenderPaymentForm is called before the payment form is rendered
+     */
+    public function beforeRenderPaymentForm()
+    {
+    }
+
+    /**
+     * beforeRenderPaymentProfileForm is called before the payment profile form is rendered
+     */
+    public function beforeRenderPaymentProfileForm()
+    {
+    }
+
+    /**
+     * payOfflineMessage returns payment instructions for offline types.
+     * @return string
+     */
+    public function payOfflineMessage()
+    {
+        return '';
+    }
 
     //
     // Payment Profiles
     //
 
     /**
-     * This method should return TRUE if the gateway supports user payment profiles.
+     * hasPaymentProfiles should return TRUE if the gateway supports user payment profiles.
      * The payment gateway must implement the updateUserProfile(), deleteUserProfile() and payFromProfile() methods if this method returns true.
      */
-    public function supportsPaymentProfiles()
+    public function hasPaymentProfiles()
     {
         return false;
     }
 
     /**
-     * Creates a user profile on the payment gateway. If the profile already exists the method should update it.
+     * updateUserProfile creates a user profile on the payment gateway. If the profile already exists the method should update it.
      * @param \RainLab\User\Models\User $user User object to create a profile for
      * @param array $data Posted payment form data
-     * @return \RainLab\Pay\Models\UserProfile Returns the user profile object
+     * @return \Responsiv\Pay\Models\UserProfile Returns the user profile object
      */
     public function updateUserProfile($user, $data)
     {
@@ -212,9 +197,9 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Deletes a user profile from the payment gateway.
+     * deleteUserProfile deletes a user profile from the payment gateway.
      * @param \RainLab\User\Models\User $user User object
-     * @param \RainLab\Pay\Models\UserProfile $profile User profile object
+     * @param \Responsiv\Pay\Models\UserProfile $profile User profile object
      */
     public function deleteUserProfile($user, $profile)
     {
@@ -222,8 +207,8 @@ class GatewayBase extends ModelBehavior
     }
 
     /**
-     * Creates a payment transaction from an existing payment profile.
-     * @param \RainLab\Pay\Models\Invoice $invoice An order object to pay
+     * payFromProfile creates a payment transaction from an existing payment profile.
+     * @param \Responsiv\Pay\Models\Invoice $invoice An invoice object to pay
      */
     public function payFromProfile($invoice)
     {
@@ -235,23 +220,18 @@ class GatewayBase extends ModelBehavior
     //
 
     /**
-     * Creates an instance of the invoice model
+     * createInvoiceModel creates an instance of the invoice model
      */
     protected function createInvoiceModel()
     {
-        $class = '\\'.ltrim($this->invoiceModel, '\\');
-        $model = new $class();
-        return $model;
+        return new \Responsiv\Pay\Models\Invoice;
     }
 
     /**
-     * Creates an instance of the invoice status model
+     * createInvoiceStatusModel creates an instance of the invoice status model
      */
     protected function createInvoiceStatusModel()
     {
-        $class = '\\'.ltrim($this->invoiceStatusModel, '\\');
-        $model = new $class();
-        return $model;
+        return new \Responsiv\Pay\Models\InvoiceStatus;
     }
 }
-

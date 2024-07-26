@@ -8,7 +8,8 @@
             <p>
                 {% if invoice.company %}<strong>{{ invoice.company }}</strong><br />{% endif %}
                 Attention: {{ invoice.first_name }} {{ invoice.last_name }}<br />
-                {% if invoice.street_addr %}{{ invoice.street_addr }}<br />{% endif %}
+                {% if invoice.address_line1 %}{{ invoice.address_line1 }}<br />{% endif %}
+                {% if invoice.address_line2 %}{{ invoice.address_line2 }}<br />{% endif %}
                 {% if invoice.city or invoice.zip %}{{ invoice.city }} {{ invoice.zip }}<br />{% endif %}
                 {% if invoice.state %}{{ invoice.state.name }}, {% endif %}
                 {% if invoice.country %}{{ invoice.country.name }}{% endif %}
@@ -17,7 +18,7 @@
         </div>
         <div class="col-md-6 text-right">
             <h2>Invoice {{ invoice.getUniqueId }}</h2>
-            <p>Date: {{ invoice.sent_at ? invoice.sent_at.toFormattedDateString }}</p>
+            <p>Date: {{ invoice.invoiced_at.toFormattedDateString }}</p>
             {% if invoice.template %}
                 <p><a href="javascript:printInvoice()">Print this invoice</a></p>
             {% endif %}
@@ -26,7 +27,7 @@
 
     <!-- Invoice table -->
     <div id="partialPaymentInvoice">
-        {% partial '@invoice_table' %}
+        {% partial '@invoice-table' %}
     </div>
 
     <!-- Status -->
@@ -37,7 +38,7 @@
                 <p>Thank you for your business.</p>
             {% else %}
                 <h4>This invoice has not been paid</h4>
-                <a class="btn btn-success btn-lg" href="{{ invoice.url }}">
+                <a class="btn btn-success btn-lg" href="{{ invoice.getReceiptUrl() }}">
                     Pay this Invoice
                 </a>
             {% endif %}
@@ -53,12 +54,12 @@
         </script>
         <script>
             function printInvoice() {
-               var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0')
-               printWindow.document.write($('#invoiceTemplateContents').html())
-               printWindow.document.close()
-               printWindow.focus()
-               printWindow.print()
-               printWindow.close()
+               var printWindow = window.open('','','left=0,top=0,width=950,height=500,toolbar=0,scrollbars=0,status=0');
+               printWindow.document.write(document.getElementById('invoiceTemplateContents').innerHTML);
+               printWindow.document.close();
+               printWindow.focus();
+               printWindow.print();
+               printWindow.onafterprint = window.close;
             }
         </script>
     {% endif %}
