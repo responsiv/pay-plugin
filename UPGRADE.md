@@ -10,6 +10,8 @@ This guide can be used to help migrate from Responsiv.Pay v1 to v2. Some theme c
 
 1. Run `php artisan plugin:install responsiv.pay` to request the latest version (you do not need to uninstall v1 first).
 
+1. Migrate pay data using `php artisan pay:migratev1` (one-way function).
+
 1. Continue using this plugin as normal.
 
 ## Key Differences

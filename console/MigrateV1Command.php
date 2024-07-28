@@ -1,11 +1,27 @@
-<?php
+<?php namespace RainLab\Pay\Console;
 
-use October\Rain\Database\Schema\Blueprint;
-use October\Rain\Database\Updates\Migration;
+use Schema;
+use Illuminate\Console\Command;
 
-return new class extends Migration
+/**
+ * MigrateV1Command
+ */
+class MigrateV1Command extends Command
 {
-    public function up()
+    /**
+     * @var string name
+     */
+    protected $name = 'pay:migratev1';
+
+    /**
+     * @var string description
+     */
+    protected $description = 'Drops unused database tables and columns from Pay plugin v1 and v2';
+
+    /**
+     * handle
+     */
+    public function handle()
     {
         $columnsToPrune = [
             'tax_discount',
@@ -30,9 +46,23 @@ return new class extends Migration
                 });
             }
         }
+
+        $this->info("Successfully cleaned up payment table data");
     }
 
-    public function down()
+    /**
+     * getArguments
+     */
+    protected function getArguments()
     {
+        return [];
     }
-};
+
+    /**
+     * getOptions
+     */
+    protected function getOptions()
+    {
+        return [];
+    }
+}
