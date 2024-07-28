@@ -40,7 +40,7 @@ class Plugin extends PluginBase
     {
         $this->registerSingletons();
 
-        $this->registerConsoleCommand('pay.migratev1', \RainLab\Pay\Console\MigrateV1Command::class);
+        $this->registerConsoleCommand('pay.migratev1', \Responsiv\Pay\Console\MigrateV1Command::class);
     }
 
     /**

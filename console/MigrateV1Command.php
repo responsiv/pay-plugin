@@ -1,4 +1,4 @@
-<?php namespace RainLab\Pay\Console;
+<?php namespace Responsiv\Pay\Console;
 
 use Schema;
 use Illuminate\Console\Command;
