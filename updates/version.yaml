@@ -26,4 +26,4 @@ v1.3.0: Add currency to invoices table
 v1.3.1: Adding a cache clearing method to the tax model
 v2.0.0:
     - Major Upgrade to Currency Plugin
-    - migrate_from_version1.php
+    - migrate_v2_0_0.php
