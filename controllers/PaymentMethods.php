@@ -36,11 +36,6 @@ class PaymentMethods extends Controller
     public $driverAlias;
 
     /**
-     * @var string driverClass
-     */
-    protected $driverClass;
-
-    /**
      * @var array required permissions
      */
     public $requiredPermissions = [];

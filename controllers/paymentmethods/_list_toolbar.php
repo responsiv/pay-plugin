@@ -1,6 +1,6 @@
 <div data-control="toolbar">
     <a
-        href="#"
+        href="javascript:;"
         data-control="popup"
         data-handler="onLoadAddPopup"
         class="btn btn-primary oc-icon-plus">
