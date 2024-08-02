@@ -45,10 +45,6 @@ return new class extends Migration
                 $table->bigInteger('total_tax')->nullable();
                 $table->boolean('prices_include_tax')->default(false)->nullable();
                 $table->integer('currency_id')->unsigned()->nullable()->index();
-                $table->renameColumn('vat_id', 'tax_id_number');
-                $table->renameColumn('tax_discount', 'discount_tax');
-                $table->renameColumn('tax_data', 'taxes');
-                $table->renameColumn('street_addr', 'address_line1');
             });
         }
 
@@ -65,6 +61,32 @@ return new class extends Migration
             Schema::table('responsiv_pay_invoice_status_logs', function(Blueprint $table) {
                 $table->bigInteger('updated_user_id')->unsigned()->nullable();
                 $table->bigInteger('created_user_id')->unsigned()->nullable();
+            });
+        }
+
+        // Rename columns need their own query for SQLite
+
+        if (!Schema::hasColumn('responsiv_pay_invoices', 'tax_id_number')) {
+            Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->renameColumn('vat_id', 'tax_id_number');
+            });
+        }
+
+        if (!Schema::hasColumn('responsiv_pay_invoices', 'discount_tax')) {
+            Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->renameColumn('tax_discount', 'discount_tax');
+            });
+        }
+
+        if (!Schema::hasColumn('responsiv_pay_invoices', 'taxes')) {
+            Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->renameColumn('tax_data', 'taxes');
+            });
+        }
+
+        if (!Schema::hasColumn('responsiv_pay_invoices', 'address_line1')) {
+            Schema::table('responsiv_pay_invoices', function(Blueprint $table) {
+                $table->renameColumn('street_addr', 'address_line1');
             });
         }
     }
