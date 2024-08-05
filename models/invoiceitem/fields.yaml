@@ -8,16 +8,20 @@ tabs:
         quantity:
             label: Quantity
             type: number
-            span: left
+            span: row
+            spanClass: col-2
 
         price:
             label: Unit Price
             type: currency
-            span: right
+            span: row
+            spanClass: col-5
 
         discount:
             label: Unit Discount
             type: discount
+            span: row
+            spanClass: col-5
 
         description:
             label: Description
