@@ -125,6 +125,22 @@ class Invoices extends Controller
     }
 
     /**
+     * onUpdateTotalsFromItem must save the invoice since these modifications
+     * are not deferred
+     */
+    public function onUpdateTotalsFromItem()
+    {
+        $result = $this->onUpdateTotals();
+
+        // Save the updated totals if the model exists
+        if (($model = $this->formGetModel()) && $model->exists) {
+            $model->save();
+        }
+
+        return $result;
+    }
+
+    /**
      * onUpdateUser
      */
     public function onUpdateUser()

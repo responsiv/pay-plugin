@@ -49,7 +49,7 @@ tabs:
         items:
             label: Items
             type: relation
-            changeHandler: onUpdateTotals
+            changeHandler: onUpdateTotalsFromItem
 
         user:
             label: User
