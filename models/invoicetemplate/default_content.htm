@@ -104,10 +104,10 @@ Australia
                     </td>
                     <td>
                         {% if invoice.isPaid %}
-                            <div class="invoice-payment-label">Amount due: {{ 0|currency({ in: invoice.currency.code }) }}</div>
+                            <div class="invoice-payment-label">Amount due: {{ 0|currency({ in: invoice.currency.code, format: 'long' }) }}</div>
                             <div class="invoice-payment-advice">This invoice has been paid</div>
                         {% else %}
-                            <div class="invoice-payment-label">Amount due: {{ invoice.total|currency({ in: invoice.currency.code }) }}</div>
+                            <div class="invoice-payment-label">Amount due: {{ invoice.total|currency({ in: invoice.currency.code, format: 'long' }) }}</div>
                             <div class="invoice-payment-advice">
                                 {textarea name="payment_advice" label="Payment advice" size="small"}
                                     Please send full amount to via any of our accepted Payment methods
