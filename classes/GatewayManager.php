@@ -190,8 +190,8 @@ class GatewayManager
             $paymentCode = strtolower(class_basename($class));
 
             $partialNames = [
-                'payment_form.htm' => 'pay/'.$paymentCode,
-                'profile_form.htm' => 'pay/'.$paymentCode.'-profile'
+                'payment-form.htm' => 'pay/'.$paymentCode,
+                'profile-form.htm' => 'pay/'.$paymentCode.'-profile'
             ];
 
             foreach ($partialNames as $sourceFile => $partialName) {

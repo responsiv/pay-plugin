@@ -35,7 +35,6 @@ class StripePayment extends GatewayBase
     public function initDriverHost($host)
     {
         $host->rules['secret_key'] = 'required';
-        $host->bindEvent('model.beforeValidate', [$this, 'validateClientSecret']);
 
         if (!$host->exists) {
             $host->name = 'Stripe';
@@ -44,12 +43,10 @@ class StripePayment extends GatewayBase
     }
 
     /**
-     * validateClientSecret
+     * validateDriverHost
      */
-    public function validateClientSecret()
+    public function validateDriverHost($host)
     {
-        $host = $this->getHostObject();
-
         if (!$host->secret_key) {
             return;
         }
