@@ -1,0 +1,16 @@
+#
+# JSON Documentation
+#
+# Compile in console:
+#
+#     php artisan october:util compile docs --value=rainlab.user
+#
+navigation:
+    -
+        title: "Introduction"
+        link: "./introduction.md"
+        description: "explains how to get started using the Pay plugin"
+    -
+        title: "Building Payment Types"
+        description: "how to implement custom integration with your own payment gateway"
+        link: "./building-payment-types.md"
