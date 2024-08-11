@@ -3,7 +3,7 @@
 #
 # Compile in console:
 #
-#     php artisan october:util compile docs --value=rainlab.user
+#     php artisan october:util compile docs --value=responsiv.pay
 #
 navigation:
     -

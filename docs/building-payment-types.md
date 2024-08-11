@@ -133,14 +133,10 @@ There are two ways to implement the payment form, either using a redirection met
 
 Using the redirection method, when the user clicks the Pay button, they are redirected away from the website to a secure payment form provided by the payment gateway and hosted with the payment provider. Usually the redirection happens using a HTML form tag where the URL points to the payment gateway directly. The form contains hidden fields providing the necessary information to process the payment, such as the order number, amount and other parameters.
 
-::: tip
-View the `Responsiv\Pay\PaymentTypes\StripePayment` class for an example of a redirection payment type.
-:::
+> **Note**: View the `Responsiv\Pay\PaymentTypes\StripePayment` class for an example of a redirection payment type.
 
 ### Client-side Method
 
 Using the client-side method, the payment form is handled using custom JavaScript. When the user clicks Pay, the request is submitted back to the server using a locally registered API endpoint, which communicates to the payment gateway via a REST API or equivalent. The response given with JSON And is processed by the JavaScript code. If everything is successful the `onPay` AJAX handler is called to redirect to the confirmation page.
 
-::: tip
-View the `Responsiv\Pay\PaymentTypes\PayPalPayment` class for an example of a redirection payment type.
-:::
+> **Note**: View the `Responsiv\Pay\PaymentTypes\PayPalPayment` class for an example of a redirection payment type.
