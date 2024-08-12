@@ -10,6 +10,7 @@ tabs:
             type: number
             span: row
             spanClass: col-2
+            default: 1
 
         price:
             label: Unit Price
