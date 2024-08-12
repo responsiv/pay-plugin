@@ -54,8 +54,7 @@ trait HasInvoiceContract
      */
     public function getReceiptUrl()
     {
-        if ($link = $this->payment_method->getReceiptPage()) {
-
+        if ($link = $this->payment_method?->getReceiptPage()) {
             $controller = Controller::getController() ?: new Controller;
 
             // @todo this is a pagefinder link

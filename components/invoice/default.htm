@@ -32,18 +32,14 @@
 
     <!-- Status -->
     <div class="text-right">
-        {% if invoice.payment_method %}
-            {% if invoice.isPaid %}
-                <h4>This invoice has been paid!</h4>
-                <p>Thank you for your business.</p>
-            {% else %}
-                <h4>This invoice has not been paid</h4>
-                <a class="btn btn-success btn-lg" href="{{ invoice.getReceiptUrl() }}">
-                    Pay this Invoice
-                </a>
-            {% endif %}
+        {% if invoice.isPaid %}
+            <h4>This invoice has been paid!</h4>
+            <p>Thank you for your business.</p>
         {% else %}
-            <p>Sorry there are no payment gateways available to use!</p>
+            <h4>This invoice has not been paid</h4>
+            <a class="btn btn-success btn-lg" href="{{ invoice.getReceiptUrl() }}">
+                Pay this Invoice
+            </a>
         {% endif %}
     </div>
 
