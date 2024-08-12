@@ -7,7 +7,10 @@
 <?php if ($formModel->status): ?>
     <div class="scoreboard-item title-value">
         <h4><?= __("Status") ?></h4>
-        <p><?= $formModel->status->name ?></p>
+        <p>
+            <span class="scoreboard-colorpicker" style="--background-color:<?= e($formModel->status->color_background) ?>;--foreground-color:<?= e($formModel->status->color_background) ?>"></span>
+            <?= $formModel->status->name ?>
+        </p>
         <p class="description"><?= __("Since") ?>: <?= $formModel->updated_at->toFormattedDateString() ?></p>
     </div>
 <?php endif ?>

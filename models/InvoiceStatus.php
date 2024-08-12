@@ -13,6 +13,7 @@ use Model;
  * @property string $user_message_template
  * @property \Illuminate\Support\Carbon $updated_at
  * @property \Illuminate\Support\Carbon $created_at
+ * @property string $color_background
  *
  * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
@@ -74,5 +75,13 @@ class InvoiceStatus extends Model
             'void' => ['Void', 'var(--bs-danger)'],
             'paid' => ['Paid', 'var(--bs-success)'],
         ];
+    }
+
+    /**
+     * getColorBackgroundAttribute returns the `color_background` attribute
+     */
+    public function getColorBackgroundAttribute()
+    {
+        return $this->getStatusCodeOptions()[$this->code][1] ?? null;
     }
 }

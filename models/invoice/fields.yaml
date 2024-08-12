@@ -10,23 +10,23 @@ tabs:
         #     type: relation
         #     span: left
 
-        template:
-            label: Invoice Template
-            type: relation
-            span: full
-            placeholder: — Use Default —
-
         due_at:
             label: Due At
             type: datepicker
             mode: date
             span: auto
 
-        currency:
-            label: Currency
+        template:
+            label: Invoice Template
             type: relation
             span: auto
             placeholder: — Use Default —
+
+        # currency:
+        #     label: Currency
+        #     type: relation
+        #     span: auto
+        #     placeholder: — Use Default —
 
         is_tax_exempt:
             label: Tax Exempt

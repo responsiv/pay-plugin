@@ -7,11 +7,13 @@ columns:
         label: ID
         invisible: true
 
-    status:
+    status_code:
         label: Status
         relation: status
-        select: name
+        select: code
         sortable: false
+        type: selectable
+        width: 130px
 
     created_at:
         label: Recorded

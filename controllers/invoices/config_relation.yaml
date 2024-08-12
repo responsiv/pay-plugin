@@ -18,7 +18,9 @@ status_log:
     readOnly: true
     view:
         showSorting: false
-        defaultSort: created_at
+        defaultSort:
+            column: created_at
+            direction: desc
 
 payment_log:
     label: Payments
@@ -28,4 +30,6 @@ payment_log:
     readOnly: true
     view:
         showSorting: false
-        defaultSort: created_at
+        defaultSort:
+            column: created_at
+            direction: desc
