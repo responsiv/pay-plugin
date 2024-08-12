@@ -3,6 +3,7 @@
 use Event;
 use Model;
 use Request;
+use Currency;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
 use Responsiv\Currency\Models\Currency as CurrencyModel;
@@ -170,7 +171,7 @@ class Invoice extends Model implements InvoiceContract
         }
 
         if (!$this->currency_id) {
-            $this->currency_id = CurrencyModel::getPrimary()?->id;
+            $this->currency_id = Currency::getPrimary()?->id;
         }
     }
 

@@ -1,6 +1,6 @@
 # Building Payment Types
 
-Payment types are defined as classes located in the **paymenttypes** directory of this plugin. You can create your own plugins with this directory or place them inside the `app` directory.
+Payment types are merchant gateways defined as classes located in the **paymenttypes** directory of this plugin. You can create your own plugins with this directory or place them inside the `app` directory.
 
 ```
 plugins/

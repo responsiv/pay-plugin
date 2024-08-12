@@ -1,8 +1,8 @@
 <?php namespace Responsiv\Pay\FormWidgets;
 
+use Currency;
 use Backend\Classes\FormField;
 use Backend\Classes\FormWidgetBase;
-use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * Discount input
@@ -88,7 +88,7 @@ class Discount extends FormWidgetBase
             $amount = str_replace('-', '', $amount);
         }
 
-        $currencyObj = CurrencyModel::getPrimary();
+        $currencyObj = Currency::getPrimary();
         $amount = $currencyObj->fromBaseValue((int) $amount);
         $amount = number_format(
             $amount,
@@ -131,7 +131,7 @@ class Discount extends FormWidgetBase
             $amount = str_replace('-', '', $amount);
         }
 
-        $currencyObj = CurrencyModel::getPrimary();
+        $currencyObj = Currency::getPrimary();
         $amount = floatval(str_replace($currencyObj->decimal_point, '.', $amount));
         $amount = $currencyObj->toBaseValue((float) $amount);
         return $symbol . $amount;

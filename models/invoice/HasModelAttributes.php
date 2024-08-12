@@ -1,6 +1,6 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
-use Responsiv\Currency\Models\Currency;
+use Currency;
 
 /**
  * HasModelAttributes
