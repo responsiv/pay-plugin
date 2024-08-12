@@ -27,3 +27,4 @@ v1.3.1: Adding a cache clearing method to the tax model
 v2.0.0:
     - Major Upgrade to Currency Plugin
     - migrate_v2_0_0.php
+v2.0.2: Update Stripe and PayPal gateway instructions
