@@ -171,7 +171,8 @@ class Invoice extends Model implements InvoiceContract
         }
 
         if (!$this->currency_id) {
-            $this->currency_id = Currency::getPrimary()?->id;
+            // Use default currency since multisite not used on invoices
+            $this->currency_id = Currency::getDefault()?->id;
         }
     }
 

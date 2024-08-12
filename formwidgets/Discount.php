@@ -88,7 +88,7 @@ class Discount extends FormWidgetBase
             $amount = str_replace('-', '', $amount);
         }
 
-        $currencyObj = Currency::getPrimary();
+        $currencyObj = $this->getLoadCurrency();
         $amount = $currencyObj->fromBaseValue((int) $amount);
         $amount = number_format(
             $amount,
@@ -131,9 +131,27 @@ class Discount extends FormWidgetBase
             $amount = str_replace('-', '', $amount);
         }
 
-        $currencyObj = Currency::getPrimary();
+        $currencyObj = $this->getLoadCurrency();
         $amount = floatval(str_replace($currencyObj->decimal_point, '.', $amount));
         $amount = $currencyObj->toBaseValue((float) $amount);
         return $symbol . $amount;
+    }
+
+    /**
+     * getLoadCurrency returns the currency object to used. If the model uses multisite,
+     * then extract the primary currency from the site definition, otherwise use the
+     * primary currency definition.
+     */
+    public function getLoadCurrency()
+    {
+        if (
+            $this->model &&
+            $this->model->isClassInstanceOf(\October\Contracts\Database\MultisiteInterface::class) &&
+            $this->model->isMultisiteEnabled()
+        ) {
+            return Currency::getPrimary();
+        }
+
+        return Currency::getDefault();
     }
 }
