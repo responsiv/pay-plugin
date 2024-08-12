@@ -1,6 +1,6 @@
 <?php namespace Responsiv\Pay\Models\InvoiceItem;
 
-use Responsiv\Shop\Models\TaxClass;
+use Responsiv\Pay\Models\Tax;
 
 /**
  * HasCalculatedAttributes
@@ -28,7 +28,7 @@ trait HasCalculatedAttributes
         $this->tax = 0;
 
         // Recalculate taxes
-        $taxClass = TaxClass::findByKey($this->tax_class_id);
+        $taxClass = Tax::findByKey($this->tax_class_id);
         if (!$taxClass) {
             return;
         }

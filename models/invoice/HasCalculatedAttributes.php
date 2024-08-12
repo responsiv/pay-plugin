@@ -1,7 +1,7 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
 use Responsiv\Pay\Models\InvoiceItem;
-use Responsiv\Shop\Models\TaxClass;
+use Responsiv\Pay\Models\Tax;
 
 /**
  * HasCalculatedAttributes
@@ -23,8 +23,8 @@ trait HasCalculatedAttributes
             $address = $this->getTaxableAddress();
         }
 
-        TaxClass::setLocationContext($address);
-        TaxClass::setPricesIncludeTax((bool) $this->prices_include_tax);
+        Tax::setLocationContext($address);
+        Tax::setPricesIncludeTax((bool) $this->prices_include_tax);
 
         // Calculate totals for order items
         if ($items !== null) {
@@ -41,7 +41,7 @@ trait HasCalculatedAttributes
             }
 
             // Calculate item taxes
-            $cartTaxes = TaxClass::calculateInvoiceTaxes($items);
+            $cartTaxes = Tax::calculateInvoiceTaxes($items);
             $this->taxes = $cartTaxes['taxes'];
             $this->tax = $cartTaxes['taxTotal'];
         }
