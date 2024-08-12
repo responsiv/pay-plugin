@@ -58,8 +58,14 @@ class Payment extends ComponentBase
      */
     protected function prepareVars()
     {
-        $this->page['invoice'] = $this->invoice();
+        $this->page['invoice'] = $invoice = $this->invoice();
         $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
+
+        if ($invoice) {
+            $this->page->meta_title = $this->page->meta_title
+                ? str_replace('%s', $invoice->getUniqueId(), $this->page->meta_title)
+                : 'Invoice #'.$invoice->getUniqueId();
+        }
     }
 
     /**
