@@ -87,7 +87,9 @@ trait HasModelAttributes
      */
     public function getCurrencyCodeAttribute()
     {
-        return $this->currency ?: Currency::getPrimary()?->currency_code;
+        return $this->currency
+            ? $this->currency->code
+            : Currency::getDefault()?->code;
     }
 
     /**
