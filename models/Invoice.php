@@ -307,7 +307,7 @@ class Invoice extends Model implements InvoiceContract
     {
         InvoicePaymentLog::createManualPayment($this, $comment);
 
-        return $this->markAsPaymentProcessed();
+        return $this->markAsPaymentProcessed($comment);
     }
 
     /**

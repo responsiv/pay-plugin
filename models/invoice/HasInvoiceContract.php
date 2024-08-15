@@ -159,7 +159,7 @@ trait HasInvoiceContract
     /**
      * markAsPaymentProcessed
      */
-    public function markAsPaymentProcessed()
+    public function markAsPaymentProcessed($comment = null)
     {
         if (!$isPaid = $this->isPaymentProcessed(true)) {
             $now = $this->processed_at = $this->freshTimestamp();
@@ -174,7 +174,7 @@ trait HasInvoiceContract
 
             $this->save();
 
-            $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID);
+            $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID, $comment);
         }
 
         return !$isPaid;

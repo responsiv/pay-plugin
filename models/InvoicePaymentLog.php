@@ -59,7 +59,7 @@ class InvoicePaymentLog extends Model
             'responseText' => null,
         ], $options));
 
-        $record = new self;
+        $record = new static;
         $record->message = $message;
         $record->invoice_id = $invoice->id;
         $record->payment_method_name = $methodName;
@@ -79,10 +79,10 @@ class InvoicePaymentLog extends Model
      */
     public static function createManualPayment($invoice, $message = null)
     {
-        $record = new self;
+        $record = new static;
         $record->message = $message;
         $record->invoice_id = $invoice->id;
-        $record->payment_method_name = 'Manual Payment';
+        $record->payment_method_name = __("Manual Payment");
         $record->is_success = true;
         $record->save();
 
