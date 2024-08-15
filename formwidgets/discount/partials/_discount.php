@@ -15,6 +15,7 @@
             <option value="%" <?= $symbol === '%' ? 'selected' : '' ?>>Percentage (%)</option>
         </select>
         <input
+            inputmode="numeric"
             name="<?= $name ?>[amount]"
             id="<?= $this->getId('value') ?>"
             value="<?= e($amount) ?>"
@@ -22,6 +23,6 @@
             class="form-control flex-grow-1"
             autocomplete="off"
             <?= $field->getAttributes() ?>
-            />
+        />
     </div>
 <?php endif ?>
