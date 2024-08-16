@@ -107,8 +107,8 @@ class GatewayManager
                 'class' => $gateway->class,
                 'alias' => $gateway->alias,
                 'object' => $gatewayObj,
-                'name' => array_get($driverDetails, 'name', 'Undefined'),
-                'description' => array_get($driverDetails, 'description', 'Undefined'),
+                'name' => e(__(array_get($driverDetails, 'name', 'Undefined'))),
+                'description' => e(__(array_get($driverDetails, 'description', 'Undefined'))),
             ];
         }
 
