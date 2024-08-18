@@ -95,7 +95,7 @@ class PaymentMethod extends ExpandoModel
         }
 
         $this->class_name = $class;
-        $this->driver_name = array_get($this->driverDetails(), 'name', 'Unknown');
+        $this->driver_name = e(__(array_get($this->driverDetails(), 'name', 'Unknown')));
         return true;
     }
 
