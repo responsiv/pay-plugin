@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('responsiv/pay/paymentmethods') ?>">Payment Methods</a></li>
+        <li><a href="<?= Backend::url('responsiv/pay/paymentmethods') ?>"><?= __("Payment Methods") ?></a></li>
         <li><?= e(trans($this->pageTitle)) ?></li>
     </ul>
 <?php Block::endPut() ?>
@@ -14,7 +14,7 @@
             <div data-control="toolbar">
                 <div class="scoreboard-item title-value">
                     <h4><?= __("Payment Method") ?></h4>
-                    <p class="oc-icon-credit-card"><?= $formModel->driver_name ?></p>
+                    <p class="oc-icon-credit-card"><?= e(__($formModel->driver_name)) ?></p>
                 </div>
             </div>
         </div>

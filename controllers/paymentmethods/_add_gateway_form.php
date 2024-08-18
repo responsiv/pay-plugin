@@ -12,8 +12,8 @@
                     <?php foreach ($gateways as $gateway): ?>
                         <li>
                             <a href="<?= Backend::url('responsiv/pay/paymentmethods/create/' . $gateway->alias) ?>">
-                                <h5 class="heading"><?= $gateway->name ?></h5>
-                                <p class="description"><?= $gateway->description ?></p>
+                                <h5 class="heading"><?= e(__($gateway->name)) ?></h5>
+                                <p class="description"><?= e(__($gateway->description)) ?></p>
                             </a>
                         </li>
                     <?php endforeach ?>

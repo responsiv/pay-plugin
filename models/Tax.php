@@ -406,7 +406,7 @@ class Tax extends Model
      */
     protected function getCountryList($term)
     {
-        $result = ['*' => html_entity_decode(e(__("* - Any Country")))];
+        $result = ['*' => __("* - Any Country")];
 
         // The search term functionality is disabled as it's not supported
         // by the Table widget's drop-down processor -ab 2015-01-03
@@ -426,7 +426,7 @@ class Tax extends Model
      */
     protected function getStateList($countryCode, $term)
     {
-        $result = ['*' => html_entity_decode(e(__("* - Any State")))];
+        $result = ['*' => __("* - Any State")];
 
         if (!$countryCode || $countryCode == '*') {
             return $result;

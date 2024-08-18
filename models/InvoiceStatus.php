@@ -70,10 +70,10 @@ class InvoiceStatus extends Model
     public function getStatusCodeOptions()
     {
         return [
-            'draft' => [e(__('Draft')), '#98a0a0'],
-            'approved' => [e(__('Approved')), 'var(--bs-info)'],
-            'void' => [e(__('Void')), 'var(--bs-danger)'],
-            'paid' => [e(__('Paid')), 'var(--bs-success)'],
+            'draft' => ['Draft', '#98a0a0'],
+            'approved' => ['Approved', 'var(--bs-info)'],
+            'void' => ['Void', 'var(--bs-danger)'],
+            'paid' => ['Paid', 'var(--bs-success)'],
         ];
     }
 

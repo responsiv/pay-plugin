@@ -9,10 +9,10 @@
             id="<?= $this->getId('type') ?>"
             class="form-select w-auto flex-grow-0">
             <?php if ($fixedPrice): ?>
-                <option value="" <?= !$symbol ? 'selected' : '' ?>><?= e(__("Set Price")) ?></option>
+                <option value="" <?= !$symbol ? 'selected' : '' ?>><?= __("Set Price") ?></option>
             <?php endif ?>
-            <option value="-" <?= $symbol === '-' ? 'selected' : '' ?>><?= e(__("Amount (-)")) ?></option>
-            <option value="%" <?= $symbol === '%' ? 'selected' : '' ?>><?= e(__("Percentage (%)")) ?></option>
+            <option value="-" <?= $symbol === '-' ? 'selected' : '' ?>><?= __("Amount (-)") ?></option>
+            <option value="%" <?= $symbol === '%' ? 'selected' : '' ?>><?= __("Percentage (%)") ?></option>
         </select>
         <input
             inputmode="numeric"
