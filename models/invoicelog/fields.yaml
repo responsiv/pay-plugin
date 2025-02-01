@@ -15,13 +15,13 @@ tabs:
             label: Request Data
             tab: Request Values
             type: partial
-            path: field_array_value
+            path: $/responsiv/pay/models/invoicelog/_field_array_value.php
 
         response_data:
             label: Response Data
             tab: Response Values
             type: partial
-            path: field_array_value
+            path: $/responsiv/pay/models/invoicelog/_field_array_value.php
 
         raw_response:
             label: Response Text
