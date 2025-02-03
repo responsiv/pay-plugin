@@ -150,6 +150,11 @@ class PayPalPayment extends GatewayBase
             $paymentMethod = $invoice->getPaymentMethod();
             $token = $paymentMethod->generatePayPalAccessToken();
             $totals = $invoice->getTotalDetails();
+            $total = Currency::fromBaseValue($totals['total']) ?? 0;
+            //check if the currency has comma as decimal separator
+            if (!empty($total) && strpos($total, ',') !== false) {
+                $total = str_replace(',', '.', $total);
+            }
 
             $payload = [
                 'intent' => 'CAPTURE',
@@ -158,7 +163,7 @@ class PayPalPayment extends GatewayBase
                         'reference_id' => $invoice->getUniqueId(),
                         'amount' => [
                             'currency_code' => $totals['currency'] ?? 'USD',
-                            'value' => Currency::fromBaseValue($totals['total'])
+                            'value' => $total
                         ]
                     ]
                 ],
