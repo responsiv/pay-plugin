@@ -28,3 +28,4 @@ v2.0.0:
     - Major Upgrade to Currency Plugin
     - migrate_v2_0_0.php
 v2.0.2: Update Stripe and PayPal gateway instructions
+v2.0.3: Fixes bug in PayPal gateway amounts
