@@ -1,6 +1,10 @@
 {% put scripts %}
+    {% set currencyCode = 'USD' %}
+    {% if invoice.currency_id %}
+    {% set currencyCode = currencyCodes[invoice.currency_id] %}
+    {% endif %}
     {% for method in paymentMethods %}
-        {{ method.renderPaymentScripts()|raw }}
+        {{ method.renderPaymentScripts(currencyCode)|raw }}
     {% endfor %}
 {% endput %}
 {% if invoice %}
