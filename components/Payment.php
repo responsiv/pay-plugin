@@ -4,7 +4,6 @@ use Auth;
 use Redirect;
 use Cms\Classes\ComponentBase;
 use RainLab\User\Models\User;
-use Responsiv\Currency\Models\Currency;
 use Responsiv\Pay\Models\PaymentMethod;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Illuminate\Http\RedirectResponse;
@@ -59,7 +58,6 @@ class Payment extends ComponentBase
      */
     protected function prepareVars()
     {
-        $this->page['currencyCodes'] = Currency::select('code','id')->get()->pluck('code', 'id');
         $this->page['invoice'] = $invoice = $this->invoice();
         $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
 
