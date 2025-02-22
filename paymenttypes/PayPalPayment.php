@@ -110,14 +110,13 @@ class PayPalPayment extends GatewayBase
     /**
      * renderPaymentScripts
      */
-    public function renderPaymentScripts($currency = 'USD')
+    public function renderPaymentScripts()
     {
         $queryParams = http_build_query([
             'client-id' => 'test',
             'components' => 'buttons',
             'enable-funding' => 'venmo',
             'disable-funding' => 'paylater,card',
-            'currency' => $currency,
         ]);
 
         $scriptParams = [
