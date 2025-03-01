@@ -64,7 +64,7 @@ class TaxLocation extends ElementBase
     /**
      * validateFromPost this object based on POST parameters
      */
-    public function validateFromPost(User $user = null)
+    public function validateFromPost(?User $user = null)
     {
         $data = post();
         $rules = [];
@@ -188,7 +188,7 @@ class TaxLocation extends ElementBase
     /**
      * fillFromUser
      */
-    public function fillFromUser(User $user, UserAddress $address = null)
+    public function fillFromUser(User $user, ?UserAddress $address = null)
     {
         $this
             ->email($user->email)
