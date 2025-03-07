@@ -92,11 +92,19 @@ class PayPalPayment extends GatewayBase
     /**
      * getPayPalEndpoint
      */
-    public function getPayPalEndpoint()
+    public function getPayPalEndpoint(): string
     {
         return $this->getHostObject()->test_mode
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
+    }
+
+    /**
+     * getPayPalClientId
+     */
+    public function getPayPalClientId(): string
+    {
+        return $this->getHostObject()->test_mode ? 'test' : $this->getHostObject()->client_id;
     }
 
     /**
@@ -110,13 +118,14 @@ class PayPalPayment extends GatewayBase
     /**
      * renderPaymentScripts
      */
-    public function renderPaymentScripts()
+    public function renderPaymentScripts($currency = 'USD')
     {
         $queryParams = http_build_query([
-            'client-id' => 'test',
+            'client-id' => $this->getPayPalClientId(),
             'components' => 'buttons',
             'enable-funding' => 'venmo',
             'disable-funding' => 'paylater,card',
+            'currency' => $currency,
         ]);
 
         $scriptParams = [
