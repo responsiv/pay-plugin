@@ -23,12 +23,17 @@ tabs:
             tab: Rates
             type: datatable
             size: large
-            # sortable: true
-            # scrollable: true
-            # allowImport: true
-            # allowExport: true
-            # exportFileName: tax-table
             columns:
+                tax_name:
+                    title: Tax Name
+                    width: 100px
+
+                rate:
+                    title: Rate
+                    width: 80px
+                    align: right
+                    # type: number
+
                 country:
                     title: Country
                     type: dropdown
@@ -47,21 +52,11 @@ tabs:
                 city:
                     title: City
 
-                rate:
-                    title: Rate
-                    width: 80px
-                    align: right
-                    # type: number
-
                 priority:
                     title: Priority
                     width: 80px
                     align: right
                     # type: number
-
-                tax_name:
-                    title: Tax Name
-                    width: 100px
 
                 is_compound:
                     title: Compound
