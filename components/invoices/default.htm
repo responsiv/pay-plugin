@@ -12,7 +12,7 @@
         <tbody>
             {% for invoice in invoices %}
                 <tr class="invoice-status-{{ invoice.status.code }}">
-                    <td>{{ invoice.getUniqueId }}</td>
+                    <td>{{ invoice.invoice_number }}</td>
                     <td>{{ invoice.invoiced_at }}</td>
                     <td><strong>{{ invoice.status.name }}</strong> since {{ invoice.status_updated_at }}</td>
                     <td class="total text-right">{{ invoice.total|currency({ in: invoice.currency.code }) }}</td>
