@@ -90,12 +90,6 @@ class Discount extends FormWidgetBase
 
         $currencyObj = $this->getLoadCurrency();
         $amount = $currencyObj->fromBaseValue((int) $amount);
-        $amount = number_format(
-            $amount,
-            $currencyObj->decimal_scale,
-            $currencyObj->decimal_point,
-            ""
-        );
 
         return [$symbol.$amount, $symbol];
     }
