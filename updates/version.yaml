@@ -29,3 +29,4 @@ v2.0.0:
     - migrate_v2_0_0.php
 v2.0.2: Update Stripe and PayPal gateway instructions
 v2.0.3: Fixes bug in PayPal gateway amounts
+v2.0.4: Fixes for PHP 8.4
