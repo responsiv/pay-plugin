@@ -20,7 +20,7 @@ tabs:
 
         discount:
             label: Unit Discount
-            type: discount
+            type: currency
             span: row
             spanClass: col-5
 
