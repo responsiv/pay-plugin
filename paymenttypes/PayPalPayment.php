@@ -7,6 +7,7 @@ use Currency;
 use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
+use Responsiv\Pay\Models\InvoiceStatus;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use ApplicationException;
 use Exception;
@@ -283,7 +284,8 @@ class PayPalPayment extends GatewayBase
 
     /**
      * processWebhook handles asynchronous PayPal webhook events, such as
-     * PAYMENT.CAPTURE.COMPLETED for pending transactions.
+     * PAYMENT.CAPTURE.COMPLETED for pending transactions and
+     * PAYMENT.CAPTURE.REFUNDED for refunds.
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
      */
     public function processWebhook($params)
@@ -308,34 +310,40 @@ class PayPalPayment extends GatewayBase
             }
 
             $eventType = $event['event_type'] ?? '';
+            $resourceId = $event['resource']['id'] ?? null;
 
-            if ($eventType === 'PAYMENT.CAPTURE.COMPLETED') {
-                $captureId = $event['resource']['id'] ?? null;
-                $referenceId = $event['resource']['custom_id']
-                    ?? $event['resource']['invoice_id']
-                    ?? null;
-
-                if (!$referenceId) {
-                    // Look up via the order linked to this capture
-                    $orderId = $event['resource']['supplementary_data']['related_ids']['order_id'] ?? null;
-                    if ($orderId) {
-                        $referenceId = $this->lookupReferenceIdFromOrder($orderId);
+            switch ($eventType) {
+                case 'PAYMENT.CAPTURE.COMPLETED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
+                        if (!$invoice->isPaymentProcessed()) {
+                            $invoice->logPaymentAttempt(
+                                "Webhook PAYMENT.CAPTURE.COMPLETED: {$resourceId}",
+                                true, [], $event, $body
+                            );
+                            $invoice->markAsPaymentProcessed();
+                        }
                     }
-                }
+                    break;
 
-                if ($referenceId) {
-                    $invoice = $this->createInvoiceModel()->findByUniqueId($referenceId);
-                    if ($invoice && !$invoice->isPaymentProcessed()) {
+                case 'PAYMENT.CAPTURE.REFUNDED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
                         $invoice->logPaymentAttempt(
-                            "Webhook PAYMENT.CAPTURE.COMPLETED: {$captureId}",
-                            true,
-                            [],
-                            $event,
-                            $body
+                            "Webhook PAYMENT.CAPTURE.REFUNDED: {$resourceId}",
+                            true, [], $event, $body
                         );
-                        $invoice->markAsPaymentProcessed();
+                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_VOID, 'Refunded via PayPal');
                     }
-                }
+                    break;
+
+                case 'PAYMENT.CAPTURE.DENIED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
+                        $invoice->logPaymentAttempt(
+                            "Webhook PAYMENT.CAPTURE.DENIED: {$resourceId}",
+                            false, [], $event, $body
+                        );
+                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_VOID, 'Payment denied by PayPal');
+                    }
+                    break;
             }
 
             return Response::make('OK', 200);
@@ -344,6 +352,33 @@ class PayPalPayment extends GatewayBase
             Log::error('PayPal webhook error: ' . $ex->getMessage());
             return Response::make('Error', 500);
         }
+    }
+
+    /**
+     * findInvoiceFromWebhookEvent locates the invoice associated with a
+     * PayPal webhook event by checking resource fields and falling back
+     * to an order lookup.
+     */
+    protected function findInvoiceFromWebhookEvent(array $event)
+    {
+        $resource = $event['resource'] ?? [];
+
+        $referenceId = $resource['custom_id']
+            ?? $resource['invoice_id']
+            ?? null;
+
+        if (!$referenceId) {
+            $orderId = $resource['supplementary_data']['related_ids']['order_id'] ?? null;
+            if ($orderId) {
+                $referenceId = $this->lookupReferenceIdFromOrder($orderId);
+            }
+        }
+
+        if (!$referenceId) {
+            return null;
+        }
+
+        return $this->createInvoiceModel()->findByUniqueId($referenceId);
     }
 
     /**

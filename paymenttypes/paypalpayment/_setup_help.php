@@ -14,9 +14,9 @@
             <li>Copy the <strong>Secret Key</strong> and paste it in the Configuration tab</li>
         </ol>
 
-        <h3>Setting up Webhooks (Optional)</h3>
+        <p><strong>Setting up Webhooks (Optional)</strong></p>
         <p>
-            Webhooks allow PayPal to notify your site when a pending payment is completed. This is recommended for production use.
+            Webhooks allow PayPal to notify your site when payments are completed, refunded or denied. This is recommended for production use.
         </p>
         <ol>
             <li>In your PayPal Developer Dashboard, navigate to your app and click <strong>Webhooks</strong></li>
@@ -25,7 +25,12 @@
                 Enter your webhook URL:
                 <code><?= e($formModel->getWebhookUrl()) ?></code>
             </li>
-            <li>Subscribe to the event: <strong>PAYMENT.CAPTURE.COMPLETED</strong></li>
+            <li>
+                Subscribe to the following events:
+                <strong>PAYMENT.CAPTURE.COMPLETED</strong>,
+                <strong>PAYMENT.CAPTURE.REFUNDED</strong>,
+                <strong>PAYMENT.CAPTURE.DENIED</strong>
+            </li>
             <li>Save, then copy the generated <strong>Webhook ID</strong> and paste it in the Configuration tab</li>
         </ol>
     </div>
