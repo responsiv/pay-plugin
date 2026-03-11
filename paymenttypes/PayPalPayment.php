@@ -113,7 +113,8 @@ class PayPalPayment extends GatewayBase
     public function renderPaymentScripts()
     {
         $queryParams = http_build_query([
-            'client-id' => 'test',
+            'client-id' => $this->getHostObject()->client_id,
+            'currency' => Currency::getActiveCode(),
             'components' => 'buttons',
             'enable-funding' => 'venmo',
             'disable-funding' => 'paylater,card',
@@ -217,32 +218,47 @@ class PayPalPayment extends GatewayBase
                 ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture", $payload);
 
             if (!$response->successful()) {
+                // Order already captured (e.g. duplicate callback) - treat as success
+                if ($response->json('details.0.issue') === 'ORDER_ALREADY_CAPTURED') {
+                    return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + ($response->json() ?: []), 200);
+                }
+
                 $errorIssue = $response->json('details.0.issue');
                 $errorDescription = $response->json('details.0.description');
                 $invoice->logPaymentAttempt("{$errorIssue} {$errorDescription}", false, $payload, $response->json(), '');
                 throw new Exception("{$errorIssue} {$errorDescription}");
             }
             elseif (!$invoice->isPaymentProcessed(true)) {
-                if ($response->json('status') !== 'COMPLETED') {
-                    throw new ApplicationException('Invalid response');
+                $validStatuses = ['COMPLETED', 'PENDING'];
+
+                if (!in_array($response->json('status'), $validStatuses)) {
+                    throw new ApplicationException('Invalid response status: ' . $response->json('status'));
                 }
 
                 if ($response->json('purchase_units.0.reference_id') !== $invoice->getUniqueId()) {
                     throw new ApplicationException('Invalid invoice number');
                 }
 
-                if ($response->json('purchase_units.0.payments.captures.0.status') !== 'COMPLETED') {
-                    throw new ApplicationException('Invalid response');
+                if (!in_array($response->json('purchase_units.0.payments.captures.0.status'), $validStatuses)) {
+                    throw new ApplicationException('Invalid capture status: ' . $response->json('purchase_units.0.payments.captures.0.status'));
                 }
 
-                if (($matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value')) !== Currency::fromBaseValue($totals['total'])) {
-                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue));
+                $matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value');
+                $expectedValue = Currency::fromBaseValue($totals['total']);
+                if (!empty($expectedValue) && strpos($expectedValue, ',') !== false) {
+                    $expectedValue = str_replace(',', '.', $expectedValue);
+                }
+                if ($matchedValue !== $expectedValue) {
+                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue) . ', expected: ' . e($expectedValue));
                 }
 
-                $transactionStatus = $response->json('status');
+                $captureStatus = $response->json('purchase_units.0.payments.captures.0.status');
                 $transactionId = $response->json('id');
-                $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $payload, $response->json(), '');
-                $invoice->markAsPaymentProcessed();
+                $invoice->logPaymentAttempt("Transaction {$captureStatus}: {$transactionId}", true, $payload, $response->json(), '');
+
+                if ($captureStatus === 'COMPLETED') {
+                    $invoice->markAsPaymentProcessed();
+                }
             }
 
             return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());
