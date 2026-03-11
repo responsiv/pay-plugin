@@ -137,6 +137,42 @@ Using the redirection method, when the user clicks the Pay button, they are redi
 
 ### Client-side Method
 
-Using the client-side method, the payment form is handled using custom JavaScript. When the user clicks Pay, the request is submitted back to the server using a locally registered API endpoint, which communicates to the payment gateway via a REST API or equivalent. The response given with JSON And is processed by the JavaScript code. If everything is successful the `onPay` AJAX handler is called to redirect to the confirmation page.
+Using the client-side method, the payment form is handled using custom JavaScript. When the user clicks Pay, the request is submitted back to the server using a locally registered API endpoint, which communicates to the payment gateway via a REST API or equivalent. The response given with JSON and is processed by the JavaScript code. If everything is successful the `onPay` AJAX handler is called to redirect to the confirmation page.
 
-> **Note**: View the `Responsiv\Pay\PaymentTypes\PayPalPayment` class for an example of a redirection payment type.
+> **Note**: View the `Responsiv\Pay\PaymentTypes\PayPalPayment` class for an example of a client-side payment type.
+
+## Handling Pending Payments
+
+Some payment gateways don't confirm transactions immediately. For example, PayPal may return a `PENDING` capture status when the seller's account requires manual review. In these cases, you should update the invoice status to `approved` to indicate the customer has submitted payment, while waiting for final confirmation via a webhook.
+
+```php
+use Responsiv\Pay\Models\InvoiceStatus;
+
+if ($captureStatus === 'COMPLETED') {
+    $invoice->markAsPaymentProcessed();
+}
+elseif ($captureStatus === 'PENDING') {
+    $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_APPROVED);
+}
+```
+
+When the invoice status is `approved`, the payment page will display a "payment is being processed" message instead of showing payment methods again, preventing the customer from paying twice.
+
+## Checking Payment Status
+
+Gateways can implement the `checkPaymentStatus` method to poll the payment provider when the customer revisits the payment page. This allows pending payments to be confirmed without waiting for a webhook. The method is called automatically by the `Payment` component when an invoice has been submitted but not yet confirmed.
+
+```php
+public function checkPaymentStatus($invoice): bool
+{
+    // Query your payment gateway API to check the current status
+    // If the payment is now confirmed:
+    $invoice->markAsPaymentProcessed();
+    return true;
+
+    // If still pending or unable to check:
+    return false;
+}
+```
+
+The method should return `true` if the payment was confirmed, or `false` otherwise. Any exceptions thrown will be caught silently by the component, so the payment page will still render normally if the check fails.
