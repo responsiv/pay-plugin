@@ -24,3 +24,8 @@ fields:
         comment: PayPal client secret to authenticate with the client ID. Keep this secret safe.
         tab: Configuration
         type: sensitive
+
+    webhook_id:
+        label: Webhook ID
+        comment: Optional. Enter the Webhook ID from PayPal to enable automatic payment confirmation for pending transactions.
+        tab: Configuration

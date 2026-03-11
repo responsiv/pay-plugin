@@ -61,7 +61,8 @@ class PayPalPayment extends GatewayBase
     {
         return [
             'paypal_rest_invoices' => 'processApiInvoices',
-            'paypal_rest_invoice_capture' => 'processApiInvoiceCapture'
+            'paypal_rest_invoice_capture' => 'processApiInvoiceCapture',
+            'paypal_rest_webhook' => 'processWebhook'
         ];
     }
 
@@ -270,6 +271,132 @@ class PayPalPayment extends GatewayBase
             Log::error($ex);
             throw $this->newResponseError('Failed to capture a valid order');
         }
+    }
+
+    /**
+     * getWebhookUrl
+     */
+    public function getWebhookUrl()
+    {
+        return $this->makeAccessPointLink('paypal_rest_webhook');
+    }
+
+    /**
+     * processWebhook handles asynchronous PayPal webhook events, such as
+     * PAYMENT.CAPTURE.COMPLETED for pending transactions.
+     * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
+     */
+    public function processWebhook($params)
+    {
+        try {
+            $host = $this->getHostObject();
+            $webhookId = $host->webhook_id;
+            if (!$webhookId) {
+                return Response::make('Webhook not configured', 200);
+            }
+
+            $body = request()->getContent();
+            $event = json_decode($body, true);
+            if (!$event) {
+                return Response::make('Invalid payload', 400);
+            }
+
+            // Verify webhook signature
+            if (!$this->verifyWebhookSignature($webhookId, $body)) {
+                Log::warning('PayPal webhook signature verification failed');
+                return Response::make('Invalid signature', 403);
+            }
+
+            $eventType = $event['event_type'] ?? '';
+
+            if ($eventType === 'PAYMENT.CAPTURE.COMPLETED') {
+                $captureId = $event['resource']['id'] ?? null;
+                $referenceId = $event['resource']['custom_id']
+                    ?? $event['resource']['invoice_id']
+                    ?? null;
+
+                if (!$referenceId) {
+                    // Look up via the order linked to this capture
+                    $orderId = $event['resource']['supplementary_data']['related_ids']['order_id'] ?? null;
+                    if ($orderId) {
+                        $referenceId = $this->lookupReferenceIdFromOrder($orderId);
+                    }
+                }
+
+                if ($referenceId) {
+                    $invoice = $this->createInvoiceModel()->findByUniqueId($referenceId);
+                    if ($invoice && !$invoice->isPaymentProcessed()) {
+                        $invoice->logPaymentAttempt(
+                            "Webhook PAYMENT.CAPTURE.COMPLETED: {$captureId}",
+                            true,
+                            [],
+                            $event,
+                            $body
+                        );
+                        $invoice->markAsPaymentProcessed();
+                    }
+                }
+            }
+
+            return Response::make('OK', 200);
+        }
+        catch (Exception $ex) {
+            Log::error('PayPal webhook error: ' . $ex->getMessage());
+            return Response::make('Error', 500);
+        }
+    }
+
+    /**
+     * verifyWebhookSignature verifies the PayPal webhook signature using the
+     * PayPal verification API endpoint.
+     * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
+     */
+    protected function verifyWebhookSignature(string $webhookId, string $body): bool
+    {
+        $headers = request()->headers;
+
+        $payload = [
+            'auth_algo' => $headers->get('paypal-auth-algo'),
+            'cert_url' => $headers->get('paypal-cert-url'),
+            'transmission_id' => $headers->get('paypal-transmission-id'),
+            'transmission_sig' => $headers->get('paypal-transmission-sig'),
+            'transmission_time' => $headers->get('paypal-transmission-time'),
+            'webhook_id' => $webhookId,
+            'webhook_event' => json_decode($body, true),
+        ];
+
+        $token = $this->generatePayPalAccessToken();
+        $baseUrl = $this->getPayPalEndpoint();
+
+        $response = Http::withToken($token)
+            ->post("{$baseUrl}/v1/notifications/verify-webhook-signature", $payload);
+
+        return $response->successful()
+            && $response->json('verification_status') === 'SUCCESS';
+    }
+
+    /**
+     * lookupReferenceIdFromOrder fetches the reference_id from a PayPal order
+     * when the webhook event doesn't include it directly.
+     */
+    protected function lookupReferenceIdFromOrder(string $orderId): ?string
+    {
+        try {
+            $token = $this->generatePayPalAccessToken();
+            $baseUrl = $this->getPayPalEndpoint();
+
+            $response = Http::withToken($token)
+                ->get("{$baseUrl}/v2/checkout/orders/{$orderId}");
+
+            if ($response->successful()) {
+                return $response->json('purchase_units.0.reference_id');
+            }
+        }
+        catch (Exception $ex) {
+            Log::warning('PayPal order lookup failed: ' . $ex->getMessage());
+        }
+
+        return null;
     }
 
     /**
