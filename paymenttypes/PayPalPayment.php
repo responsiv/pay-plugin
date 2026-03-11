@@ -278,6 +278,49 @@ class PayPalPayment extends GatewayBase
     }
 
     /**
+     * checkPaymentStatus polls PayPal to check if a pending capture has
+     * since completed. Returns true if the payment was confirmed.
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_get
+     */
+    public function checkPaymentStatus($invoice): bool
+    {
+        // Find the PayPal order ID from the last successful payment log
+        $paymentLog = $invoice->payment_log()
+            ->where('is_success', true)
+            ->latest()
+            ->first();
+
+        $orderId = $paymentLog?->response_data['id'] ?? null;
+        if (!$orderId) {
+            return false;
+        }
+
+        $paymentMethod = $invoice->getPaymentMethod();
+        $token = $paymentMethod->generatePayPalAccessToken();
+        $baseUrl = $paymentMethod->getPayPalEndpoint();
+
+        $response = Http::withToken($token)
+            ->get("{$baseUrl}/v2/checkout/orders/{$orderId}");
+
+        if (!$response->successful()) {
+            return false;
+        }
+
+        $captureStatus = $response->json('purchase_units.0.payments.captures.0.status');
+
+        if ($captureStatus === 'COMPLETED' && !$invoice->isPaymentProcessed()) {
+            $invoice->logPaymentAttempt(
+                "Status Check COMPLETED: {$orderId}",
+                true, [], $response->json(), ''
+            );
+            $invoice->markAsPaymentProcessed();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * getWebhookUrl
      */
     public function getWebhookUrl()

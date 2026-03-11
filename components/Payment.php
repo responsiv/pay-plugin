@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Components;
 
+use Log;
 use Auth;
 use Redirect;
 use Cms\Classes\ComponentBase;
@@ -8,6 +9,7 @@ use Responsiv\Pay\Models\PaymentMethod;
 use Responsiv\Pay\Models\Invoice as InvoiceModel;
 use Illuminate\Http\RedirectResponse;
 use ApplicationException;
+use Exception;
 
 /**
  * Payment screen for an existing invoice.
@@ -59,12 +61,38 @@ class Payment extends ComponentBase
     protected function prepareVars()
     {
         $this->page['invoice'] = $invoice = $this->invoice();
-        $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
 
         if ($invoice) {
+            $this->checkPaymentStatus($invoice);
+
             $this->page->meta_title = $this->page->meta_title
                 ? str_replace('%s', $invoice->getUniqueId(), $this->page->meta_title)
                 : 'Invoice #'.$invoice->getUniqueId();
+        }
+
+        $this->page['paymentMethods'] = $this->listAvailablePaymentMethods();
+    }
+
+    /**
+     * checkPaymentStatus polls the payment gateway to check if a submitted
+     * payment has since been confirmed. Silently fails on any error.
+     */
+    protected function checkPaymentStatus($invoice)
+    {
+        if ($invoice->is_paid || !$invoice->is_payment_submitted) {
+            return;
+        }
+
+        try {
+            $paymentMethod = $invoice->payment_method;
+            if ($paymentMethod && ($driver = $paymentMethod->getDriverObject())) {
+                if ($driver->checkPaymentStatus($invoice)) {
+                    $invoice->refresh();
+                }
+            }
+        }
+        catch (Exception $ex) {
+            Log::debug('Payment status check failed: ' . $ex->getMessage());
         }
     }
 
