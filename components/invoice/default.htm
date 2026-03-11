@@ -32,9 +32,12 @@
 
     <!-- Status -->
     <div class="text-right">
-        {% if invoice.isPaid %}
+        {% if invoice.is_paid %}
             <h4>This invoice has been paid!</h4>
             <p>Thank you for your business.</p>
+        {% elseif invoice.is_payment_submitted %}
+            <h4>Your payment is being processed</h4>
+            <p>Your payment has been submitted and is awaiting confirmation. No further action is needed.</p>
         {% else %}
             <h4>This invoice has not been paid</h4>
             <a class="btn btn-success btn-lg" href="{{ invoice.getReceiptUrl() }}">

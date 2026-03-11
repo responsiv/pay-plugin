@@ -11,6 +11,12 @@
                 This invoice has been paid. Thank-you!
             </h4>
         </div>
+    {% elseif invoice.is_payment_submitted %}
+        <div class="payment-invoice-pending">
+            <h4 class="text-info">
+                Your payment has been submitted and is being processed. Thank-you!
+            </h4>
+        </div>
     {% else %}
 
         <!-- Invoice header -->

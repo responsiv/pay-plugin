@@ -261,6 +261,9 @@ class PayPalPayment extends GatewayBase
                 if ($captureStatus === 'COMPLETED') {
                     $invoice->markAsPaymentProcessed();
                 }
+                elseif ($captureStatus === 'PENDING') {
+                    $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_APPROVED);
+                }
             }
 
             return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());
