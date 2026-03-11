@@ -22,7 +22,7 @@
             ->outline() ?>
     <?php elseif ($statusCode === 'paid'): ?>
         <?= Ui::popupButton("Mark Refunded", 'onLoadChangeInvoiceStatusForm')
-            ->ajaxData(['invoice_id' => $formModel->id, 'status_preset' => 'void'])
+            ->ajaxData(['invoice_id' => $formModel->id, 'status_preset' => 'refunded'])
             ->size(500)
             ->icon('icon-ban')
             ->outline() ?>

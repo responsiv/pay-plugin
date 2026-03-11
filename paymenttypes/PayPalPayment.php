@@ -331,7 +331,7 @@ class PayPalPayment extends GatewayBase
                             "Webhook PAYMENT.CAPTURE.REFUNDED: {$resourceId}",
                             true, [], $event, $body
                         );
-                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_VOID, 'Refunded via PayPal');
+                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_REFUNDED, 'Refunded via PayPal');
                     }
                     break;
 

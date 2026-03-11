@@ -123,6 +123,8 @@ trait HasInvoiceStatus
                 return "Add Payment";
             case 'approved':
                 return "Approve Invoice";
+            case 'refunded':
+                return "Refund Invoice";
             case 'void':
                 return "Void Invoice";
             default:
