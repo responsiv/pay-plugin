@@ -1,6 +1,7 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
 use Currency;
+use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * HasModelAttributes
@@ -11,7 +12,6 @@ use Currency;
  * @property int $original_subtotal
  * @property int $final_subtotal
  * @property int $final_discount
- * @property string $currency_code
  * @property string $street_address
  * @property string $status_code
  * @property string $tax_mode
@@ -101,13 +101,13 @@ trait HasModelAttributes
     }
 
     /**
-     * getCurrencyCodeAttribute returns `currency_code`
+     * getCurrencyObject returns the Currency model for this invoice's currency_code
      */
-    public function getCurrencyCodeAttribute()
+    public function getCurrencyObject()
     {
-        return $this->currency
-            ? $this->currency->code
-            : Currency::getDefault()?->code;
+        return $this->currency_code
+            ? CurrencyModel::findByCode($this->currency_code)
+            : Currency::getActive();
     }
 
     /**

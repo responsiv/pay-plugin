@@ -29,8 +29,8 @@
 
 <div class="scoreboard-item title-value">
     <h4><?= __("Total") ?></h4>
-    <p><?= $formModel->currency?->formatCurrency($formModel->total) ?: Currency::format($formModel->total) ?></p>
+    <p><?= $formModel->getCurrencyObject()?->formatCurrency($formModel->total) ?: Currency::format($formModel->total) ?></p>
     <p class="description">
-        <?= __("Tax") ?>: <?= $formModel->currency?->formatCurrency($formModel->tax) ?: Currency::format($formModel->tax) ?>
+        <?= __("Tax") ?>: <?= $formModel->getCurrencyObject()?->formatCurrency($formModel->tax) ?: Currency::format($formModel->tax) ?>
     </p>
 </div>
