@@ -9,10 +9,12 @@ columns:
     price:
         label: Price
         type: currency
+        currencyFrom: invoice.currency_code
 
     discount:
         label: Discount
         type: currency
+        currencyFrom: invoice.currency_code
 
     quantity:
         label: Quantity
@@ -22,3 +24,4 @@ columns:
     subtotal:
         label: Total
         type: currency
+        currencyFrom: invoice.currency_code
