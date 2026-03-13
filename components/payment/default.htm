@@ -1,6 +1,6 @@
 {% put scripts %}
     {% for method in paymentMethods %}
-        {{ method.renderPaymentScripts()|raw }}
+        {{ method.renderPaymentScripts(invoice.currency ?invoice.currency.code : 'USD')|raw }}
     {% endfor %}
 {% endput %}
 {% if invoice %}
