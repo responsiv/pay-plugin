@@ -50,11 +50,6 @@ class Tax extends Model
     ];
 
     /**
-     * @var int roundPrecision
-     */
-    protected $roundPrecision = 2;
-
-    /**
      * getTotalTax adds tax to an untaxed amount. Return value is the tax amount
      * to add to the final price.
      */
@@ -68,7 +63,7 @@ class Tax extends Model
             $result += $tax['rate'];
         }
 
-        return round($result, $this->roundPrecision);
+        return round($result);
     }
 
     /**
@@ -85,7 +80,7 @@ class Tax extends Model
             $result += $tax['rate'];
         }
 
-        return round($result, $this->roundPrecision);
+        return round($result);
     }
 
     /**
@@ -139,8 +134,8 @@ class Tax extends Model
             $taxInfo['addedTax'] = true;
             $taxInfo['compoundTax'] = false;
             $taxInfo['rate'] = $pricesIncludeTax
-                ? round(($amount * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']), $this->roundPrecision)
-                : round($amount * $taxInfo['taxRate'], $this->roundPrecision);
+                ? round(($amount * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']))
+                : round($amount * $taxInfo['taxRate']);
             $taxInfo['total'] = $taxInfo['rate'];
             $result[] = $taxInfo;
             $addedResult += $taxInfo['rate'];
@@ -153,8 +148,8 @@ class Tax extends Model
             $taxInfo['compoundTax'] = true;
             $taxInfo['addedTax'] = false;
             $taxInfo['rate'] = $pricesIncludeTax
-                ? round(($addedResult * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']), $this->roundPrecision)
-                : round($addedResult * $taxInfo['taxRate'], $this->roundPrecision);
+                ? round(($addedResult * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']))
+                : round($addedResult * $taxInfo['taxRate']);
             $taxInfo['total'] = $taxInfo['rate'];
             $result[] = $taxInfo;
         }
