@@ -148,8 +148,8 @@ class Tax extends Model
 
         foreach ($compoundTaxes as $compoundTax) {
             $taxInfo = [];
-            $taxInfo['name'] = $compoundTax->name;
-            $taxInfo['taxRate'] = $compoundTax->rate / 100;
+            $taxInfo['name'] = $compoundTax['name'];
+            $taxInfo['taxRate'] = $compoundTax['rate'] / 100;
             $taxInfo['compoundTax'] = true;
             $taxInfo['addedTax'] = false;
             $taxInfo['rate'] = $pricesIncludeTax
@@ -205,7 +205,7 @@ class Tax extends Model
                 continue;
             }
 
-            $isCompound = isset($row['compound']) ? $row['compound'] : 0;
+            $isCompound = isset($row['is_compound']) ? $row['is_compound'] : 0;
             if (preg_match('/^[0-9]+$/', $isCompound)) {
                 $isCompound = (int) $isCompound;
             }
@@ -406,19 +406,9 @@ class Tax extends Model
      */
     protected function getCountryList($term)
     {
-        $result = ['*' => __("* - Any Country")];
+        $codes = Country::applyEnabled()->lists('code');
 
-        // The search term functionality is disabled as it's not supported
-        // by the Table widget's drop-down processor -ab 2015-01-03
-        //$countries = Country::searchWhere($term, ['name', 'code'])
-
-        $countries = Country::applyEnabled()->lists('name', 'code');
-
-        foreach ($countries as $code => $name) {
-            $result[$code] = $code .' - ' . $name;
-        }
-
-        return $result;
+        return array_merge(['*'], $codes);
     }
 
     /**
@@ -426,29 +416,15 @@ class Tax extends Model
      */
     protected function getStateList($countryCode, $term)
     {
-        $result = ['*' => __("* - Any State")];
-
         if (!$countryCode || $countryCode == '*') {
-            return $result;
+            return ['*'];
         }
 
-        // The search term functionality is disabled as it's not supported
-        // by the Table widget's drop-down processor -ab 2015-01-03
-        // $states = State::searchWhere($term, ['name', 'code']);
+        $codes = State::whereHas('country', function($query) use ($countryCode) {
+            $query->where('code', $countryCode);
+        })->limit(10)->lists('code');
 
-        if ($countryCode) {
-            $states = State::whereHas('country', function($query) use ($countryCode) {
-                $query->where('code', $countryCode);
-            });
-        }
-
-        $states = $states->limit(10)->lists('name', 'code');
-
-        foreach ($states as $code => $name) {
-            $result[$code] = $code .' - ' . $name;
-        }
-
-        return $result;
+        return array_merge(['*'], $codes);
     }
 
     /**
