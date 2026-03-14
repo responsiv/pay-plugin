@@ -8,15 +8,13 @@ use Model;
  * @property int $id
  * @property string $description
  * @property int $quantity quantity the total quantity of units
- * @property int $price
- * @property int $price_less_tax
- * @property int $price_with_tax
- * @property int $discount
- * @property int $discount_less_tax
- * @property int $discount_with_tax
- * @property int $tax
- * @property int $subtotal
- * @property int $total
+ * @property int $price price the per-unit price
+ * @property int $price_less_tax price_less_tax the per-unit price excluding tax
+ * @property int $price_with_tax price_with_tax the per-unit price including tax
+ * @property int $discount discount the line discount amount (total for the row)
+ * @property int $tax tax the line tax amount
+ * @property int $subtotal subtotal the line subtotal (qty * price - discount)
+ * @property int $total total the line total (subtotal + tax)
  * @property int $sort_order
  * @property int $related_id
  * @property string $related_type
@@ -72,7 +70,7 @@ class InvoiceItem extends Model
             $this->tax_class = Tax::getDefault();
         }
 
-        $this->subtotal = $this->quantity * ($this->price - $this->discount);
+        $this->subtotal = $this->quantity * $this->price - $this->discount;
         $this->total = $this->subtotal + $this->tax;
     }
 

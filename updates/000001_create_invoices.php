@@ -36,7 +36,7 @@ return new class extends Migration
             $table->integer('payment_method_id')->unsigned()->nullable()->index();
             $table->string('related_id')->index()->nullable();
             $table->string('related_type')->index()->nullable();
-            $table->integer('currency_id')->unsigned()->nullable()->index();
+            $table->string('currency_code', 3)->nullable();
             $table->integer('state_id')->unsigned()->nullable()->index();
             $table->integer('country_id')->unsigned()->nullable()->index();
             $table->integer('status_id')->unsigned()->nullable()->index();

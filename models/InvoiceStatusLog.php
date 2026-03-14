@@ -128,8 +128,10 @@ class InvoiceStatusLog extends Model
                 InvoiceStatus::STATUS_VOID,
             ],
             InvoiceStatus::STATUS_PAID => [
+                InvoiceStatus::STATUS_REFUNDED,
                 InvoiceStatus::STATUS_VOID,
             ],
+            InvoiceStatus::STATUS_REFUNDED => [],
             InvoiceStatus::STATUS_VOID => [],
         ];
 

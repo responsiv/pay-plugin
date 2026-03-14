@@ -172,6 +172,18 @@ abstract class GatewayBase extends DriverBehavior
         return '';
     }
 
+    /**
+     * checkPaymentStatus checks the payment status with the gateway for an
+     * invoice that has been submitted but not yet confirmed. Gateways can
+     * implement this to poll for updated payment status (e.g. a pending
+     * capture that has since completed). Returns true if the payment has
+     * been confirmed as processed.
+     */
+    public function checkPaymentStatus($invoice): bool
+    {
+        return false;
+    }
+
     //
     // Payment Profiles
     //

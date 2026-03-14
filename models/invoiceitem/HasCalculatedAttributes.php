@@ -24,7 +24,6 @@ trait HasCalculatedAttributes
 
         // Defaults
         $this->price_with_tax = $this->price_less_tax = $this->price;
-        $this->discount_with_tax = $this->discount_less_tax = $this->discount;
         $this->tax = 0;
 
         // Recalculate taxes
@@ -35,13 +34,15 @@ trait HasCalculatedAttributes
 
         if ($this->prices_include_tax) {
             $this->price_less_tax = $this->price - $taxClass->getTotalUntax($this->price, $address);
-            $this->discount_less_tax = $this->discount - $taxClass->getTotalUntax($this->discount, $address);
-            $this->tax = ($this->price - $this->price_less_tax) - ($this->discount - $this->discount_less_tax);
+            $priceTax = ($this->price - $this->price_less_tax) * $this->quantity;
+            $discountTax = $taxClass->getTotalUntax($this->discount, $address);
         }
         else {
             $this->price_with_tax = $this->price + $taxClass->getTotalTax($this->price, $address);
-            $this->discount_with_tax = $this->discount + $taxClass->getTotalTax($this->discount, $address);
-            $this->tax = ($this->price_with_tax - $this->price) - ($this->discount_with_tax - $this->discount);
+            $priceTax = ($this->price_with_tax - $this->price) * $this->quantity;
+            $discountTax = $taxClass->getTotalTax($this->discount, $address);
         }
+
+        $this->tax = $priceTax - $discountTax;
     }
 }

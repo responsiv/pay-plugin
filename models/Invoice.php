@@ -6,7 +6,6 @@ use Request;
 use Currency;
 use Responsiv\Pay\Classes\TaxLocation;
 use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
-use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * Invoice Model
@@ -37,7 +36,7 @@ use Responsiv\Currency\Models\Currency as CurrencyModel;
  * @property int $user_id
  * @property int $template_id
  * @property int $payment_method_id
- * @property int $currency_id
+ * @property string $currency_code
  * @property int $related_id
  * @property string $related_type
  * @property int $status_id
@@ -92,7 +91,6 @@ class Invoice extends Model implements InvoiceContract
         'template' => InvoiceTemplate::class,
         'payment_method' => PaymentMethod::class,
         'user' => \RainLab\User\Models\User::class,
-        'currency' => CurrencyModel::class,
     ];
 
     /**
@@ -170,9 +168,8 @@ class Invoice extends Model implements InvoiceContract
             $this->template_id = InvoiceTemplate::getDefault()?->id;
         }
 
-        if (!$this->currency_id) {
-            // Use default currency since multisite not used on invoices
-            $this->currency_id = Currency::getDefault()?->id;
+        if (!$this->currency_code) {
+            $this->currency_code = Currency::getActiveCode();
         }
     }
 

@@ -15,8 +15,6 @@ return new class extends Migration
             $table->bigInteger('price_less_tax')->nullable();
             $table->bigInteger('price_with_tax')->nullable();
             $table->bigInteger('discount')->nullable();
-            $table->bigInteger('discount_less_tax')->nullable();
-            $table->bigInteger('discount_with_tax')->nullable();
             $table->bigInteger('subtotal')->nullable();
             $table->bigInteger('tax')->nullable();
             $table->bigInteger('total')->nullable();

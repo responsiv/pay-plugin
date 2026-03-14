@@ -11,6 +11,7 @@ class SeedAllTables extends Seeder
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Draft', 'code' => 'draft']);
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Approved', 'code' => 'approved']);
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Paid', 'code' => 'paid']);
+        InvoiceStatus::create(['is_enabled' => true, 'name' => 'Refunded', 'code' => 'refunded']);
         InvoiceStatus::create(['is_enabled' => true, 'name' => 'Void', 'code' => 'void']);
 
         InvoiceTemplate::create([
