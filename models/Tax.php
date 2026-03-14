@@ -62,10 +62,10 @@ class Tax extends Model
     {
         $result = 0;
 
-        $taxes = $this->getTaxRates($amount);
+        $taxes = $this->getTaxRates($amount, ['pricesIncludeTax' => false]);
 
         foreach ($taxes as $tax) {
-            $result += ($tax['taxRate'] * $amount) / (1 + $tax['taxRate']);
+            $result += $tax['rate'];
         }
 
         return round($result, $this->roundPrecision);
@@ -79,10 +79,10 @@ class Tax extends Model
     {
         $result = 0;
 
-        $taxes = $this->getTaxRates($amount);
+        $taxes = $this->getTaxRates($amount, ['pricesIncludeTax' => true]);
 
         foreach ($taxes as $tax) {
-            $result += ($tax['taxRate'] * $amount) / (1 + $tax['taxRate']);
+            $result += $tax['rate'];
         }
 
         return round($result, $this->roundPrecision);
