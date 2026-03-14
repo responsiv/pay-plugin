@@ -40,7 +40,7 @@ trait HasModelAttributes
      */
     public function getOriginalSubtotalAttribute(): int
     {
-        return $this->subtotal - $this->discount;
+        return $this->subtotal + $this->discount;
     }
 
     /**

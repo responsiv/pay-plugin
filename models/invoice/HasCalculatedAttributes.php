@@ -26,7 +26,7 @@ trait HasCalculatedAttributes
         Tax::setLocationContext($address);
         Tax::setPricesIncludeTax((bool) $this->prices_include_tax);
 
-        // Calculate totals for order items
+        // Calculate totals for invoice items
         if ($items !== null) {
             $this->discount = 0;
             $this->discount_tax = 0;
@@ -34,9 +34,21 @@ trait HasCalculatedAttributes
 
             foreach ($items as $item) {
                 if ($item instanceof InvoiceItem) {
-                    $this->discount += $item->quantity * $item->discount;
-                    $this->discount_tax += $item->quantity * ($item->discount_with_tax - $item->discount);
-                    $this->subtotal += $item->quantity * ($item->price - $item->discount);
+                    $this->discount += $item->discount;
+                    $this->subtotal += $item->quantity * $item->price - $item->discount;
+
+                    // Calculate the tax portion of the discount
+                    if ($item->discount) {
+                        $taxClass = Tax::findByKey($item->tax_class_id);
+                        if ($taxClass) {
+                            if ($this->prices_include_tax) {
+                                $this->discount_tax += $taxClass->getTotalUntax($item->discount, $address);
+                            }
+                            else {
+                                $this->discount_tax += $taxClass->getTotalTax($item->discount, $address);
+                            }
+                        }
+                    }
                 }
             }
 

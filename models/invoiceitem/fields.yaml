@@ -20,7 +20,7 @@ tabs:
             spanClass: col-5
 
         discount:
-            label: Unit Discount
+            label: Discount
             type: currency
             currencyFrom: invoice.currency_code
             span: row
