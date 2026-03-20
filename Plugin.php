@@ -183,13 +183,4 @@ class Plugin extends PluginBase
         ];
     }
 
-    /**
-     * registerFormWidgets
-     */
-    public function registerFormWidgets()
-    {
-        return [
-            \Responsiv\Pay\FormWidgets\Discount::class => 'discount'
-        ];
-    }
 }

@@ -1,16 +1,17 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
 use Currency;
+use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * HasModelAttributes
  *
  * @property bool $is_paid
+ * @property bool $is_payment_submitted
  * @property bool $is_past_due_date
  * @property int $original_subtotal
  * @property int $final_subtotal
  * @property int $final_discount
- * @property string $currency_code
  * @property string $street_address
  * @property string $status_code
  * @property string $tax_mode
@@ -39,7 +40,7 @@ trait HasModelAttributes
      */
     public function getOriginalSubtotalAttribute(): int
     {
-        return $this->subtotal - $this->discount;
+        return $this->subtotal + $this->discount;
     }
 
     /**
@@ -71,6 +72,23 @@ trait HasModelAttributes
     }
 
     /**
+     * getIsPaymentSubmittedAttribute returns true if the payment has been
+     * submitted by the customer, either fully processed or awaiting
+     * confirmation (e.g. PayPal PENDING capture).
+     */
+    public function getIsPaymentSubmittedAttribute()
+    {
+        if ($this->isPaymentProcessed()) {
+            return true;
+        }
+
+        return in_array($this->status_code, [
+            \Responsiv\Pay\Models\InvoiceStatus::STATUS_APPROVED,
+            \Responsiv\Pay\Models\InvoiceStatus::STATUS_PAID,
+        ]);
+    }
+
+    /**
      * getIsPastDueDateAttribute
      */
     public function getIsPastDueDateAttribute()
@@ -83,13 +101,13 @@ trait HasModelAttributes
     }
 
     /**
-     * getCurrencyCodeAttribute returns `currency_code`
+     * getCurrencyObject returns the Currency model for this invoice's currency_code
      */
-    public function getCurrencyCodeAttribute()
+    public function getCurrencyObject()
     {
-        return $this->currency
-            ? $this->currency->code
-            : Currency::getDefault()?->code;
+        return $this->currency_code
+            ? CurrencyModel::findByCode($this->currency_code)
+            : Currency::getActive();
     }
 
     /**

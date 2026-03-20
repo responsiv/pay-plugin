@@ -54,6 +54,7 @@ columns:
         label: Total
         searchable: true
         type: currency
+        currencyFrom: currency_code
 
     sent_at:
         label: Sent
@@ -63,6 +64,7 @@ columns:
         label: Subtotal
         invisible: true
         type: currency
+        currencyFrom: currency_code
 
     phone:
         label: Phone

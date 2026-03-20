@@ -26,6 +26,7 @@ class InvoiceStatus extends Model
     const STATUS_DRAFT = 'draft';
     const STATUS_APPROVED = 'approved';
     const STATUS_PAID = 'paid';
+    const STATUS_REFUNDED = 'refunded';
     const STATUS_VOID = 'void';
 
     /**
@@ -72,8 +73,9 @@ class InvoiceStatus extends Model
         return [
             'draft' => ['Draft', '#98a0a0'],
             'approved' => ['Approved', 'var(--bs-info)'],
-            'void' => ['Void', 'var(--bs-danger)'],
             'paid' => ['Paid', 'var(--bs-success)'],
+            'refunded' => ['Refunded', 'var(--bs-warning)'],
+            'void' => ['Void', 'var(--bs-danger)'],
         ];
     }
 

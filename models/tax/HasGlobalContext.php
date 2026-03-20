@@ -61,4 +61,28 @@ trait HasGlobalContext
     {
         static::$pricesIncludeTax = (bool) $pricesIncludeTax;
     }
+
+    /**
+     * withContext executes a callback with a temporary tax context,
+     * restoring the previous context when done.
+     */
+    public static function withContext(?TaxLocation $location, bool $pricesIncludeTax, callable $callback)
+    {
+        $prevLocation = static::$locationContext;
+        $prevPricesIncludeTax = static::$pricesIncludeTax;
+        $prevUserContext = static::$userContext;
+        $prevTaxExempt = static::$taxExempt;
+
+        try {
+            static::$locationContext = $location;
+            static::$pricesIncludeTax = $pricesIncludeTax;
+            return $callback();
+        }
+        finally {
+            static::$locationContext = $prevLocation;
+            static::$pricesIncludeTax = $prevPricesIncludeTax;
+            static::$userContext = $prevUserContext;
+            static::$taxExempt = $prevTaxExempt;
+        }
+    }
 }

@@ -7,7 +7,6 @@ use BackendMenu;
 use Responsiv\Pay\Models\Tax;
 use Backend\Classes\Controller;
 use Responsiv\Pay\Models\Invoice;
-use Responsiv\Currency\Models\Currency as CurrencyModel;
 
 /**
  * Invoices Back-end Controller
@@ -75,7 +74,7 @@ class Invoices extends Controller
     {
         try {
             $invoice = Invoice::find($recordId);
-            $this->vars['currency'] = CurrencyModel::findByCode($invoice->currency);
+            $this->vars['currency'] = $invoice->getCurrencyObject();
         }
         catch (Exception $ex) {
             $this->handleError($ex);

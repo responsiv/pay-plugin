@@ -16,7 +16,7 @@ trait HasModelAttributes
 
         if (strpos($amount, '%') !== false) {
             $amount = str_replace('%', '', $amount);
-            $amount = $this->price * ($amount / 100);
+            $amount = $this->quantity * $this->price * ($amount / 100);
         }
 
         $this->attributes['discount'] = $amount;

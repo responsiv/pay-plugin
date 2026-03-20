@@ -19,19 +19,21 @@
         </div>
     <?php endif ?>
 
+    <?php $currencyObj = $formModel->getCurrencyObject(); ?>
+
     <div class="scoreboard-item title-value">
         <h4><?= __("Subtotal") ?></h4>
-        <p><?= Currency::format($formModel->subtotal ?: 0) ?></p>
+        <p><?= $currencyObj?->formatCurrency($formModel->subtotal ?: 0) ?: Currency::format($formModel->subtotal ?: 0) ?></p>
         <p class="description">
-            <?= __("Discounts") ?>: <?= Currency::format($formModel->discount ?: 0) ?>
+            <?= __("Discounts") ?>: <?= $currencyObj?->formatCurrency($formModel->discount ?: 0) ?: Currency::format($formModel->discount ?: 0) ?>
         </p>
     </div>
 
     <div class="scoreboard-item title-value">
         <h4><?= __("Total") ?></h4>
-        <p><?= Currency::format($formModel->total) ?></p>
+        <p><?= $currencyObj?->formatCurrency($formModel->total) ?: Currency::format($formModel->total) ?></p>
         <p class="description">
-            <?= __("Tax") ?>: <?= Currency::format($formModel->tax) ?>
+            <?= __("Tax") ?>: <?= $currencyObj?->formatCurrency($formModel->tax) ?: Currency::format($formModel->tax) ?>
         </p>
     </div>
 </div>

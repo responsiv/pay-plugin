@@ -15,12 +15,14 @@ tabs:
         price:
             label: Unit Price
             type: currency
+            currencyFrom: invoice.currency_code
             span: row
             spanClass: col-5
 
         discount:
-            label: Unit Discount
-            type: discount
+            label: Discount
+            type: currency
+            currencyFrom: invoice.currency_code
             span: row
             spanClass: col-5
 

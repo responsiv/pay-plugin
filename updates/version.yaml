@@ -30,3 +30,6 @@ v2.0.0:
 v2.0.2: Update Stripe and PayPal gateway instructions
 v2.0.3: Fixes bug in PayPal gateway amounts
 v2.0.4: Fixes for PHP 8.4
+v3.0.0:
+    - Added refunded invoice status and PayPal webhook support
+    - migrate_v3_0_0.php

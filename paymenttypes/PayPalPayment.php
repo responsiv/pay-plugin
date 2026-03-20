@@ -7,6 +7,7 @@ use Currency;
 use Response;
 use Cms\Classes\Page;
 use Responsiv\Pay\Classes\GatewayBase;
+use Responsiv\Pay\Models\InvoiceStatus;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use ApplicationException;
 use Exception;
@@ -61,7 +62,8 @@ class PayPalPayment extends GatewayBase
     {
         return [
             'paypal_rest_invoices' => 'processApiInvoices',
-            'paypal_rest_invoice_capture' => 'processApiInvoiceCapture'
+            'paypal_rest_invoice_capture' => 'processApiInvoiceCapture',
+            'paypal_rest_webhook' => 'processWebhook'
         ];
     }
 
@@ -92,19 +94,11 @@ class PayPalPayment extends GatewayBase
     /**
      * getPayPalEndpoint
      */
-    public function getPayPalEndpoint(): string
+    public function getPayPalEndpoint()
     {
         return $this->getHostObject()->test_mode
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
-    }
-
-    /**
-     * getPayPalClientId
-     */
-    public function getPayPalClientId(): string
-    {
-        return $this->getHostObject()->test_mode ? 'test' : $this->getHostObject()->client_id;
     }
 
     /**
@@ -118,14 +112,14 @@ class PayPalPayment extends GatewayBase
     /**
      * renderPaymentScripts
      */
-    public function renderPaymentScripts($currency = 'USD')
+    public function renderPaymentScripts()
     {
         $queryParams = http_build_query([
-            'client-id' => $this->getPayPalClientId(),
+            'client-id' => $this->getHostObject()->client_id,
+            'currency' => Currency::getActiveCode(),
             'components' => 'buttons',
             'enable-funding' => 'venmo',
             'disable-funding' => 'paylater,card',
-            'currency' => $currency,
         ]);
 
         $scriptParams = [
@@ -226,32 +220,50 @@ class PayPalPayment extends GatewayBase
                 ->post("{$baseUrl}/v2/checkout/orders/{$orderId}/capture", $payload);
 
             if (!$response->successful()) {
+                // Order already captured (e.g. duplicate callback) - treat as success
+                if ($response->json('details.0.issue') === 'ORDER_ALREADY_CAPTURED') {
+                    return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + ($response->json() ?: []), 200);
+                }
+
                 $errorIssue = $response->json('details.0.issue');
                 $errorDescription = $response->json('details.0.description');
                 $invoice->logPaymentAttempt("{$errorIssue} {$errorDescription}", false, $payload, $response->json(), '');
                 throw new Exception("{$errorIssue} {$errorDescription}");
             }
             elseif (!$invoice->isPaymentProcessed(true)) {
-                if ($response->json('status') !== 'COMPLETED') {
-                    throw new ApplicationException('Invalid response');
+                $validStatuses = ['COMPLETED', 'PENDING'];
+
+                if (!in_array($response->json('status'), $validStatuses)) {
+                    throw new ApplicationException('Invalid response status: ' . $response->json('status'));
                 }
 
                 if ($response->json('purchase_units.0.reference_id') !== $invoice->getUniqueId()) {
                     throw new ApplicationException('Invalid invoice number');
                 }
 
-                if ($response->json('purchase_units.0.payments.captures.0.status') !== 'COMPLETED') {
-                    throw new ApplicationException('Invalid response');
+                if (!in_array($response->json('purchase_units.0.payments.captures.0.status'), $validStatuses)) {
+                    throw new ApplicationException('Invalid capture status: ' . $response->json('purchase_units.0.payments.captures.0.status'));
                 }
 
-                if (($matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value')) !== Currency::fromBaseValue($totals['total'])) {
-                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue));
+                $matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value');
+                $expectedValue = Currency::fromBaseValue($totals['total']);
+                if (!empty($expectedValue) && strpos($expectedValue, ',') !== false) {
+                    $expectedValue = str_replace(',', '.', $expectedValue);
+                }
+                if ($matchedValue !== $expectedValue) {
+                    throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue) . ', expected: ' . e($expectedValue));
                 }
 
-                $transactionStatus = $response->json('status');
+                $captureStatus = $response->json('purchase_units.0.payments.captures.0.status');
                 $transactionId = $response->json('id');
-                $invoice->logPaymentAttempt("Transaction {$transactionStatus}: {$transactionId}", true, $payload, $response->json(), '');
-                $invoice->markAsPaymentProcessed();
+                $invoice->logPaymentAttempt("Transaction {$captureStatus}: {$transactionId}", true, $payload, $response->json(), '');
+
+                if ($captureStatus === 'COMPLETED') {
+                    $invoice->markAsPaymentProcessed();
+                }
+                elseif ($captureStatus === 'PENDING') {
+                    $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_APPROVED);
+                }
             }
 
             return Response::json(['cms_redirect' => $invoice->getReceiptUrl()] + $response->json(), $response->status());
@@ -263,6 +275,209 @@ class PayPalPayment extends GatewayBase
             Log::error($ex);
             throw $this->newResponseError('Failed to capture a valid order');
         }
+    }
+
+    /**
+     * checkPaymentStatus polls PayPal to check if a pending capture has
+     * since completed. Returns true if the payment was confirmed.
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_get
+     */
+    public function checkPaymentStatus($invoice): bool
+    {
+        // Find the PayPal order ID from the last successful payment log
+        $paymentLog = $invoice->payment_log()
+            ->where('is_success', true)
+            ->latest()
+            ->first();
+
+        $orderId = $paymentLog?->response_data['id'] ?? null;
+        if (!$orderId) {
+            return false;
+        }
+
+        $paymentMethod = $invoice->getPaymentMethod();
+        $token = $paymentMethod->generatePayPalAccessToken();
+        $baseUrl = $paymentMethod->getPayPalEndpoint();
+
+        $response = Http::withToken($token)
+            ->get("{$baseUrl}/v2/checkout/orders/{$orderId}");
+
+        if (!$response->successful()) {
+            return false;
+        }
+
+        $captureStatus = $response->json('purchase_units.0.payments.captures.0.status');
+
+        if ($captureStatus === 'COMPLETED' && !$invoice->isPaymentProcessed()) {
+            $invoice->logPaymentAttempt(
+                "Status Check COMPLETED: {$orderId}",
+                true, [], $response->json(), ''
+            );
+            $invoice->markAsPaymentProcessed();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * getWebhookUrl
+     */
+    public function getWebhookUrl()
+    {
+        return $this->makeAccessPointLink('paypal_rest_webhook');
+    }
+
+    /**
+     * processWebhook handles asynchronous PayPal webhook events, such as
+     * PAYMENT.CAPTURE.COMPLETED for pending transactions and
+     * PAYMENT.CAPTURE.REFUNDED for refunds.
+     * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
+     */
+    public function processWebhook($params)
+    {
+        try {
+            $host = $this->getHostObject();
+            $webhookId = $host->webhook_id;
+            if (!$webhookId) {
+                return Response::make('Webhook not configured', 200);
+            }
+
+            $body = request()->getContent();
+            $event = json_decode($body, true);
+            if (!$event) {
+                return Response::make('Invalid payload', 400);
+            }
+
+            // Verify webhook signature
+            if (!$this->verifyWebhookSignature($webhookId, $body)) {
+                Log::warning('PayPal webhook signature verification failed');
+                return Response::make('Invalid signature', 403);
+            }
+
+            $eventType = $event['event_type'] ?? '';
+            $resourceId = $event['resource']['id'] ?? null;
+
+            switch ($eventType) {
+                case 'PAYMENT.CAPTURE.COMPLETED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
+                        if (!$invoice->isPaymentProcessed()) {
+                            $invoice->logPaymentAttempt(
+                                "Webhook PAYMENT.CAPTURE.COMPLETED: {$resourceId}",
+                                true, [], $event, $body
+                            );
+                            $invoice->markAsPaymentProcessed();
+                        }
+                    }
+                    break;
+
+                case 'PAYMENT.CAPTURE.REFUNDED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
+                        $invoice->logPaymentAttempt(
+                            "Webhook PAYMENT.CAPTURE.REFUNDED: {$resourceId}",
+                            true, [], $event, $body
+                        );
+                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_REFUNDED, 'Refunded via PayPal');
+                    }
+                    break;
+
+                case 'PAYMENT.CAPTURE.DENIED':
+                    if ($invoice = $this->findInvoiceFromWebhookEvent($event)) {
+                        $invoice->logPaymentAttempt(
+                            "Webhook PAYMENT.CAPTURE.DENIED: {$resourceId}",
+                            false, [], $event, $body
+                        );
+                        $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_VOID, 'Payment denied by PayPal');
+                    }
+                    break;
+            }
+
+            return Response::make('OK', 200);
+        }
+        catch (Exception $ex) {
+            Log::error('PayPal webhook error: ' . $ex->getMessage());
+            return Response::make('Error', 500);
+        }
+    }
+
+    /**
+     * findInvoiceFromWebhookEvent locates the invoice associated with a
+     * PayPal webhook event by checking resource fields and falling back
+     * to an order lookup.
+     */
+    protected function findInvoiceFromWebhookEvent(array $event)
+    {
+        $resource = $event['resource'] ?? [];
+
+        $referenceId = $resource['custom_id']
+            ?? $resource['invoice_id']
+            ?? null;
+
+        if (!$referenceId) {
+            $orderId = $resource['supplementary_data']['related_ids']['order_id'] ?? null;
+            if ($orderId) {
+                $referenceId = $this->lookupReferenceIdFromOrder($orderId);
+            }
+        }
+
+        if (!$referenceId) {
+            return null;
+        }
+
+        return $this->createInvoiceModel()->findByUniqueId($referenceId);
+    }
+
+    /**
+     * verifyWebhookSignature verifies the PayPal webhook signature using the
+     * PayPal verification API endpoint.
+     * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
+     */
+    protected function verifyWebhookSignature(string $webhookId, string $body): bool
+    {
+        $headers = request()->headers;
+
+        $payload = [
+            'auth_algo' => $headers->get('paypal-auth-algo'),
+            'cert_url' => $headers->get('paypal-cert-url'),
+            'transmission_id' => $headers->get('paypal-transmission-id'),
+            'transmission_sig' => $headers->get('paypal-transmission-sig'),
+            'transmission_time' => $headers->get('paypal-transmission-time'),
+            'webhook_id' => $webhookId,
+            'webhook_event' => json_decode($body, true),
+        ];
+
+        $token = $this->generatePayPalAccessToken();
+        $baseUrl = $this->getPayPalEndpoint();
+
+        $response = Http::withToken($token)
+            ->post("{$baseUrl}/v1/notifications/verify-webhook-signature", $payload);
+
+        return $response->successful()
+            && $response->json('verification_status') === 'SUCCESS';
+    }
+
+    /**
+     * lookupReferenceIdFromOrder fetches the reference_id from a PayPal order
+     * when the webhook event doesn't include it directly.
+     */
+    protected function lookupReferenceIdFromOrder(string $orderId): ?string
+    {
+        try {
+            $token = $this->generatePayPalAccessToken();
+            $baseUrl = $this->getPayPalEndpoint();
+
+            $response = Http::withToken($token)
+                ->get("{$baseUrl}/v2/checkout/orders/{$orderId}");
+
+            if ($response->successful()) {
+                return $response->json('purchase_units.0.reference_id');
+            }
+        }
+        catch (Exception $ex) {
+            Log::warning('PayPal order lookup failed: ' . $ex->getMessage());
+        }
+
+        return null;
     }
 
     /**
