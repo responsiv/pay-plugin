@@ -172,7 +172,7 @@ class Plugin extends PluginBase
                 'order' => 800,
             ],
             'invoice_settings' => [
-                'label' => "Invoice Settings",
+                'label' => "Invoice Templates",
                 'description' => "Customize invoice templates and settings.",
                 'icon' => 'icon-file-excel-o',
                 'url' => Backend::url('responsiv/pay/invoicetemplates'),

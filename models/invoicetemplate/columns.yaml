@@ -14,3 +14,7 @@ columns:
     code:
         label: Code
         searchable: true
+
+    is_default:
+        label: Default
+        type: switch

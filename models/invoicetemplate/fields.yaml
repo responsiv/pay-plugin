@@ -9,9 +9,15 @@ fields:
         span: left
 
     code:
-        label: Code
+        label: API Code
         tab: Invoice
         span: right
+
+    is_default:
+        label: Default
+        comment: Use this invoice template by default for new invoices.
+        tab: Invoice
+        type: checkbox
 
 tabs:
     fields:
