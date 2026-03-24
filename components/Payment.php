@@ -154,6 +154,15 @@ class Payment extends ComponentBase
             return;
         }
 
+        // Zero-amount: auto-complete without payment gateway
+        if ($invoice->amount_due <= 0) {
+            $invoice->submitManualPayment(__('Paid in full with store credit'));
+            if ($receiptPage = $invoice->getReceiptUrl()) {
+                return Redirect::to($receiptPage);
+            }
+            return;
+        }
+
         if (!$paymentMethod = $invoice->payment_method) {
             return;
         }

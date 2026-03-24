@@ -34,7 +34,6 @@ v3.0.0:
     - Added refunded invoice status and PayPal webhook support
     - migrate_v3_0_0.php
 v3.1.0:
-    - Added credit notes and credit application support
+    - Added credit notes support
     - 000012_create_credit_notes.php
-    - 000013_create_credit_applications.php
     - migrate_v3_1_0.php

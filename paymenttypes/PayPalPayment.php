@@ -153,7 +153,7 @@ class PayPalPayment extends GatewayBase
             $paymentMethod = $invoice->getPaymentMethod();
             $token = $paymentMethod->generatePayPalAccessToken();
             $totals = $invoice->getTotalDetails();
-            $total = Currency::fromBaseValue($totals['total']) ?? 0;
+            $total = Currency::fromBaseValue($totals['amount_due']) ?? 0;
             //check if the currency has comma as decimal separator
             if (!empty($total) && strpos($total, ',') !== false) {
                 $total = str_replace(',', '.', $total);
@@ -246,7 +246,7 @@ class PayPalPayment extends GatewayBase
                 }
 
                 $matchedValue = $response->json('purchase_units.0.payments.captures.0.amount.value');
-                $expectedValue = Currency::fromBaseValue($totals['total']);
+                $expectedValue = Currency::fromBaseValue($totals['amount_due']);
                 if (!empty($expectedValue) && strpos($expectedValue, ',') !== false) {
                     $expectedValue = str_replace(',', '.', $expectedValue);
                 }

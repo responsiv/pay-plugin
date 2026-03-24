@@ -115,7 +115,7 @@ class StripePayment extends GatewayBase
                                 'name' => 'Invoice ' . $invoice->getUniqueId(),
                                 'description' => $this->getInvoiceDescription($invoice)
                             ],
-                            'unit_amount' => (int) $totals['total'],
+                            'unit_amount' => (int) $totals['amount_due'],
                             'currency' => $totals['currency'] ?? 'USD'
                         ]
                     ]
@@ -182,7 +182,7 @@ class StripePayment extends GatewayBase
                     throw new ApplicationException('Invalid invoice number');
                 }
 
-                if (($matchedValue = $response->json('amount_total')) !== (int) $totals['total']) {
+                if (($matchedValue = $response->json('amount_total')) !== (int) $totals['amount_due']) {
                     throw new ApplicationException('Invalid invoice total - order total received is: ' . e($matchedValue));
                 }
 

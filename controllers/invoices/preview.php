@@ -20,9 +20,8 @@
 </div>
 
 <?php
-    $hasCreditApplications = $formModel->credit_applications->count() > 0;
     $hasCreditNotesFrom = $formModel->credit_notes_from->count() > 0;
-    $hasCreditTab = $hasCreditApplications || $hasCreditNotesFrom;
+    $hasCreditTab = $hasCreditNotesFrom;
 ?>
 <div class="control-tabs content-tabs tabs-inset" data-control="tab">
     <ul class="nav nav-tabs">
@@ -49,12 +48,8 @@
         </div>
         <?php if ($hasCreditTab): ?>
             <div class="tab-pane">
-                <?php if ($hasCreditApplications): ?>
-                    <h4 class="my-3 fw-normal"><?= __("Credit Applied to This Invoice") ?></h4>
-                    <?= $this->relationRender('credit_applications') ?>
-                <?php endif ?>
                 <?php if ($hasCreditNotesFrom): ?>
-                    <h4 class="my-3 fw-normal"><?= __("Credit Notes Issued from This Invoice") ?></h4>
+                    <h4 class="my-3 fw-normal"><?= __("Credit Notes") ?></h4>
                     <div class="list-widget-container mx-0">
                         <div class="list-widget list-scrollable-container list-flush">
                             <div class="control-list">

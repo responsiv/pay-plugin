@@ -6,9 +6,9 @@ use Model;
 use ApplicationException;
 
 /**
- * CreditNote represents credit owed to a customer, functioning as the
- * credit side of a double-entry ledger. Credit is applied to invoices
- * via CreditApplication records (the debit side).
+ * CreditNote implements a simple ledger for store credit. Credit notes
+ * (refund, adjustment, promotion) increase the balance; debit notes
+ * decrease it. Balance = sum(credits) - sum(debits).
  *
  * @property int $id
  * @property int $user_id
@@ -21,8 +21,6 @@ use ApplicationException;
  * @property \Illuminate\Support\Carbon $issued_at
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
- *
- * @property int $available_balance
  *
  * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
@@ -64,30 +62,6 @@ class CreditNote extends Model
         'invoice' => Invoice::class,
         'issued_by_user' => [\Backend\Models\User::class, 'key' => 'issued_by'],
     ];
-
-    /**
-     * @var array hasMany
-     */
-    public $hasMany = [
-        'applications' => CreditApplication::class,
-    ];
-
-    /**
-     * getAvailableBalanceAttribute returns the remaining balance on this
-     * credit note after subtracting all active (non-voided) applications.
-     */
-    public function getAvailableBalanceAttribute(): int
-    {
-        if ($this->type === static::TYPE_DEBIT) {
-            return 0;
-        }
-
-        $applied = $this->applications()
-            ->whereNull('voided_at')
-            ->sum('amount');
-
-        return max(0, $this->amount - $applied);
-    }
 
     /**
      * getTypeOptions returns available type options for form dropdowns
@@ -186,9 +160,9 @@ class CreditNote extends Model
 
     /**
      * issueDebit creates a debit note that subtracts from a user's credit balance.
-     * Currency must be specified explicitly.
+     * Currency must be specified explicitly. An optional invoice can be linked.
      */
-    public static function issueDebit($user, $amount, $currencyCode, $reason, $adminUser = null): static
+    public static function issueDebit($user, $amount, $currencyCode, $reason, $adminUser = null, $invoice = null): static
     {
         $note = new static;
         $note->user = $user;
@@ -202,6 +176,10 @@ class CreditNote extends Model
             $note->issued_by = $adminUser->id;
         }
 
+        if ($invoice) {
+            $note->invoice_id = $invoice->id;
+        }
+
         $note->save();
 
         Event::fire('responsiv.pay.creditNote.issued', [$note]);
@@ -211,7 +189,7 @@ class CreditNote extends Model
 
     /**
      * getBalanceForUser returns the credit balance for a user in a given currency.
-     * Balance = issued credit minus debits minus spent (applied) credit.
+     * Simple ledger: balance = sum(credits) - sum(debits).
      */
     public static function getBalanceForUser($user, $currencyCode = null): int
     {
@@ -219,7 +197,7 @@ class CreditNote extends Model
             $currencyCode = \Currency::getActiveCode();
         }
 
-        $issued = static::applyUser($user)
+        $credited = static::applyUser($user)
             ->applyCurrency($currencyCode)
             ->where('type', '!=', static::TYPE_DEBIT)
             ->sum('amount');
@@ -229,24 +207,16 @@ class CreditNote extends Model
             ->applyType(static::TYPE_DEBIT)
             ->sum('amount');
 
-        $spent = CreditApplication::where('user_id', $user->id)
-            ->whereNull('voided_at')
-            ->whereHas('credit_note', function($q) use ($currencyCode) {
-                $q->where('currency_code', $currencyCode);
-            })
-            ->sum('amount');
-
-        return (int) $issued - (int) $debited - (int) $spent;
+        return max(0, (int) $credited - (int) $debited);
     }
 
     /**
      * getHistoryForUser returns all credit notes for a user in a given currency,
-     * with their applications, ordered by most recent first.
+     * ordered by most recent first.
      */
     public static function getHistoryForUser($user, $currencyCode = null)
     {
         $query = static::applyUser($user)
-            ->with('applications')
             ->orderBy('issued_at', 'desc');
 
         if ($currencyCode !== null) {
@@ -257,68 +227,72 @@ class CreditNote extends Model
     }
 
     /**
-     * applyToInvoice distributes credit across the user's available credit
-     * notes (FIFO by issued_at) and creates CreditApplication records.
-     *
+     * applyToInvoice creates a debit note that spends credit toward an invoice.
      * Uses database-level locking to prevent double-spending in concurrent
      * checkout scenarios.
-     *
-     * @return \Illuminate\Support\Collection<CreditApplication>
      */
-    public static function applyToInvoice($user, $invoice, $requestedAmount)
+    public static function applyToInvoice($user, $invoice, $requestedAmount): static
     {
         return Db::transaction(function() use ($user, $invoice, $requestedAmount) {
-            // Lock this user's active credit notes for the invoice currency
-            $creditNotes = static::where('user_id', $user->id)
+            // Lock credit notes to serialize concurrent access
+            static::where('user_id', $user->id)
                 ->where('currency_code', $invoice->currency_code)
-                ->where('type', '!=', static::TYPE_DEBIT)
                 ->lockForUpdate()
-                ->orderBy('issued_at')
-                ->get();
+                ->count();
 
-            $available = $creditNotes->sum('available_balance');
-            $amountToApply = min($requestedAmount, $available, $invoice->total);
+            $balance = static::getBalanceForUser($user, $invoice->currency_code);
+            $amountToApply = min($requestedAmount, $invoice->total);
 
-            if ($amountToApply <= 0) {
+            if ($amountToApply <= 0 || $balance < $amountToApply) {
                 throw new ApplicationException('Insufficient store credit');
             }
 
-            // Distribute across notes (FIFO by issued_at)
-            $applications = collect();
-            $remaining = $amountToApply;
-
-            foreach ($creditNotes as $note) {
-                if ($remaining <= 0) {
-                    break;
-                }
-
-                $noteAvailable = $note->available_balance;
-                if ($noteAvailable <= 0) {
-                    continue;
-                }
-
-                $applyFromNote = min($remaining, $noteAvailable);
-
-                $application = CreditApplication::create([
-                    'credit_note_id' => $note->id,
-                    'invoice_id' => $invoice->id,
-                    'user_id' => $user->id,
-                    'amount' => $applyFromNote,
-                    'applied_at' => now(),
-                ]);
-
-                $applications->push($application);
-                $remaining -= $applyFromNote;
-            }
+            $note = static::issueDebit(
+                $user,
+                $amountToApply,
+                $invoice->currency_code,
+                __('Applied to invoice'),
+                null,
+                $invoice
+            );
 
             // Update denormalized cache on invoice
             $invoice->credit_applied = ($invoice->credit_applied ?? 0) + $amountToApply;
             $invoice->save();
 
-            Event::fire('responsiv.pay.creditNote.applied', [$user, $invoice, $applications]);
+            Event::fire('responsiv.pay.creditNote.applied', [$user, $invoice, $note]);
             Event::fire('responsiv.pay.invoice.creditApplied', [$invoice, $amountToApply]);
 
-            return $applications;
+            return $note;
         });
+    }
+
+    /**
+     * removeFromInvoice reverses credit applied to an invoice by issuing
+     * a credit note (adjustment) linked to the invoice.
+     */
+    public static function removeFromInvoice($user, $invoice): ?static
+    {
+        $creditApplied = $invoice->credit_applied;
+        if ($creditApplied <= 0) {
+            return null;
+        }
+
+        $note = new static;
+        $note->user = $user;
+        $note->amount = $creditApplied;
+        $note->currency_code = $invoice->currency_code;
+        $note->reason = __('Credit reversed');
+        $note->type = static::TYPE_ADJUSTMENT;
+        $note->invoice_id = $invoice->id;
+        $note->issued_at = $note->freshTimestamp();
+        $note->save();
+
+        $invoice->credit_applied = 0;
+        $invoice->save();
+
+        Event::fire('responsiv.pay.creditNote.issued', [$note]);
+
+        return $note;
     }
 }

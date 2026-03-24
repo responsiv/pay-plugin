@@ -4,13 +4,11 @@ use PluginTestCase;
 use October\Rain\Database\Model;
 use ApplicationException;
 use Responsiv\Pay\Models\CreditNote;
-use Responsiv\Pay\Models\CreditApplication;
 use Responsiv\Pay\Models\Invoice;
 
 /**
  * CreditNoteTest validates the credit note ledger system including
- * issuance, balance calculation, application to invoices, voiding,
- * and edge cases like partial credit and FIFO distribution.
+ * issuance, balance calculation, application to invoices, and reversal.
  */
 class CreditNoteTest extends PluginTestCase
 {
@@ -132,46 +130,24 @@ class CreditNoteTest extends PluginTestCase
         $this->assertEquals('EUR', $note->currency_code);
     }
 
+    /**
+     * testIssueDebitLinkedToInvoice
+     */
+    public function testIssueDebitLinkedToInvoice()
+    {
+        $user = $this->createUser();
+        $invoice = $this->createInvoice($user, 5000);
+
+        $note = CreditNote::issueDebit($user, 3000, 'USD', 'Test', null, $invoice);
+
+        $this->assertEquals('debit', $note->type);
+        $this->assertEquals($invoice->id, $note->invoice_id);
+        $this->assertEquals(3000, $note->amount);
+    }
+
     //
     // Balance Tests
     //
-
-    /**
-     * testAvailableBalanceFullyAvailable
-     */
-    public function testAvailableBalanceFullyAvailable()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-
-        $this->assertEquals(5000, $note->available_balance);
-    }
-
-    /**
-     * testAvailableBalanceAfterPartialApplication
-     */
-    public function testAvailableBalanceAfterPartialApplication()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-        $invoice = $this->createInvoice($user, 3000);
-
-        CreditNote::applyToInvoice($user, $invoice, 3000);
-
-        $note->refresh();
-        $this->assertEquals(2000, $note->available_balance);
-    }
-
-    /**
-     * testAvailableBalanceDebitNoteIsZero
-     */
-    public function testAvailableBalanceDebitNoteIsZero()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueDebit($user, 5000, 'USD', 'Test');
-
-        $this->assertEquals(0, $note->available_balance);
-    }
 
     /**
      * testGetBalanceForUserSingleNote
@@ -245,6 +221,18 @@ class CreditNoteTest extends PluginTestCase
         $this->assertEquals(0, CreditNote::getBalanceForUser($user, 'USD'));
     }
 
+    /**
+     * testGetBalanceForUserNeverNegative
+     */
+    public function testGetBalanceForUserNeverNegative()
+    {
+        $user = $this->createUser();
+        CreditNote::issueAdjustment($user, 1000, 'USD', 'Credit');
+        CreditNote::issueDebit($user, 5000, 'USD', 'Large debit');
+
+        $this->assertEquals(0, CreditNote::getBalanceForUser($user, 'USD'));
+    }
+
     //
     // Apply to Invoice Tests
     //
@@ -258,10 +246,12 @@ class CreditNoteTest extends PluginTestCase
         CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 5000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 5000);
+        $debitNote = CreditNote::applyToInvoice($user, $invoice, 5000);
 
-        $this->assertCount(1, $applications);
-        $this->assertEquals(5000, $applications->first()->amount);
+        $this->assertInstanceOf(CreditNote::class, $debitNote);
+        $this->assertEquals('debit', $debitNote->type);
+        $this->assertEquals(5000, $debitNote->amount);
+        $this->assertEquals($invoice->id, $debitNote->invoice_id);
 
         $invoice->refresh();
         $this->assertEquals(5000, $invoice->credit_applied);
@@ -277,10 +267,9 @@ class CreditNoteTest extends PluginTestCase
         CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 10000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 3000);
+        $debitNote = CreditNote::applyToInvoice($user, $invoice, 3000);
 
-        $this->assertCount(1, $applications);
-        $this->assertEquals(3000, $applications->first()->amount);
+        $this->assertEquals(3000, $debitNote->amount);
 
         $invoice->refresh();
         $this->assertEquals(3000, $invoice->credit_applied);
@@ -288,21 +277,16 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testApplyToInvoiceCapsAtAvailableBalance
+     * testApplyToInvoiceFailsWhenInsufficientBalance
      */
-    public function testApplyToInvoiceCapsAtAvailableBalance()
+    public function testApplyToInvoiceFailsWhenInsufficientBalance()
     {
         $user = $this->createUser();
         CreditNote::issueAdjustment($user, 3000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 10000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 10000);
-
-        $this->assertCount(1, $applications);
-        $this->assertEquals(3000, $applications->first()->amount);
-
-        $invoice->refresh();
-        $this->assertEquals(3000, $invoice->credit_applied);
+        $this->expectException(\ApplicationException::class);
+        CreditNote::applyToInvoice($user, $invoice, 10000);
     }
 
     /**
@@ -314,49 +298,12 @@ class CreditNoteTest extends PluginTestCase
         CreditNote::issueAdjustment($user, 10000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 3000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 10000);
+        $debitNote = CreditNote::applyToInvoice($user, $invoice, 10000);
 
-        $this->assertCount(1, $applications);
-        $this->assertEquals(3000, $applications->first()->amount);
+        $this->assertEquals(3000, $debitNote->amount);
 
         $invoice->refresh();
         $this->assertEquals(3000, $invoice->credit_applied);
-    }
-
-    /**
-     * testApplyToInvoiceFifoDistribution distributes across multiple
-     * credit notes in FIFO order (oldest first)
-     */
-    public function testApplyToInvoiceFifoDistribution()
-    {
-        $user = $this->createUser();
-
-        $note1 = CreditNote::issueAdjustment($user, 2000, 'USD', 'Oldest');
-        $note1->issued_at = now()->subDays(3);
-        $note1->save();
-
-        $note2 = CreditNote::issueAdjustment($user, 3000, 'USD', 'Middle');
-        $note2->issued_at = now()->subDays(2);
-        $note2->save();
-
-        $note3 = CreditNote::issueAdjustment($user, 5000, 'USD', 'Newest');
-        $note3->issued_at = now()->subDays(1);
-        $note3->save();
-
-        $invoice = $this->createInvoice($user, 4000);
-
-        $applications = CreditNote::applyToInvoice($user, $invoice, 4000);
-
-        // Should take all 2000 from note1 and 2000 from note2
-        $this->assertCount(2, $applications);
-        $this->assertEquals($note1->id, $applications[0]->credit_note_id);
-        $this->assertEquals(2000, $applications[0]->amount);
-        $this->assertEquals($note2->id, $applications[1]->credit_note_id);
-        $this->assertEquals(2000, $applications[1]->amount);
-
-        // note3 should be untouched
-        $note3->refresh();
-        $this->assertEquals(5000, $note3->available_balance);
     }
 
     /**
@@ -402,98 +349,81 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testApplyToInvoiceSkipsFullySpentNotes
+     * testApplyToInvoiceMultipleApplicationsReduceBalance
      */
-    public function testApplyToInvoiceSkipsFullySpentNotes()
+    public function testApplyToInvoiceMultipleApplicationsReduceBalance()
     {
         $user = $this->createUser();
+        CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
 
-        $note1 = CreditNote::issueAdjustment($user, 2000, 'USD', 'First');
-        $note1->issued_at = now()->subDays(2);
-        $note1->save();
-
-        $note2 = CreditNote::issueAdjustment($user, 3000, 'USD', 'Second');
-        $note2->issued_at = now()->subDays(1);
-        $note2->save();
-
-        // Spend all of note1
         $invoice1 = $this->createInvoice($user, 2000);
         CreditNote::applyToInvoice($user, $invoice1, 2000);
 
-        // Now apply more — should come from note2 only
-        $invoice2 = $this->createInvoice($user, 1500);
-        $applications = CreditNote::applyToInvoice($user, $invoice2, 1500);
+        $this->assertEquals(3000, CreditNote::getBalanceForUser($user, 'USD'));
 
-        $this->assertCount(1, $applications);
-        $this->assertEquals($note2->id, $applications->first()->credit_note_id);
-        $this->assertEquals(1500, $applications->first()->amount);
+        $invoice2 = $this->createInvoice($user, 1500);
+        CreditNote::applyToInvoice($user, $invoice2, 1500);
+
+        $this->assertEquals(1500, CreditNote::getBalanceForUser($user, 'USD'));
     }
 
     //
-    // Void Application Tests
+    // Remove from Invoice Tests
     //
 
     /**
-     * testVoidApplicationRestoresInvoiceCache
+     * testRemoveFromInvoiceRestoresBalance
      */
-    public function testVoidApplicationRestoresInvoiceCache()
+    public function testRemoveFromInvoiceRestoresBalance()
     {
         $user = $this->createUser();
         CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 5000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 3000);
+        CreditNote::applyToInvoice($user, $invoice, 3000);
+
+        $this->assertEquals(2000, CreditNote::getBalanceForUser($user, 'USD'));
 
         $invoice->refresh();
-        $this->assertEquals(3000, $invoice->credit_applied);
-        $this->assertEquals(2000, $invoice->amount_due);
-
-        // Void the application
-        $applications->first()->void();
+        CreditNote::removeFromInvoice($user, $invoice);
 
         $invoice->refresh();
         $this->assertEquals(0, $invoice->credit_applied);
         $this->assertEquals(5000, $invoice->amount_due);
+        $this->assertEquals(5000, CreditNote::getBalanceForUser($user, 'USD'));
     }
 
     /**
-     * testVoidApplicationIsIdempotent
+     * testRemoveFromInvoiceReturnsNullWhenNoCredit
      */
-    public function testVoidApplicationIsIdempotent()
+    public function testRemoveFromInvoiceReturnsNullWhenNoCredit()
+    {
+        $user = $this->createUser();
+        $invoice = $this->createInvoice($user, 5000);
+
+        $result = CreditNote::removeFromInvoice($user, $invoice);
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * testRemoveFromInvoiceCreatesAdjustmentNote
+     */
+    public function testRemoveFromInvoiceCreatesAdjustmentNote()
     {
         $user = $this->createUser();
         CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
         $invoice = $this->createInvoice($user, 5000);
 
-        $applications = CreditNote::applyToInvoice($user, $invoice, 3000);
-        $app = $applications->first();
-
-        $app->void();
-        $app->void();
+        CreditNote::applyToInvoice($user, $invoice, 3000);
 
         $invoice->refresh();
-        $this->assertEquals(0, $invoice->credit_applied);
-    }
+        $note = CreditNote::removeFromInvoice($user, $invoice);
 
-    /**
-     * testVoidApplicationRestoresNoteBalance
-     */
-    public function testVoidApplicationRestoresNoteBalance()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-        $invoice = $this->createInvoice($user, 5000);
-
-        $applications = CreditNote::applyToInvoice($user, $invoice, 3000);
-
-        $note->refresh();
-        $this->assertEquals(2000, $note->available_balance);
-
-        $applications->first()->void();
-
-        $note->refresh();
-        $this->assertEquals(5000, $note->available_balance);
-        $this->assertEquals(5000, CreditNote::getBalanceForUser($user, 'USD'));
+        $this->assertInstanceOf(CreditNote::class, $note);
+        $this->assertEquals('adjustment', $note->type);
+        $this->assertEquals(3000, $note->amount);
+        $this->assertEquals($invoice->id, $note->invoice_id);
     }
 
     //
@@ -524,9 +454,9 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testGetHistoryForUserIncludesApplications
+     * testGetHistoryForUserIncludesDebitNotes
      */
-    public function testGetHistoryForUserIncludesApplications()
+    public function testGetHistoryForUserIncludesDebitNotes()
     {
         $user = $this->createUser();
         CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
@@ -534,10 +464,11 @@ class CreditNoteTest extends PluginTestCase
         CreditNote::applyToInvoice($user, $invoice, 3000);
 
         $history = CreditNote::getHistoryForUser($user);
+        $types = $history->pluck('type')->sort()->values()->all();
 
-        $this->assertCount(1, $history);
-        $this->assertTrue($history->first()->relationLoaded('applications'));
-        $this->assertCount(1, $history->first()->applications);
+        // Should include both the adjustment and the debit note
+        $this->assertCount(2, $history);
+        $this->assertEquals(['adjustment', 'debit'], $types);
     }
 
     /**

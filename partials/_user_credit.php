@@ -27,7 +27,6 @@
                             <th><span><?= __("Type") ?></span></th>
                             <th><span><?= __("Reason") ?></span></th>
                             <th><span><?= __("Amount") ?></span></th>
-                            <th><span><?= __("Available") ?></span></th>
                             <th><span><?= __("Source") ?></span></th>
                         </tr>
                     </thead>
@@ -50,9 +49,6 @@
                                         <?php else: ?>
                                             <?= Currency::format($note->amount) ?>
                                         <?php endif ?>
-                                    </td>
-                                    <td>
-                                        <?= Currency::format($note->available_balance) ?>
                                     </td>
                                     <td>
                                         <?php if ($note->invoice_id): ?>

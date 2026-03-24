@@ -102,7 +102,6 @@ class Invoice extends Model implements InvoiceContract
         'items' => [InvoiceItem::class, 'delete' => true],
         'status_log' => [InvoiceStatusLog::class, 'delete' => true],
         'payment_log' => [InvoicePaymentLog::class, 'delete' => true],
-        'credit_applications' => [CreditApplication::class, 'delete' => true],
         'credit_notes_from' => [CreditNote::class, 'key' => 'invoice_id'],
     ];
 
