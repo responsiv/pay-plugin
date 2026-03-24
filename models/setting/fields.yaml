@@ -16,3 +16,9 @@ tabs:
             comment: Use this to set the next invoice number, must be more than the current invoice number.
             tab: Invoices
             span: auto
+
+        enable_credit_notes:
+            label: Enable Store Credit
+            comment: Allow customers to accumulate and spend store credit at checkout.
+            tab: Credit
+            type: switch

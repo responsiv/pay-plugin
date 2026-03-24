@@ -3,6 +3,7 @@
 use Flash;
 use Currency;
 use BackendAuth;
+use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\CreditNote;
 use October\Rain\Extension\Container as ExtensionContainer;
 use ValidationException;
@@ -56,6 +57,10 @@ class ExtendUserPlugin
      */
     public static function extendPreviewTabs()
     {
+        if (!Setting::isCreditEnabled()) {
+            return [];
+        }
+
         return [
             "Credit" => '$/responsiv/pay/partials/_user_credit.php',
         ];

@@ -9,6 +9,7 @@ use ValidationException;
  *
  * @property string invoice_prefix
  * @property string new_invoice_number
+ * @property bool enable_credit_notes
  *
  * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
@@ -38,6 +39,15 @@ class Setting extends SettingModel
     public function initSettingsData()
     {
         $this->invoice_prefix = '';
+        $this->enable_credit_notes = false;
+    }
+
+    /**
+     * isCreditEnabled returns true if the credit notes feature is enabled
+     */
+    public static function isCreditEnabled(): bool
+    {
+        return (bool) static::get('enable_credit_notes', false);
     }
 
     /**
