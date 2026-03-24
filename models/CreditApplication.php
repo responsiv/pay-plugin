@@ -93,8 +93,8 @@ class CreditApplication extends Model
         $this->voided_at = $this->freshTimestamp();
         $this->save();
 
-        // Update denormalized cache on invoice
-        if ($invoice = $this->invoice) {
+        // Update denormalized cache on invoice (fresh load to avoid stale relation)
+        if ($invoice = Invoice::find($this->invoice_id)) {
             $invoice->credit_applied = max(0, ($invoice->credit_applied ?? 0) - $this->amount);
             $invoice->save();
         }
