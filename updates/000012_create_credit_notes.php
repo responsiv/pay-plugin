@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->integer('issued_by')->unsigned()->nullable()->index();
             $table->timestamp('issued_at')->nullable();
-            $table->timestamp('voided_at')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,6 @@ use ApplicationException;
  * @property string $type
  * @property int $issued_by
  * @property \Illuminate\Support\Carbon $issued_at
- * @property \Illuminate\Support\Carbon $voided_at
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  *
@@ -45,7 +44,7 @@ class CreditNote extends Model
     /**
      * @var array dates are attributes to convert to Carbon instances
      */
-    protected $dates = ['issued_at', 'voided_at'];
+    protected $dates = ['issued_at'];
 
     /**
      * @var array rules for validation
@@ -79,7 +78,7 @@ class CreditNote extends Model
      */
     public function getAvailableBalanceAttribute(): int
     {
-        if ($this->voided_at || $this->type === static::TYPE_DEBIT) {
+        if ($this->type === static::TYPE_DEBIT) {
             return 0;
         }
 
@@ -116,14 +115,6 @@ class CreditNote extends Model
     }
 
     /**
-     * scopeApplyActive filters to non-voided credit notes
-     */
-    public function scopeApplyActive($query)
-    {
-        return $query->whereNull('voided_at');
-    }
-
-    /**
      * scopeApplyType filters by credit note type
      */
     public function scopeApplyType($query, $type)
@@ -142,22 +133,6 @@ class CreditNote extends Model
     //
     // Actions
     //
-
-    /**
-     * void marks this credit note as voided. Any unapplied balance becomes
-     * unavailable. Already-applied amounts are not reversed.
-     */
-    public function void()
-    {
-        if ($this->voided_at) {
-            return;
-        }
-
-        $this->voided_at = $this->freshTimestamp();
-        $this->save();
-
-        Event::fire('responsiv.pay.creditNote.voided', [$this]);
-    }
 
     //
     // Static API
@@ -245,13 +220,11 @@ class CreditNote extends Model
         }
 
         $issued = static::applyUser($user)
-            ->applyActive()
             ->applyCurrency($currencyCode)
             ->where('type', '!=', static::TYPE_DEBIT)
             ->sum('amount');
 
         $debited = static::applyUser($user)
-            ->applyActive()
             ->applyCurrency($currencyCode)
             ->applyType(static::TYPE_DEBIT)
             ->sum('amount');
@@ -298,7 +271,7 @@ class CreditNote extends Model
             // Lock this user's active credit notes for the invoice currency
             $creditNotes = static::where('user_id', $user->id)
                 ->where('currency_code', $invoice->currency_code)
-                ->whereNull('voided_at')
+                ->where('type', '!=', static::TYPE_DEBIT)
                 ->lockForUpdate()
                 ->orderBy('issued_at')
                 ->get();

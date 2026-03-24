@@ -75,7 +75,6 @@ class CreditNoteTest extends PluginTestCase
         $this->assertEquals('adjustment', $note->type);
         $this->assertEquals('Test credit', $note->reason);
         $this->assertNotNull($note->issued_at);
-        $this->assertNull($note->voided_at);
         $this->assertNull($note->issued_by);
     }
 
@@ -164,14 +163,12 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testAvailableBalanceVoidedNoteIsZero
+     * testAvailableBalanceDebitNoteIsZero
      */
-    public function testAvailableBalanceVoidedNoteIsZero()
+    public function testAvailableBalanceDebitNoteIsZero()
     {
         $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-
-        $note->void();
+        $note = CreditNote::issueDebit($user, 5000, 'USD', 'Test');
 
         $this->assertEquals(0, $note->available_balance);
     }
@@ -200,14 +197,13 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testGetBalanceForUserExcludesVoidedNotes
+     * testGetBalanceForUserSubtractsDebits
      */
-    public function testGetBalanceForUserExcludesVoidedNotes()
+    public function testGetBalanceForUserSubtractsDebits()
     {
         $user = $this->createUser();
-        CreditNote::issueAdjustment($user, 3000, 'USD', 'Active');
-        $voided = CreditNote::issueAdjustment($user, 2000, 'USD', 'Voided');
-        $voided->void();
+        CreditNote::issueAdjustment($user, 5000, 'USD', 'Credit');
+        CreditNote::issueDebit($user, 2000, 'USD', 'Debit');
 
         $this->assertEquals(3000, CreditNote::getBalanceForUser($user, 'USD'));
     }
@@ -391,15 +387,14 @@ class CreditNoteTest extends PluginTestCase
     }
 
     /**
-     * testApplyToInvoiceIgnoresVoidedNotes
+     * testApplyToInvoiceIgnoresDebitNotes
      */
-    public function testApplyToInvoiceIgnoresVoidedNotes()
+    public function testApplyToInvoiceIgnoresDebitNotes()
     {
         $this->expectException(ApplicationException::class);
 
         $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Voided');
-        $note->void();
+        CreditNote::issueDebit($user, 5000, 'USD', 'Debit only');
 
         $invoice = $this->createInvoice($user, 3000);
 
@@ -435,38 +430,8 @@ class CreditNoteTest extends PluginTestCase
     }
 
     //
-    // Void Tests
+    // Void Application Tests
     //
-
-    /**
-     * testVoidCreditNote
-     */
-    public function testVoidCreditNote()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-
-        $note->void();
-
-        $this->assertNotNull($note->voided_at);
-        $this->assertEquals(0, $note->available_balance);
-        $this->assertEquals(0, CreditNote::getBalanceForUser($user, 'USD'));
-    }
-
-    /**
-     * testVoidCreditNoteIsIdempotent
-     */
-    public function testVoidCreditNoteIsIdempotent()
-    {
-        $user = $this->createUser();
-        $note = CreditNote::issueAdjustment($user, 5000, 'USD', 'Test');
-
-        $note->void();
-        $voidedAt = $note->voided_at;
-
-        $note->void();
-        $this->assertEquals($voidedAt, $note->voided_at);
-    }
 
     /**
      * testVoidApplicationRestoresInvoiceCache

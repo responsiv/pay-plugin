@@ -40,9 +40,6 @@
                                     </td>
                                     <td>
                                         <?= e(__(ucfirst($note->type))) ?>
-                                        <?php if ($note->voided_at): ?>
-                                            <span class="text-muted">(<?= __("Voided") ?>)</span>
-                                        <?php endif ?>
                                     </td>
                                     <td>
                                         <?= e($note->reason) ?>
