@@ -9,6 +9,7 @@ use Responsiv\Currency\Models\Currency as CurrencyModel;
  * @property bool $is_paid
  * @property bool $is_payment_submitted
  * @property bool $is_past_due_date
+ * @property int $amount_due
  * @property int $original_subtotal
  * @property int $final_subtotal
  * @property int $final_discount
@@ -19,6 +20,14 @@ use Responsiv\Currency\Models\Currency as CurrencyModel;
  */
 trait HasModelAttributes
 {
+    /**
+     * getAmountDueAttribute returns the outstanding amount after credit applied
+     */
+    public function getAmountDueAttribute(): int
+    {
+        return max(0, ($this->total ?? 0) - ($this->credit_applied ?? 0));
+    }
+
     /**
      * getInvoicedAtAttribute returns the `invoiced_at` attribute
      */

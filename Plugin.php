@@ -44,13 +44,6 @@ class Plugin extends PluginBase
     }
 
     /**
-     * boot the module events.
-     */
-    public function boot()
-    {
-    }
-
-    /**
      * registerSingletons
      */
     protected function registerSingletons()

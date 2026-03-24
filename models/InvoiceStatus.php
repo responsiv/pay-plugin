@@ -58,6 +58,14 @@ class InvoiceStatus extends Model
     }
 
     /**
+     * getRefundedStatus
+     */
+    public static function getRefundedStatus()
+    {
+        return static::findByCode(static::STATUS_REFUNDED);
+    }
+
+    /**
      * listStatuses
      */
     public static function listStatuses()

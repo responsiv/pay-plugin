@@ -39,6 +39,8 @@ use Responsiv\Pay\Contracts\Invoice as InvoiceContract;
  * @property string $currency_code
  * @property int $related_id
  * @property string $related_type
+ * @property int $credit_applied
+ * @property int $amount_due
  * @property int $status_id
  * @property int $state_id
  * @property int $country_id
@@ -100,6 +102,7 @@ class Invoice extends Model implements InvoiceContract
         'items' => [InvoiceItem::class, 'delete' => true],
         'status_log' => [InvoiceStatusLog::class, 'delete' => true],
         'payment_log' => [InvoicePaymentLog::class, 'delete' => true],
+        'credit_applications' => [CreditApplication::class, 'delete' => true],
     ];
 
     /**
