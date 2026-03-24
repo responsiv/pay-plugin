@@ -34,6 +34,7 @@ class CreditNote extends Model
 
     const TYPE_REFUND = 'refund';
     const TYPE_ADJUSTMENT = 'adjustment';
+    const TYPE_DEBIT = 'debit';
     const TYPE_PROMOTION = 'promotion';
 
     /**
@@ -53,7 +54,7 @@ class CreditNote extends Model
         'user' => 'required',
         'amount' => 'required|integer|min:1',
         'currency_code' => 'required',
-        'type' => 'required|in:refund,adjustment,promotion',
+        'type' => 'required|in:refund,adjustment,debit,promotion',
     ];
 
     /**
@@ -78,7 +79,7 @@ class CreditNote extends Model
      */
     public function getAvailableBalanceAttribute(): int
     {
-        if ($this->voided_at) {
+        if ($this->voided_at || $this->type === static::TYPE_DEBIT) {
             return 0;
         }
 
@@ -97,6 +98,7 @@ class CreditNote extends Model
         return [
             self::TYPE_REFUND => 'Refund',
             self::TYPE_ADJUSTMENT => 'Adjustment',
+            self::TYPE_DEBIT => 'Debit',
             self::TYPE_PROMOTION => 'Promotion',
         ];
     }
@@ -208,8 +210,33 @@ class CreditNote extends Model
     }
 
     /**
+     * issueDebit creates a debit note that subtracts from a user's credit balance.
+     * Currency must be specified explicitly.
+     */
+    public static function issueDebit($user, $amount, $currencyCode, $reason, $adminUser = null): static
+    {
+        $note = new static;
+        $note->user = $user;
+        $note->amount = $amount;
+        $note->currency_code = $currencyCode;
+        $note->reason = $reason;
+        $note->type = static::TYPE_DEBIT;
+        $note->issued_at = $note->freshTimestamp();
+
+        if ($adminUser) {
+            $note->issued_by = $adminUser->id;
+        }
+
+        $note->save();
+
+        Event::fire('responsiv.pay.creditNote.issued', [$note]);
+
+        return $note;
+    }
+
+    /**
      * getBalanceForUser returns the credit balance for a user in a given currency.
-     * Balance = issued credit minus spent (applied) credit.
+     * Balance = issued credit minus debits minus spent (applied) credit.
      */
     public static function getBalanceForUser($user, $currencyCode = null): int
     {
@@ -220,6 +247,13 @@ class CreditNote extends Model
         $issued = static::applyUser($user)
             ->applyActive()
             ->applyCurrency($currencyCode)
+            ->where('type', '!=', static::TYPE_DEBIT)
+            ->sum('amount');
+
+        $debited = static::applyUser($user)
+            ->applyActive()
+            ->applyCurrency($currencyCode)
+            ->applyType(static::TYPE_DEBIT)
             ->sum('amount');
 
         $spent = CreditApplication::where('user_id', $user->id)
@@ -229,19 +263,24 @@ class CreditNote extends Model
             })
             ->sum('amount');
 
-        return (int) $issued - (int) $spent;
+        return (int) $issued - (int) $debited - (int) $spent;
     }
 
     /**
-     * getHistoryForUser returns all credit notes for a user with their
-     * applications, ordered by most recent first.
+     * getHistoryForUser returns all credit notes for a user in a given currency,
+     * with their applications, ordered by most recent first.
      */
-    public static function getHistoryForUser($user)
+    public static function getHistoryForUser($user, $currencyCode = null)
     {
-        return static::applyUser($user)
+        $query = static::applyUser($user)
             ->with('applications')
-            ->orderBy('issued_at', 'desc')
-            ->get();
+            ->orderBy('issued_at', 'desc');
+
+        if ($currencyCode !== null) {
+            $query->applyCurrency($currencyCode);
+        }
+
+        return $query->get();
     }
 
     /**

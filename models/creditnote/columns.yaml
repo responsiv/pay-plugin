@@ -1,0 +1,28 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        width: 80px
+
+    type:
+        label: Type
+        width: 120px
+
+    reason:
+        label: Reason
+
+    amount:
+        label: Amount
+        type: currency
+
+    issued_at:
+        label: Issued
+        type: datetime
+
+    voided_at:
+        label: Voided
+        type: datetime
+        invisible: true

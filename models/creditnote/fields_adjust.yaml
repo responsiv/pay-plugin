@@ -1,0 +1,27 @@
+# ===================================
+#  Form Field Definitions (Adjust Credit)
+# ===================================
+
+fields:
+    adjust_type:
+        label: Type
+        type: radio
+        inlineOptions: true
+        span: full
+        options:
+            credit: Credit
+            debit: Debit
+        default: credit
+
+    amount:
+        label: Amount
+        type: currency
+        span: full
+        required: true
+
+    reason:
+        label: Reason
+        type: textarea
+        size: small
+        span: full
+        required: true

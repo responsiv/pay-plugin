@@ -1,0 +1,27 @@
+# ===================================
+#  Form Field Definitions (Refund)
+# ===================================
+
+fields:
+    status:
+        label: Status
+        type: dropdown
+        placeholder: -- select --
+
+    comment:
+        label: Reason
+        type: textarea
+        size: small
+
+    issue_credit:
+        label: Issue store credit to customer
+        type: checkbox
+
+    refund_amount:
+        label: Refund Amount
+        comment: Amount to refund. Defaults to the invoice total.
+        type: currency
+        trigger:
+            action: show
+            field: issue_credit
+            condition: checked

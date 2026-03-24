@@ -33,3 +33,14 @@ payment_log:
         defaultSort:
             column: created_at
             direction: desc
+
+credit_applications:
+    label: Credit Applied
+    emptyMessage: No credit has been applied to this invoice
+    list: $/responsiv/pay/models/creditapplication/columns.yaml
+    readOnly: true
+    view:
+        showSorting: false
+        defaultSort:
+            column: applied_at
+            direction: desc

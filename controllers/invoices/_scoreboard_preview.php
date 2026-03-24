@@ -34,3 +34,14 @@
         <?= __("Tax") ?>: <?= $formModel->getCurrencyObject()?->formatCurrency($formModel->tax) ?: Currency::format($formModel->tax) ?>
     </p>
 </div>
+
+<?php if ($formModel->credit_applied > 0): ?>
+    <div class="scoreboard-item title-value">
+        <h4><?= __("Amount Due") ?></h4>
+        <p><?= $formModel->getCurrencyObject()?->formatCurrency($formModel->amount_due) ?: Currency::format($formModel->amount_due) ?></p>
+        <p class="description">
+            <?= __("Credit Applied") ?>:
+            <?= $formModel->getCurrencyObject()?->formatCurrency($formModel->credit_applied) ?: Currency::format($formModel->credit_applied) ?>
+        </p>
+    </div>
+<?php endif ?>

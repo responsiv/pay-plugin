@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay;
 
+use Event;
 use Backend;
 use System\Classes\PluginBase;
 use System\Classes\SettingsManager;
@@ -31,6 +32,14 @@ class Plugin extends PluginBase
             'icon' => 'icon-credit-card',
             'homepage' => 'https://github.com/responsiv/pay-plugin'
         ];
+    }
+
+    /**
+     * boot
+     */
+    public function boot()
+    {
+        Event::subscribe(\Responsiv\Pay\Classes\ExtendUserPlugin::class);
     }
 
     /**

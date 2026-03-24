@@ -1,10 +1,12 @@
 <?php namespace Responsiv\Pay\Controllers\Invoices;
 
 use Flash;
+use Currency;
 use Redirect;
 use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
+use Responsiv\Pay\Models\CreditNote;
 use ApplicationException;
 use ValidationException;
 use Exception;
@@ -34,7 +36,7 @@ trait HasInvoiceStatus
     }
 
     /**
-     * onRestoreExtraSet
+     * onChangeInvoiceStatus
      */
     public function onChangeInvoiceStatus($productId = null)
     {
@@ -44,7 +46,12 @@ trait HasInvoiceStatus
         }
 
         $isPaymentAction = (int) InvoiceStatus::getPaidStatus()?->getKey() === (int) $statusId;
+        $isRefundAction = (int) InvoiceStatus::getRefundedStatus()?->getKey() === (int) $statusId;
         $comment = post('InvoiceStatusLog[comment]');
+
+        // Refund-specific fields (from preset flow)
+        $issueCredit = post('InvoiceStatusLog[issue_credit]');
+        $refundAmountInput = post('InvoiceStatusLog[refund_amount]');
 
         $processed = 0;
         $invoices = $this->getInvoiceStatusInvoicesFromPost();
@@ -55,6 +62,16 @@ trait HasInvoiceStatus
                 }
                 elseif ($invoice->updateInvoiceStatus($statusId, $comment)) {
                     $processed++;
+
+                    // Issue credit note when refunding
+                    if ($isRefundAction) {
+                        $this->processRefundCredit(
+                            $invoice,
+                            $issueCredit,
+                            $refundAmountInput,
+                            $comment
+                        );
+                    }
                 }
             }
             catch (Exception $ex) {
@@ -72,6 +89,35 @@ trait HasInvoiceStatus
         }
 
         return $this->listRefresh();
+    }
+
+    /**
+     * processRefundCredit issues a credit note when store credit is requested
+     */
+    protected function processRefundCredit($invoice, $issueCredit, $refundAmountInput, $comment)
+    {
+        // Bulk flow (no checkbox shown) does not issue credit
+        if ($issueCredit === null) {
+            $issueCredit = false;
+        }
+
+        if (!$issueCredit) {
+            return;
+        }
+
+        // Convert display amount to base value, or use full invoice total
+        $refundAmount = $refundAmountInput !== null
+            ? Currency::toBaseValue($refundAmountInput)
+            : $invoice->total;
+
+        if ($refundAmount > 0 && $invoice->user) {
+            CreditNote::issueRefund(
+                $invoice->user,
+                $invoice,
+                $refundAmount,
+                $comment ?: __("Refund for invoice #:id", ['id' => $invoice->id])
+            );
+        }
     }
 
     /**
@@ -96,7 +142,12 @@ trait HasInvoiceStatus
      */
     protected function getInvoiceStatusFormWidget()
     {
-        $fields = '$/responsiv/pay/models/invoicestatuslog/fields.yaml';
+        $preset = post('status_preset');
+        $isRefund = $preset === 'refunded';
+
+        $fields = $isRefund
+            ? '$/responsiv/pay/models/invoicestatuslog/fields_refund.yaml'
+            : '$/responsiv/pay/models/invoicestatuslog/fields.yaml';
 
         $statusLog = new InvoiceStatusLog;
 
@@ -106,8 +157,15 @@ trait HasInvoiceStatus
         $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
         $widget->bindToController();
 
-        if (($preset = post('status_preset')) && ($statusObj = InvoiceStatus::findByCode($preset))) {
+        if ($preset && ($statusObj = InvoiceStatus::findByCode($preset))) {
             $widget->getField('status')->value($statusObj->id)->readOnly();
+        }
+
+        // Set refund amount default to invoice total
+        if ($isRefund && ($invoiceId = post('invoice_id'))) {
+            if ($invoice = Invoice::find($invoiceId)) {
+                $widget->getField('refund_amount')->value($invoice->total);
+            }
         }
 
         return $widget;
