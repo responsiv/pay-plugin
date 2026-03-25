@@ -7,6 +7,7 @@ use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
 use Responsiv\Pay\Models\CreditNote;
+use Responsiv\Pay\Models\Setting as PaySetting;
 use ApplicationException;
 use ValidationException;
 use Exception;
@@ -161,9 +162,13 @@ trait HasInvoiceStatus
             $widget->getField('status')->value($statusObj->id)->readOnly();
         }
 
-        // Set refund amount default to invoice total
-        if ($isRefund && ($invoiceId = post('invoice_id'))) {
-            if ($invoice = Invoice::find($invoiceId)) {
+        // Set refund amount default to invoice total, hide credit when disabled
+        if ($isRefund) {
+            if (!PaySetting::isCreditEnabled()) {
+                $widget->getField('issue_credit')->hidden();
+                $widget->getField('refund_amount')->hidden();
+            }
+            elseif (($invoiceId = post('invoice_id')) && ($invoice = Invoice::find($invoiceId))) {
                 $widget->getField('refund_amount')->value($invoice->total);
             }
         }
