@@ -6,6 +6,10 @@
     </ol>
 <?php Block::endPut() ?>
 
+<?php if ($this->fatalError): ?>
+    <?= $this->formRenderDesign() ?>
+<?php else: ?>
+
 <div class="d-flex flex-column h-100">
     <div class="scoreboard" id="<?= $this->getId('scoreboard') ?>">
         <?= $this->makePartial('scoreboard_edit') ?>
@@ -13,3 +17,5 @@
 
     <?= $this->formRenderDesign() ?>
 </div>
+
+<?php endif ?>

@@ -73,7 +73,7 @@ class Invoices extends Controller
     public function preview($recordId = null, $context = null)
     {
         try {
-            $invoice = Invoice::find($recordId);
+            $invoice = Invoice::findOrFail($recordId);
             $this->vars['currency'] = $invoice->getCurrencyObject();
         }
         catch (Exception $ex) {
