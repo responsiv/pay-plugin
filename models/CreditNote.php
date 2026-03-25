@@ -193,6 +193,10 @@ class CreditNote extends Model
      */
     public static function getBalanceForUser($user, $currencyCode = null): int
     {
+        if (!$user) {
+            return 0;
+        }
+
         if ($currencyCode === null) {
             $currencyCode = \Currency::getActiveCode();
         }
