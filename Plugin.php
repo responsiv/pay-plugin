@@ -114,6 +114,7 @@ class Plugin extends PluginBase
         return [
             \Responsiv\Pay\PaymentTypes\PayPalPayment::class => 'paypal',
             \Responsiv\Pay\PaymentTypes\StripePayment::class => 'stripe',
+            \Responsiv\Pay\PaymentTypes\RazorPayPayment::class => 'razorpay',
             \Responsiv\Pay\PaymentTypes\CustomPayment::class => 'custom',
         ];
     }

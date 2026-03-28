@@ -1,0 +1,102 @@
+<p>Click the button below to pay using RazorPay</p>
+
+<button type="button" id="razorpay-pay-btn" class="btn btn-lg btn-primary w-100">
+    Pay with RazorPay
+</button>
+
+<p id="razorpay-result-message"></p>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+oc.pageReady().then(function() {
+    // Data store for the invoice hash
+    const invoiceHash = { value: '{{ invoice.hash }}' };
+
+    // This function requests the invoice hash from an external source, usually
+    // a checkout form, and provides an opportunity to validate the form
+    async function fetchInvoiceHash() {
+        const detail = { fetchFunc: null };
+        const event = new CustomEvent('pay:fetch-invoice', { detail });
+        window.dispatchEvent(event);
+        if (detail.fetchFunc) {
+            try {
+                invoiceHash.value = await detail.fetchFunc();
+            } catch (error) {
+            }
+        }
+    }
+
+    document.getElementById('razorpay-pay-btn').addEventListener('click', async function() {
+        if (!invoiceHash.value) {
+            await fetchInvoiceHash();
+            if (!invoiceHash.value) return;
+        }
+
+        try {
+            // Step 1: Create order on server
+            const orderResponse = await fetch(`{{ paymentMethod.getCreateOrderUrl() }}/${invoiceHash.value}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const orderData = await orderResponse.json();
+            if (orderData.error) {
+                throw new Error(orderData.error.description || orderData.error);
+            }
+            if (!orderData.id) {
+                throw new Error('Failed to create order');
+            }
+
+            // Step 2: Open RazorPay popup
+            const options = {
+                key: '{{ paymentMethod.getHostObject().key_id }}',
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: '{{ paymentMethod.getHostObject().name|e("js") }}',
+                order_id: orderData.id,
+                handler: async function(response) {
+                    try {
+                        // Step 3: Verify payment on server
+                        const verifyResponse = await fetch(`{{ paymentMethod.getVerifyUrl() }}/${invoiceHash.value}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(response)
+                        });
+
+                        const result = await verifyResponse.json();
+                        if (result.error) {
+                            throw new Error(result.error);
+                        }
+
+                        // Step 4: Finalize via onPay handler
+                        oc.ajax('onPay');
+                    } catch (error) {
+                        resultMessage('Payment verification failed: ' + error.message);
+                    }
+                },
+                modal: {
+                    ondismiss: function() {
+                        resultMessage('Payment cancelled.');
+                    }
+                },
+                theme: {
+                    color: '#3399cc'
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function(response) {
+                resultMessage('Payment failed: ' + response.error.description);
+            });
+            rzp.open();
+        } catch (error) {
+            console.error(error);
+            resultMessage('Could not initiate RazorPay Checkout: ' + error.message);
+        }
+    });
+
+    function resultMessage(message) {
+        document.getElementById('razorpay-result-message').innerHTML = message;
+    }
+});
+</script>

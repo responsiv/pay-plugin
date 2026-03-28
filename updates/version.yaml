@@ -37,3 +37,4 @@ v3.1.0:
     - Added credit notes support
     - 000012_create_credit_notes.php
     - migrate_v3_1_0.php
+v3.1.1: Added RazorPay payment gateway

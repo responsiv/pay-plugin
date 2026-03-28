@@ -1,0 +1,27 @@
+# ===================================
+#  Payment Field Definitions
+# ===================================
+
+fields:
+    test_mode:
+        label: Test Mode
+        type: switch
+        tab: Configuration
+        comment: Use the RazorPay Test Environment to try out payments using this gateway.
+
+    key_id:
+        label: Key ID
+        comment: Your RazorPay Key ID (starts with rzp_test_ or rzp_live_).
+        tab: Configuration
+
+    key_secret:
+        label: Key Secret
+        comment: Your RazorPay Key Secret. Keep this secret safe.
+        tab: Configuration
+        type: sensitive
+
+    webhook_secret:
+        label: Webhook Secret
+        comment: Optional. Enter the Webhook Secret from your RazorPay Dashboard to enable automatic payment confirmation.
+        tab: Configuration
+        type: sensitive
