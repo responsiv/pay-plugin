@@ -11,6 +11,10 @@ navigation:
         link: "./introduction.md"
         description: "explains how to get started using the Pay plugin"
     -
+        title: "Setting Up"
+        link: "./setting-up.md"
+        description: "setting up invoices and payment pages on the frontend"
+    -
         title: "Building Payment Types"
         description: "how to implement custom integration with your own payment gateway"
         link: "./building-payment-types.md"
