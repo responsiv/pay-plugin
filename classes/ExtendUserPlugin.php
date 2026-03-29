@@ -3,6 +3,7 @@
 use Flash;
 use Currency;
 use BackendAuth;
+use RainLab\User\Models\UserLog;
 use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\CreditNote;
 use October\Rain\Extension\Container as ExtensionContainer;
@@ -22,6 +23,12 @@ class ExtendUserPlugin
         $this->extendUserController();
 
         $events->listen('rainlab.user.view.extendPreviewTabs', [static::class, 'extendPreviewTabs'], 200);
+
+        $events->listen('responsiv.pay.invoicePaid', [static::class, 'logInvoicePaid']);
+
+        $events->listen('rainlab.user.extendLogDetailViewPath', [static::class, 'extendLogDetailViewPath']);
+
+        $events->listen('rainlab.user.extendLogTypeOptions', [static::class, 'extendLogTypeOptions']);
     }
 
     /**
@@ -117,6 +124,42 @@ class ExtendUserPlugin
 
         $controller->vars['formModel'] = $user;
         return ['#userCreditTab' => $controller->makePartial('$/responsiv/pay/partials/_user_credit.php')];
+    }
+
+    /**
+     * logInvoicePaid logs a paid invoice to the user activity timeline
+     */
+    public static function logInvoicePaid($invoice)
+    {
+        if (!$invoice->user_id) {
+            return;
+        }
+
+        UserLog::createRecord($invoice->user_id, 'pay-invoice-paid', [
+            'invoice_id' => $invoice->id,
+            'invoice_total' => $invoice->total,
+            'currency_code' => $invoice->currency_code,
+        ]);
+    }
+
+    /**
+     * extendLogDetailViewPath returns a custom partial for pay log types
+     */
+    public static function extendLogDetailViewPath($record, $type)
+    {
+        if ($type === 'pay-invoice-paid') {
+            return plugins_path('responsiv/pay/views/userlog/_detail_pay_invoice_paid.php');
+        }
+    }
+
+    /**
+     * extendLogTypeOptions adds pay log types to the filter dropdown
+     */
+    public static function extendLogTypeOptions()
+    {
+        return [
+            'pay-invoice-paid' => __("Invoice Paid"),
+        ];
     }
 
     /**
