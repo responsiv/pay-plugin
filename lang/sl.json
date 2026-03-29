@@ -133,5 +133,7 @@
   "Accept payments using Stripe.": "Sprejmite plačila z uporabo Stripe.",
   "Test Mode": "Testni način",
   "Use Stripe Test Mode to try out payments using this gateway.": "Uporabite način Stripe Test, da preizkusite plačila prek tega prehoda.",
-  "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe tajni ključ za preverjanje pristnosti zahtev. Shranite to skrivnost."
+  "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe tajni ključ za preverjanje pristnosti zahtev. Shranite to skrivnost.",
+  ":name paid an invoice for :total": "Uporabnik :name je plačal račun za :total",
+  "Invoice Paid": "Plačan račun"
 }

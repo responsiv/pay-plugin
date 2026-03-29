@@ -133,5 +133,7 @@
   "Accept payments using Stripe.": "Принимайте платежи через Stripe.",
   "Test Mode": "Тестовый режим",
   "Use Stripe Test Mode to try out payments using this gateway.": "Используйте тестовый режим Stripe, чтобы протестировать платежи с использованием этого шлюза.",
-  "Stripe secret key to authenticate requests. Keep this secret safe.": "Секретный ключ Stripe для аутентификации запросов. Сохраните этот секрет в безопасности."
+  "Stripe secret key to authenticate requests. Keep this secret safe.": "Секретный ключ Stripe для аутентификации запросов. Сохраните этот секрет в безопасности.",
+  ":name paid an invoice for :total": ":имя оплатил счет на сумму :итого",
+  "Invoice Paid": "Счет оплачен"
 }

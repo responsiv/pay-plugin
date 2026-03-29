@@ -133,5 +133,7 @@
   "Accept payments using Stripe.": "Stripe භාවිතයෙන් ගෙවීම් පිළිගන්න.",
   "Test Mode": "පරීක්ෂණ මාදිලිය",
   "Use Stripe Test Mode to try out payments using this gateway.": "මෙම ද්වාරය භාවිතයෙන් ගෙවීම් උත්සාහ කිරීමට ඉරි පරීක්ෂණ ප්‍රකාරය භාවිතා කරන්න.",
-  "Stripe secret key to authenticate requests. Keep this secret safe.": "ඉල්ලීම් සත්‍යාපනය කිරීමට ඉරි රහස් යතුර. මෙම රහස සුරක්ෂිතව තබා ගන්න."
+  "Stripe secret key to authenticate requests. Keep this secret safe.": "ඉල්ලීම් සත්‍යාපනය කිරීමට ඉරි රහස් යතුර. මෙම රහස සුරක්ෂිතව තබා ගන්න.",
+  ":name paid an invoice for :total": ":name :total සඳහා ඉන්වොයිසියක් ගෙව්වා",
+  "Invoice Paid": "ඉන්වොයිසිය ගෙවන ලදී"
 }

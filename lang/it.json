@@ -134,6 +134,8 @@
   "Test Mode": "Modalità di prova",
   "Use Stripe Test Mode to try out payments using this gateway.": "Utilizza la modalità di test Stripe per provare i pagamenti tramite questo gateway.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Chiave segreta Stripe per autenticare le richieste. Mantieni questo segreto al sicuro.",
+  ":name paid an invoice for :total": ":nome ha pagato una fattura per :totale",
+  "Invoice Paid": "Fattura pagata",
   "Currencies": "Valute",
   "Create and configure available currencies.": "Crea e configura le valute disponibili.",
   "Currency Converters": "Convertitore Valute",

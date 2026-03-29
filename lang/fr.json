@@ -134,6 +134,8 @@
   "Test Mode": "Mode test",
   "Use Stripe Test Mode to try out payments using this gateway.": "Utilisez le mode test Stripe pour tester les paiements à l'aide de cette passerelle.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Clé secrète Stripe pour authentifier les demandes. Gardez ce secret en sécurité.",
+  ":name paid an invoice for :total": ":nom a réglé une facture de :total",
+  "Invoice Paid": "Facture payée",
   "* - Any Country": "* - N'importe quel pays",
   "* - Any State": "* - N'importe quel état",
   "Create Taxes": "Créer des taxes",

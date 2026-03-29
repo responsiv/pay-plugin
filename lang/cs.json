@@ -133,5 +133,7 @@
   "Accept payments using Stripe.": "Přijímejte platby pomocí Stripe.",
   "Test Mode": "Testovací režim",
   "Use Stripe Test Mode to try out payments using this gateway.": "Použijte Stripe Test Mode k vyzkoušení plateb pomocí této brány.",
-  "Stripe secret key to authenticate requests. Keep this secret safe.": "Proužkový tajný klíč k ověření požadavků. Udržujte toto tajemství v bezpečí."
+  "Stripe secret key to authenticate requests. Keep this secret safe.": "Proužkový tajný klíč k ověření požadavků. Udržujte toto tajemství v bezpečí.",
+  ":name paid an invoice for :total": "Uživatel :name zaplatil fakturu na částku :total",
+  "Invoice Paid": "Faktura zaplacena"
 }

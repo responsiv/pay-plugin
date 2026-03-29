@@ -133,5 +133,7 @@
   "Accept payments using Stripe.": "Akceptuj płatności za pomocą Stripe.",
   "Test Mode": "Tryb testowy",
   "Use Stripe Test Mode to try out payments using this gateway.": "Użyj trybu testowego Stripe, aby wypróbować płatności za pomocą tej bramki.",
-  "Stripe secret key to authenticate requests. Keep this secret safe.": "Tajny klucz Stripe do uwierzytelniania żądań. Zachowaj ten sekret w bezpiecznym miejscu."
+  "Stripe secret key to authenticate requests. Keep this secret safe.": "Tajny klucz Stripe do uwierzytelniania żądań. Zachowaj ten sekret w bezpiecznym miejscu.",
+  ":name paid an invoice for :total": ":name zapłacił fakturę na kwotę :total",
+  "Invoice Paid": "Faktura zapłacona"
 }
