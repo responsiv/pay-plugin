@@ -38,3 +38,4 @@ v3.1.0:
     - 000012_create_credit_notes.php
     - migrate_v3_1_0.php
 v3.1.1: Added RazorPay payment gateway
+v3.1.2: Added Activity Log entry for paid invoices
