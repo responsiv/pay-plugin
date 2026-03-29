@@ -134,6 +134,7 @@
   "Test Mode": "حالت تست",
   "Use Stripe Test Mode to try out payments using this gateway.": "از حالت تست نواری برای امتحان کردن پرداخت ها با استفاده از این دروازه استفاده کنید.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "کلید مخفی راه راه برای احراز هویت درخواست ها. این راز را امن نگه دارید",
-  ":name paid an invoice for :total": ":name فاکتوری برای :total پرداخت کرد.",
+  ":name paid :invoice for :total": ":نام پرداخت شده :فاکتور برای :جمع کل",
+  "Invoice #:id": "شماره فاکتور: شناسه",
   "Invoice Paid": "فاکتور پرداخت شده"
 }

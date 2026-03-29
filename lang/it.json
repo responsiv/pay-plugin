@@ -134,16 +134,7 @@
   "Test Mode": "Modalità di prova",
   "Use Stripe Test Mode to try out payments using this gateway.": "Utilizza la modalità di test Stripe per provare i pagamenti tramite questo gateway.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Chiave segreta Stripe per autenticare le richieste. Mantieni questo segreto al sicuro.",
-  ":name paid an invoice for :total": ":nome ha pagato una fattura per :totale",
-  "Invoice Paid": "Fattura pagata",
-  "Currencies": "Valute",
-  "Create and configure available currencies.": "Crea e configura le valute disponibili.",
-  "Currency Converters": "Convertitore Valute",
-  "Select and manage the currency converter to use.": "Seleziona e gestisci il convertitore di valute da utilizzare.",
-  "Successfully enabled those currencies.": "Valute selezionate abilitate correttamente.",
-  "Successfully disabled those currencies.": "Valute selezionate disabilitate correttamente.",
-  "Enable or Disable Currencies": "Abilita o Disabilita Valute",
-  "Currencies selected: :amount": "Valuta selezionata: :amount",
-  "Disabled currencies are not visible on the front-end.": "Le valute disabilitate non verranno mostrate nel front-end.",
-  "Tools for currency display and conversion.": "Tool per visualizzare e convertire valute."
+  ":name paid :invoice for :total": ":nome pagato :fattura per :totale",
+  "Invoice #:id": "Numero fattura:id",
+  "Invoice Paid": "Fattura pagata"
 }

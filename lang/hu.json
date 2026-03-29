@@ -134,6 +134,7 @@
   "Test Mode": "Teszt mód",
   "Use Stripe Test Mode to try out payments using this gateway.": "A Stripe Test Mode használatával próbálja ki a fizetést ezen az átjárón keresztül.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Csíkos titkos kulcs a kérések hitelesítéséhez. Tartsa biztonságban ezt a titkot.",
-  ":name paid an invoice for :total": ":name kifizetett egy számlát :total összegből",
+  ":name paid :invoice for :total": ":name fizette :invoice összege: :total",
+  "Invoice #:id": "Számlaszám: azonosító",
   "Invoice Paid": "Számla kifizetve"
 }

@@ -134,6 +134,7 @@
   "Test Mode": "Testmodus",
   "Use Stripe Test Mode to try out payments using this gateway.": "Gebruik de Stripe-testmodus om betalingen via deze gateway uit te proberen.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe geheime sleutel om verzoeken te authenticeren. Houd dit geheim veilig.",
-  ":name paid an invoice for :total": ":naam betaalde een factuur voor :totaal",
+  ":name paid :invoice for :total": ":naam betaalde :factuur voor :totaal",
+  "Invoice #:id": "Factuurnummer:id",
   "Invoice Paid": "Factuur betaald"
 }

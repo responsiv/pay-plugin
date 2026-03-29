@@ -134,6 +134,7 @@
   "Test Mode": "وضع الاختبار",
   "Use Stripe Test Mode to try out payments using this gateway.": "استخدم وضع اختبار Stripe لتجربة المدفوعات باستخدام هذه البوابة.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "مفتاح سري لـ Stripe للتحقق من صحة الطلبات. احتفظ بهذا السر في مكان آمن.",
-  ":name paid an invoice for :total": "قام :الاسم بدفع فاتورة بقيمة :الإجمالي",
+  ":name paid :invoice for :total": ":name دفع :invoice مقابل :total",
+  "Invoice #:id": "رقم الفاتورة: id",
   "Invoice Paid": "تم دفع الفاتورة"
 }

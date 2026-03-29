@@ -134,6 +134,8 @@
   "Test Mode": "Test Modu",
   "Use Stripe Test Mode to try out payments using this gateway.": "Bu ağ geçidini kullanarak ödeme yapmayı denemek için Stripe Test Modunu kullanın.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "İstekleri doğrulamak için Stripe gizli anahtarı. Bu sırrı güvende tutun.",
-  ":name paid an invoice for :total": ":adı, toplam tutar için bir fatura ödedi.",
-  "Invoice Paid": "Fatura Ödendi"
+  ":name paid :invoice for :total": ":ödeme yapılan isim :fatura tutarı :toplam",
+  "Invoice #:id": "Fatura numarası: id",
+  "Invoice Paid": "Fatura Ödendi",
+  ":name paid an invoice for :total": ":adı, toplam tutar için bir fatura ödedi."
 }

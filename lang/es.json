@@ -134,6 +134,7 @@
   "Test Mode": "Modo de prueba",
   "Use Stripe Test Mode to try out payments using this gateway.": "Utilice el modo de prueba de Stripe para probar los pagos mediante esta pasarela.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Clave secreta de Stripe para autenticar solicitudes. Mantén este secreto a salvo.",
-  ":name paid an invoice for :total": ":nombre pagó una factura por :total",
+  ":name paid :invoice for :total": ":nombre pagó :factura por :total",
+  "Invoice #:id": "Número de factura:id",
   "Invoice Paid": "Factura pagada"
 }

@@ -134,6 +134,8 @@
   "Test Mode": "Testovací režim",
   "Use Stripe Test Mode to try out payments using this gateway.": "Použite Stripe Test Mode na vyskúšanie platieb pomocou tejto brány.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe tajný kľúč na overenie žiadostí. Udržujte toto tajomstvo v bezpečí.",
-  ":name paid an invoice for :total": "Používateľ :name zaplatil faktúru na sumu :total",
-  "Invoice Paid": "Faktúra zaplatená"
+  ":name paid :invoice for :total": "Používateľ :meno zaplatil :faktúru za :celkom",
+  "Invoice #:id": "Číslo faktúry: ID",
+  "Invoice Paid": "Faktúra zaplatená",
+  ":name paid an invoice for :total": "Používateľ :name zaplatil faktúru na sumu :total"
 }

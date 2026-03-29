@@ -134,6 +134,7 @@
   "Test Mode": "Mode Uji",
   "Use Stripe Test Mode to try out payments using this gateway.": "Gunakan Mode Uji Stripe untuk mencoba pembayaran menggunakan gateway ini.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Kunci rahasia Stripe untuk mengautentikasi permintaan. Jaga kerahasiaan ini dengan aman.",
-  ":name paid an invoice for :total": ":nama membayar tagihan sebesar :total",
+  ":name paid :invoice for :total": ":nama dibayar :faktur untuk :total",
+  "Invoice #:id": "Nomor Faktur:id",
   "Invoice Paid": "Faktur Terbayar"
 }

@@ -134,6 +134,7 @@
   "Test Mode": "Test Mode",
   "Use Stripe Test Mode to try out payments using this gateway.": "Use Stripe Test Mode to try out payments using this gateway.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe secret key to authenticate requests. Keep this secret safe.",
-  ":name paid an invoice for :total": ":name paid an invoice for :total",
+  ":name paid :invoice for :total": ":name paid :invoice for :total",
+  "Invoice #:id": "Invoice #:id",
   "Invoice Paid": "Invoice Paid"
 }
