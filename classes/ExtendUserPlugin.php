@@ -24,6 +24,8 @@ class ExtendUserPlugin
 
         $events->listen('rainlab.user.view.extendPreviewTabs', [static::class, 'extendPreviewTabs'], 200);
 
+        $events->listen('rainlab.user.mergeUser', [static::class, 'mergeUser']);
+
         $events->listen('responsiv.pay.invoicePaid', [static::class, 'logInvoicePaid']);
 
         $events->listen('rainlab.user.extendLogDetailViewPath', [static::class, 'extendLogDetailViewPath']);
@@ -71,6 +73,21 @@ class ExtendUserPlugin
         return [
             "Credit" => '$/responsiv/pay/partials/_user_credit.php',
         ];
+    }
+
+    /**
+     * mergeUser reassigns pay records from the merged user to the leading user
+     */
+    public static function mergeUser($leadingUser, $mergedUser)
+    {
+        \Responsiv\Pay\Models\Invoice::where('user_id', $mergedUser->id)
+            ->update(['user_id' => $leadingUser->id]);
+
+        CreditNote::where('user_id', $mergedUser->id)
+            ->update(['user_id' => $leadingUser->id]);
+
+        \Responsiv\Pay\Models\UserProfile::where('user_id', $mergedUser->id)
+            ->update(['user_id' => $leadingUser->id]);
     }
 
     /**
