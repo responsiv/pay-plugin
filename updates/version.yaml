@@ -39,3 +39,4 @@ v3.1.0:
     - migrate_v3_1_0.php
 v3.1.1: Added RazorPay payment gateway
 v3.1.2: Added Activity Log entry for paid invoices
+v3.1.3: Added support for merging users
