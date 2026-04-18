@@ -4,10 +4,10 @@
 ?>
 <?php if ($template): ?>
 
-    <iframe id="<?= $this->getId('invoiceIframe') ?>" style="width: 100%; height: 500px; padding: 0 10px" frameborder="0"></iframe>
-    <script type="text/template" id="<?= $this->getId('invoiceContents') ?>">
+    <iframe id="<?= $this->getId('invoiceIframe') ?>" style="width: 100%; height: 500px; padding: 0 10px; box-sizing: border-box" frameborder="0"></iframe>
+    <template id="<?= $this->getId('invoiceContents') ?>">
         <?= $template->renderInvoice($invoice) ?>
-    </script>
+    </template>
     <script>
         (function($){
             var invoiceContents,
@@ -18,10 +18,16 @@
                     return;
                 }
 
-                var frameContents = invoiceFrame.contents().find('html');
-                invoiceContents = $('#<?= $this->getId('invoiceContents') ?>').html();
-                frameContents.html(invoiceContents);
-                invoiceFrame.height(frameContents.height() + 100);
+                var templateEl = document.getElementById('<?= $this->getId('invoiceContents') ?>');
+                invoiceContents = templateEl.innerHTML;
+                var iframe = invoiceFrame[0];
+                iframe.srcdoc = invoiceContents;
+                iframe.onload = function() {
+                    var body = iframe.contentWindow.document.body;
+                    if (body) {
+                        invoiceFrame.height(body.scrollHeight + 100);
+                    }
+                };
             })
 
             invoiceFrame.on('print.invoice', function(){
