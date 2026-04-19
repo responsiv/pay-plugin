@@ -11,7 +11,7 @@
   "Invoice Template": "ඉන්වොයිස් අච්චුව",
   "Customize the template used for invoices.": "ඉන්වොයිසි සඳහා භාවිතා කරන අච්චුව අභිරුචිකරණය කරන්න.",
   "Change Invoice Status": "ඉන්වොයිස් තත්ත්වය වෙනස් කරන්න",
-  "Current status: :name": "වත්මන් තත්ත්වය:: නම",
+  "Current status: :name": "වත්මන් තත්ත්වය: :name",
   "Add Payment Method": "ගෙවීම් ක්‍රමය එක් කරන්න",
   "Default Currency": "පෙරනිමි මුදල්",
   "* - Any country": "* - ඕනෑම රටක්",

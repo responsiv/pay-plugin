@@ -11,7 +11,7 @@
   "Invoice Template": "Šablóna faktúry",
   "Customize the template used for invoices.": "Prispôsobte šablónu používanú pre faktúry.",
   "Change Invoice Status": "Zmeniť stav faktúry",
-  "Current status: :name": "Aktuálny stav: :meno",
+  "Current status: :name": "Aktuálny stav: :name",
   "Add Payment Method": "Pridať spôsob platby",
   "Default Currency": "Predvolená mena",
   "* - Any country": "* - Akákoľvek krajina",
@@ -134,8 +134,8 @@
   "Test Mode": "Testovací režim",
   "Use Stripe Test Mode to try out payments using this gateway.": "Použite Stripe Test Mode na vyskúšanie platieb pomocou tejto brány.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe tajný kľúč na overenie žiadostí. Udržujte toto tajomstvo v bezpečí.",
-  ":name paid :invoice for :total": "Používateľ :meno zaplatil :faktúru za :celkom",
-  "Invoice #:id": "Číslo faktúry: ID",
+  ":name paid :invoice for :total": "Používateľ :name zaplatil :invoice za :total",
+  "Invoice #:id": "Faktúra #:id",
   "Invoice Paid": "Faktúra zaplatená",
   ":name paid an invoice for :total": "Používateľ :name zaplatil faktúru na sumu :total"
 }

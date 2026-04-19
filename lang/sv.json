@@ -134,8 +134,8 @@
   "Test Mode": "Testläge",
   "Use Stripe Test Mode to try out payments using this gateway.": "Använd Stripe Test Mode för att testa betalningar med denna gateway.",
   "Stripe secret key to authenticate requests. Keep this secret safe.": "Stripe hemlig nyckel för att autentisera förfrågningar. Håll den här hemligheten säker.",
-  ":name paid :invoice for :total": ":namn betalt :faktura för :totalt",
-  "Invoice #:id": "Fakturanummer:id",
+  ":name paid :invoice for :total": ":name betalt :invoice för :total",
+  "Invoice #:id": "Faktura #:id",
   "Invoice Paid": "Faktura betald",
-  ":name paid an invoice for :total": ":namn betalade en faktura för :totalt"
+  ":name paid an invoice for :total": ":name betalade en faktura för :total"
 }
