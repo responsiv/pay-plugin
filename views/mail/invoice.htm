@@ -1,8 +1,8 @@
 subject = "Invoice {{ invoice.invoice_number }}"
 description = "Sent to the customer with the invoice attached as a PDF."
 ==
-{% if custom_message %}
-{{ custom_message }}
+{% if customMessage %}
+{{ customMessage }}
 {% else %}
 Hi {{ invoice.first_name }},
 
