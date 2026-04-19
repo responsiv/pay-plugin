@@ -4,7 +4,7 @@
 ?>
 <?php if ($template): ?>
 
-    <iframe id="<?= $this->getId('invoiceIframe') ?>" style="width: 100%; height: 500px; padding: 0 10px; box-sizing: border-box" frameborder="0"></iframe>
+    <iframe id="<?= $this->getId('invoiceIframe') ?>" style="width: 100%; height: 500px; padding: 0 10px" frameborder="0"></iframe>
     <template id="<?= $this->getId('invoiceContents') ?>">
         <?= $template->renderInvoice($invoice) ?>
     </template>
