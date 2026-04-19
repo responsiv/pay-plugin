@@ -36,6 +36,11 @@ td, tr, th, table {
     padding-bottom: 20px;
 }
 
+.invoice-header img {
+    max-height: 80px;
+    max-width: 200px;
+}
+
 .invoice-header-number,
 .invoice-header-date {
     text-align: right;

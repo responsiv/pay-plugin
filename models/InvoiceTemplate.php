@@ -25,6 +25,7 @@ class InvoiceTemplate extends Model
 {
     use \October\Rain\Database\Traits\Defaultable;
     use \October\Rain\Parse\Syntax\SyntaxModelTrait;
+    use \Responsiv\Pay\Models\InvoiceTemplate\HasDomPdf;
 
     /**
      * @var string table used by the model
