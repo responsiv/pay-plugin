@@ -6,7 +6,7 @@ description = "Sent to the customer with the invoice attached as a PDF."
 {% else %}
 Hi {{ invoice.first_name }},
 
-Here's invoice {{ invoice.invoice_number }} for {{ invoice.total|currency({ in: invoice.currency_code }) }}.
+Here's Invoice {{ invoice.invoice_number }} for {{ invoice.total|currency({ in: invoice.currency_code }) }}.
 
 {% if invoice.due_at %}
 The amount outstanding of {{ invoice.amount_due|currency({ in: invoice.currency_code }) }} is due on {{ invoice.due_at.toFormattedDateString() }}.

@@ -3,6 +3,7 @@
 use File;
 use Twig;
 use Model;
+use ApplicationException;
 
 /**
  * InvoiceTemplate Model
@@ -46,6 +47,16 @@ class InvoiceTemplate extends Model
     public function beforeSave()
     {
         $this->makeSyntaxFields($this->content_html);
+    }
+
+    /**
+     * beforeDelete
+     */
+    public function beforeDelete()
+    {
+        if (Invoice::where('template_id', $this->id)->exists()) {
+            throw new ApplicationException(__("Cannot delete this template because it is used by one or more invoices."));
+        }
     }
 
     /**
