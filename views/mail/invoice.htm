@@ -1,0 +1,16 @@
+subject = "Invoice {{ invoice.invoice_number }}"
+description = "Sent to the customer with the invoice attached as a PDF."
+==
+{% if custom_message %}
+{{ custom_message }}
+{% else %}
+Hello {{ invoice.first_name }}
+
+Please find your invoice attached.
+
+- Invoice: #{{ invoice.invoice_number }}
+- Date: {{ invoice.created_at.toFormattedDateString() }}
+- Total: {{ invoice.total|currency({ in: invoice.currency_code }) }}
+
+Thank you for your business.
+{% endif %}

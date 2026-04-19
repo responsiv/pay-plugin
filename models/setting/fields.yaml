@@ -17,6 +17,12 @@ tabs:
             tab: Invoices
             span: auto
 
+        send_invoice_on_payment:
+            label: Email Invoice on Payment
+            comment: Automatically email the invoice to the customer when payment is processed.
+            tab: Invoices
+            type: switch
+
         enable_credit_notes:
             label: Enable Store Credit
             comment: Allow customers to accumulate and spend store credit at checkout.

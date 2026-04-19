@@ -14,6 +14,7 @@ use Responsiv\Pay\Models\Invoice;
 class Invoices extends Controller
 {
     use \Responsiv\Pay\Controllers\Invoices\HasInvoiceStatus;
+    use \Responsiv\Pay\Controllers\Invoices\HasInvoiceEmail;
 
     /**
      * @var array implement extensions

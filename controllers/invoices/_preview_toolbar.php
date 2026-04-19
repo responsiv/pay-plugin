@@ -42,13 +42,11 @@
         <i class="icon-print"></i>
         Print Invoice
     </a>
-    <? /* @todo
-    <a
-        href="#"
-        class="btn btn-default">
-        Email invoice
-    </a>
-    */ ?>
+    <?= Ui::popupButton("Email Invoice", 'onLoadSendInvoiceEmailForm')
+        ->ajaxData(['invoice_id' => $formModel->id])
+        ->size(500)
+        ->icon('icon-envelope')
+        ->outline() ?>
 
     <div class="toolbar-divider"></div>
 

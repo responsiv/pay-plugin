@@ -1,5 +1,6 @@
 <?php namespace Responsiv\Pay\Models\Invoice;
 
+use Log;
 use Cms;
 use Event;
 use Cms\Classes\Controller;
@@ -176,6 +177,19 @@ trait HasInvoiceContract
             $this->save();
 
             $this->updateInvoiceStatus(InvoiceStatus::STATUS_PAID, $comment);
+
+            // Auto-send invoice email if enabled
+            if (Setting::isSendInvoiceOnPayment() && !$this->sent_at) {
+                try {
+                    $this->sendInvoiceEmail();
+                }
+                catch (\Exception $ex) {
+                    Log::error('Failed to auto-send invoice email', [
+                        'invoice_id' => $this->id,
+                        'error' => $ex->getMessage()
+                    ]);
+                }
+            }
         }
 
         return !$isPaid;

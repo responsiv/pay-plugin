@@ -10,6 +10,7 @@ use ValidationException;
  * @property string invoice_prefix
  * @property string new_invoice_number
  * @property bool enable_credit_notes
+ * @property bool send_invoice_on_payment
  *
  * @package responsiv\pay
  * @author Alexey Bobkov, Samuel Georges
@@ -40,6 +41,7 @@ class Setting extends SettingModel
     {
         $this->invoice_prefix = '';
         $this->enable_credit_notes = false;
+        $this->send_invoice_on_payment = false;
     }
 
     /**
@@ -48,6 +50,14 @@ class Setting extends SettingModel
     public static function isCreditEnabled(): bool
     {
         return (bool) static::get('enable_credit_notes', false);
+    }
+
+    /**
+     * isSendInvoiceOnPayment returns true if invoices should be emailed on payment
+     */
+    public static function isSendInvoiceOnPayment(): bool
+    {
+        return (bool) static::get('send_invoice_on_payment', false);
     }
 
     /**
