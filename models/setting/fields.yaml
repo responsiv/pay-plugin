@@ -4,6 +4,11 @@
 
 tabs:
     fields:
+        send_invoice_on_payment:
+            label: Email Invoice on Payment
+            comment: Automatically email the invoice to the customer when payment is processed.
+            tab: Invoices
+            type: switch
 
         invoice_prefix:
             label: Invoice Prefix
@@ -16,12 +21,6 @@ tabs:
             comment: Use this to set the next invoice number, must be more than the current invoice number.
             tab: Invoices
             span: auto
-
-        send_invoice_on_payment:
-            label: Email Invoice on Payment
-            comment: Automatically email the invoice to the customer when payment is processed.
-            tab: Invoices
-            type: switch
 
         enable_credit_notes:
             label: Enable Store Credit
