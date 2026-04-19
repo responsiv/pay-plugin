@@ -3,6 +3,8 @@
 use Flash;
 use BackendAuth;
 use Responsiv\Pay\Models\Invoice;
+use System\Classes\MailManager;
+use System\Models\MailTemplate;
 use Exception;
 
 /**
@@ -55,12 +57,19 @@ trait HasInvoiceEmail
     }
 
     /**
-     * getInvoiceEmailDefaultMessage returns the default email body
+     * getInvoiceEmailDefaultMessage renders the default email body
+     * from the mail template so developers can customize it.
      */
     protected function getInvoiceEmailDefaultMessage($invoice): string
     {
-        return __("Hello :name\n\nPlease find your invoice attached.\n\nThank you for your business.", [
-            'name' => $invoice->first_name
-        ]);
+        $template = MailTemplate::findOrMakeTemplate('pay:invoice');
+        if (!$template) {
+            return '';
+        }
+
+        return trim(MailManager::instance()->renderText(
+            $template->content_html,
+            ['invoice' => $invoice]
+        ));
     }
 }

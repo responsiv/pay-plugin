@@ -4,13 +4,19 @@ description = "Sent to the customer with the invoice attached as a PDF."
 {% if custom_message %}
 {{ custom_message }}
 {% else %}
-Hello {{ invoice.first_name }}
+Hi {{ invoice.first_name }},
 
-Please find your invoice attached.
+Here's invoice {{ invoice.invoice_number }} for {{ invoice.total|currency({ in: invoice.currency_code }) }}.
 
-- Invoice: #{{ invoice.invoice_number }}
-- Date: {{ invoice.created_at.toFormattedDateString() }}
-- Total: {{ invoice.total|currency({ in: invoice.currency_code }) }}
+{% if invoice.due_at %}
+The amount outstanding of {{ invoice.amount_due|currency({ in: invoice.currency_code }) }} is due on {{ invoice.due_at.toFormattedDateString() }}.
+{% endif %}
+
+{% if invoice.receiptUrl %}
+View your invoice online: {{ invoice.receiptUrl }}
+{% endif %}
+
+If you have any questions, please let us know.
 
 Thank you for your business.
 {% endif %}

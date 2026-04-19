@@ -49,7 +49,7 @@
                 <textarea
                     name="message"
                     class="form-control"
-                    rows="5"><?= e($defaultMessage) ?></textarea>
+                    rows="10"><?= e($defaultMessage) ?></textarea>
             </div>
 
             <div class="form-group checkboxlist-field span-left">

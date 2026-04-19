@@ -44,7 +44,7 @@
     </a>
     <?= Ui::popupButton("Email Invoice", 'onLoadSendInvoiceEmailForm')
         ->ajaxData(['invoice_id' => $formModel->id])
-        ->size(500)
+        ->size(700)
         ->icon('icon-envelope')
         ->outline() ?>
 
