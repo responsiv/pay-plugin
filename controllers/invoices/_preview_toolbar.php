@@ -37,7 +37,7 @@
 
     <a
         href="javascript:;"
-        onclick="$('#<?= $this->getId('invoiceIframe') ?>').trigger('print.invoice')"
+        onclick="document.getElementById('<?= $this->getId('invoiceIframe') ?>').dispatchEvent(new Event('print'))"
         class="btn btn-outline-default">
         <i class="icon-print"></i>
         Print Invoice
