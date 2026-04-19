@@ -48,6 +48,7 @@ class Plugin extends PluginBase
     public function register()
     {
         $this->registerSingletons();
+        $this->registerDomPdf();
 
         $this->registerConsoleCommand('pay.migratev1', \Responsiv\Pay\Console\MigrateV1Command::class);
     }
@@ -58,6 +59,19 @@ class Plugin extends PluginBase
     protected function registerSingletons()
     {
         $this->app->singleton('pay.gateways', \Responsiv\Pay\Classes\GatewayManager::class);
+    }
+
+    /**
+     * registerDomPdf configures the dompdf library for October CMS
+     */
+    protected function registerDomPdf()
+    {
+        $this->app['config']->set('dompdf.public_path', public_path());
+        $this->app['config']->set('dompdf.options.enable_remote', true);
+        $this->app['config']->set('dompdf.options.chroot', [
+            realpath(base_path()),
+            realpath(public_path()),
+        ]);
     }
 
     /**
@@ -98,6 +112,16 @@ class Plugin extends PluginBase
                 'tab' => 'Pay',
                 'label' => 'Access settings'
             ],
+        ];
+    }
+
+    /**
+     * registerMailTemplates
+     */
+    public function registerMailTemplates()
+    {
+        return [
+            'pay:invoice' => 'responsiv.pay::mail.invoice',
         ];
     }
 
