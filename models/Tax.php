@@ -134,8 +134,8 @@ class Tax extends Model
             $taxInfo['addedTax'] = true;
             $taxInfo['compoundTax'] = false;
             $taxInfo['rate'] = $pricesIncludeTax
-                ? round(($amount * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']))
-                : round($amount * $taxInfo['taxRate']);
+                ? round($amount * $addedTax['rate'] / (100 + $addedTax['rate']))
+                : round($amount * $addedTax['rate'] / 100);
             $taxInfo['total'] = $taxInfo['rate'];
             $result[] = $taxInfo;
             $addedResult += $taxInfo['rate'];
@@ -148,8 +148,8 @@ class Tax extends Model
             $taxInfo['compoundTax'] = true;
             $taxInfo['addedTax'] = false;
             $taxInfo['rate'] = $pricesIncludeTax
-                ? round(($addedResult * $taxInfo['taxRate']) / (1 + $taxInfo['taxRate']))
-                : round($addedResult * $taxInfo['taxRate']);
+                ? round($addedResult * $compoundTax['rate'] / (100 + $compoundTax['rate']))
+                : round($addedResult * $compoundTax['rate'] / 100);
             $taxInfo['total'] = $taxInfo['rate'];
             $result[] = $taxInfo;
         }
