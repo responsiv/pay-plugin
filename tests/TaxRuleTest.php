@@ -542,18 +542,18 @@ class TaxRuleTest extends PluginTestCase
 
         // $100.00 item
         // GST: 10000 * 0.05 = 500
-        // QST: 10000 * (9.975/100) = 997 (float precision: 9.975/100 = 0.09974999...)
-        // Total: 1497
+        // QST: 10000 * 9.975/100 = 997.5 → round() = 998
+        // Total: 1498
         $rates = $tax->getTaxRates(10000);
         $this->assertCount(2, $rates);
 
         $this->assertEquals(500, $rates[0]['rate']);
         $this->assertFalse($rates[0]['compoundTax']);
 
-        $this->assertEquals(997, $rates[1]['rate']);
+        $this->assertEquals(998, $rates[1]['rate']);
         $this->assertFalse($rates[1]['compoundTax']);
 
-        $this->assertEquals(1497, $tax->getTotalTax(10000));
+        $this->assertEquals(1498, $tax->getTotalTax(10000));
     }
 
     /**
