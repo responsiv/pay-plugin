@@ -53,8 +53,11 @@ class TaxLocation extends ElementBase
             'city' => 'required',
             'zip' => 'required',
             'countryId' => 'required',
-            'stateId' => 'required',
         ];
+
+        if ($this->countryId && Country::find($this->countryId)?->states()->exists()) {
+            $rules['stateId'] = 'required';
+        }
 
         Validator::validate($this->config, $rules, [
             'addressLine1' => __("The address field is required")
@@ -89,8 +92,12 @@ class TaxLocation extends ElementBase
             $prefix.'city' => 'required',
             $prefix.'zip' => 'required',
             $prefix.'country_id' => 'required',
-            $prefix.'state_id' => 'required',
         ];
+
+        $countryId = post($prefix.'country_id');
+        if ($countryId && Country::find($countryId)?->states()->exists()) {
+            $rules[$prefix.'state_id'] = 'required';
+        }
 
         Validator::validate($data, $rules, [
             $prefix.'address_line1' => __("The address field is required")
