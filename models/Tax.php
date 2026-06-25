@@ -401,9 +401,15 @@ class Tax extends Model
      */
     protected function getCountryList($term)
     {
-        $codes = Country::applyEnabled()->lists('code');
+        $result = ['*' => __("* - Any Country")];
 
-        return array_merge(['*'], $codes);
+        $countries = Country::applyEnabled()->lists('name', 'code');
+
+        foreach ($countries as $code => $name) {
+            $result[$code] = $code .' - ' . $name;
+        }
+
+        return $result;
     }
 
     /**
@@ -411,15 +417,25 @@ class Tax extends Model
      */
     protected function getStateList($countryCode, $term)
     {
+        $result = ['*' => __("* - Any State")];
+
         if (!$countryCode || $countryCode == '*') {
-            return ['*'];
+            return $result;
         }
 
-        $codes = State::whereHas('country', function($query) use ($countryCode) {
-            $query->where('code', $countryCode);
-        })->limit(10)->lists('code');
+        if ($countryCode) {
+            $states = State::whereHas('country', function($query) use ($countryCode) {
+                $query->where('code', $countryCode);
+            });
+        }
 
-        return array_merge(['*'], $codes);
+        $states = $states->limit(10)->lists('name', 'code');
+
+        foreach ($states as $code => $name) {
+            $result[$code] = $code .' - ' . $name;
+        }
+
+        return $result;
     }
 
     /**
