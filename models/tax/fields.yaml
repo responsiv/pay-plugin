@@ -5,8 +5,14 @@
 tabs:
     defaultTab: Tax Class
     fields:
+        is_default:
+            label: Default
+            comment: Place a tick in this checkbox if you want to use this tax table by default.
+            type: checkbox
+
         name:
             label: Name
+            span: full
 
         description:
             label: Description
@@ -14,10 +20,10 @@ tabs:
             type: textarea
             size: small
 
-        is_default:
-            label: Default
-            comment: Place a tick in this checkbox if you want to use this tax table by default.
-            type: checkbox
+        code:
+            label: API Code
+            span: full
+            commentAbove: Use this code to refer to this tax class in API calls.
 
         rates:
             tab: Rates

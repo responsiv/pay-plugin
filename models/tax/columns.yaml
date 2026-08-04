@@ -11,6 +11,10 @@ columns:
         label: Name
         searchable: true
 
+    code:
+        label: API Code
+        searchable: true
+
     description:
         label: Description
         searchable: true
