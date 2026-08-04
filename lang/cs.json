@@ -154,5 +154,7 @@
   "Print Invoice": "Tisk faktury",
   "or": "nebo",
   "Cancel": "Zrušit",
-  "Close": "Blízko"
+  "Close": "Blízko",
+  "API Code": "API kód",
+  "Use this code to refer to this tax class in API calls.": "Pomocí tohoto kódu se odkazuje na tuto daňovou třídu ve voláních API."
 }

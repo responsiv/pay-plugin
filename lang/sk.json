@@ -137,5 +137,7 @@
   ":name paid :invoice for :total": "Používateľ :name zaplatil :invoice za :total",
   "Invoice #:id": "Faktúra #:id",
   "Invoice Paid": "Faktúra zaplatená",
-  ":name paid an invoice for :total": "Používateľ :name zaplatil faktúru na sumu :total"
+  ":name paid an invoice for :total": "Používateľ :name zaplatil faktúru na sumu :total",
+  "API Code": "API kód",
+  "Use this code to refer to this tax class in API calls.": "Pomocou tohto kódu sa odkazuje na túto daňovú triedu vo volaniach API."
 }

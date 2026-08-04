@@ -154,5 +154,7 @@
   "Print Invoice": "Cetak Faktur",
   "or": "atau",
   "Cancel": "Membatalkan",
-  "Close": "Menutup"
+  "Close": "Menutup",
+  "API Code": "Kode API",
+  "Use this code to refer to this tax class in API calls.": "Gunakan kode ini untuk merujuk ke kelas pajak ini dalam panggilan API."
 }

@@ -137,5 +137,7 @@
   ":name paid :invoice for :total": ":name ödedi :invoice için :total",
   "Invoice #:id": "Fatura #:id",
   "Invoice Paid": "Fatura Ödendi",
-  ":name paid an invoice for :total": ":name :total için bir fatura ödedi."
+  ":name paid an invoice for :total": ":name :total için bir fatura ödedi.",
+  "API Code": "API Kodu",
+  "Use this code to refer to this tax class in API calls.": "API çağrılarında bu vergi sınıfına başvurmak için bu kodu kullanın."
 }

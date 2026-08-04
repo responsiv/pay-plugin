@@ -154,5 +154,7 @@
   "Print Invoice": "چاپ فاکتور",
   "or": "یا",
   "Cancel": "لغو",
-  "Close": "بستن"
+  "Close": "بستن",
+  "API Code": "کد API",
+  "Use this code to refer to this tax class in API calls.": "از این کد برای ارجاع به این طبقه مالیاتی در فراخوانی‌های API استفاده کنید."
 }

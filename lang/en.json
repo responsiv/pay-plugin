@@ -154,5 +154,7 @@
   "Print Invoice": "Print Invoice",
   "or": "or",
   "Cancel": "Cancel",
-  "Close": "Close"
+  "Close": "Close",
+  "API Code": "API Code",
+  "Use this code to refer to this tax class in API calls.": "Use this code to refer to this tax class in API calls."
 }

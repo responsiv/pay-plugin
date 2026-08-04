@@ -154,5 +154,7 @@
   "Print Invoice": "Stampa fattura",
   "or": "O",
   "Cancel": "Cancellare",
-  "Close": "Vicino"
+  "Close": "Vicino",
+  "API Code": "Codice API",
+  "Use this code to refer to this tax class in API calls.": "Utilizza questo codice per fare riferimento a questa categoria fiscale nelle chiamate API."
 }

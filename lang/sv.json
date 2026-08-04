@@ -137,5 +137,7 @@
   ":name paid :invoice for :total": ":name betalt :invoice för :total",
   "Invoice #:id": "Faktura #:id",
   "Invoice Paid": "Faktura betald",
-  ":name paid an invoice for :total": ":name betalade en faktura för :total"
+  ":name paid an invoice for :total": ":name betalade en faktura för :total",
+  "API Code": "API-kod",
+  "Use this code to refer to this tax class in API calls.": "Använd denna kod för att referera till denna skatteklass i API-anrop."
 }

@@ -137,5 +137,7 @@
   ":name paid :invoice for :total": ":name оплачено :invoice за :total",
   "Invoice #:id": "Счет #:id",
   "Invoice Paid": "Счет оплачен",
-  ":name paid an invoice for :total": ":name оплатил счет на сумму :total"
+  ":name paid an invoice for :total": ":name оплатил счет на сумму :total",
+  "API Code": "Код API",
+  "Use this code to refer to this tax class in API calls.": "Используйте этот код для обращения к этому налоговому классу в вызовах API."
 }

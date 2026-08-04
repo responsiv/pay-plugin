@@ -154,5 +154,7 @@
   "Print Invoice": "طباعة الفاتورة",
   "or": "أو",
   "Cancel": "يلغي",
-  "Close": "يغلق"
+  "Close": "يغلق",
+  "API Code": "رمز API",
+  "Use this code to refer to this tax class in API calls.": "استخدم هذا الرمز للإشارة إلى فئة الضرائب هذه في استدعاءات API."
 }

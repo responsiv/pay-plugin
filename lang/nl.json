@@ -154,5 +154,7 @@
   "Print Invoice": "Factuur afdrukken",
   "or": "of",
   "Cancel": "Annuleren",
-  "Close": "Dichtbij"
+  "Close": "Dichtbij",
+  "API Code": "API-code",
+  "Use this code to refer to this tax class in API calls.": "Gebruik deze code om in API-aanroepen naar deze belastingklasse te verwijzen."
 }

@@ -11,5 +11,7 @@
   "Customize the template used for invoices.": "Customize o template usado para os pedidos.",
   "Change Invoice Status": "Alterar status do pedido",
   "Current status: :name": "Status atual: :name",
-  "Add Payment Method": "Adicionar método de pagamento"
+  "Add Payment Method": "Adicionar método de pagamento",
+  "API Code": "Código de API",
+  "Use this code to refer to this tax class in API calls.": "Use este código para se referir a esta classe de imposto em chamadas de API."
 }

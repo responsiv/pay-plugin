@@ -154,5 +154,7 @@
   "Print Invoice": "Számla nyomtatása",
   "or": "vagy",
   "Cancel": "Mégsem",
-  "Close": "Közeli"
+  "Close": "Közeli",
+  "API Code": "API kód",
+  "Use this code to refer to this tax class in API calls.": "Ezzel a kóddal hivatkozhat erre az adóosztályra az API-hívásokban."
 }

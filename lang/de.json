@@ -154,5 +154,7 @@
   "Print Invoice": "Rechnung drucken",
   "or": "oder",
   "Cancel": "Stornieren",
-  "Close": "Schließen"
+  "Close": "Schließen",
+  "API Code": "API-Code",
+  "Use this code to refer to this tax class in API calls.": "Verwenden Sie diesen Code, um in API-Aufrufen auf diese Steuerklasse zu verweisen."
 }

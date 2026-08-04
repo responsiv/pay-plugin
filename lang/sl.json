@@ -137,5 +137,7 @@
   ":name paid :invoice for :total": ":name plačano :invoice za :total",
   "Invoice #:id": "Račun #:id",
   "Invoice Paid": "Plačan račun",
-  ":name paid an invoice for :total": "Uporabnik :name je plačal račun za :total"
+  ":name paid an invoice for :total": "Uporabnik :name je plačal račun za :total",
+  "API Code": "Koda API",
+  "Use this code to refer to this tax class in API calls.": "Uporabite to kodo za sklicevanje na ta davčni razred v klicih API."
 }
