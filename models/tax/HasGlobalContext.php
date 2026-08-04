@@ -63,6 +63,14 @@ trait HasGlobalContext
     }
 
     /**
+     * pricesIncludeTax returns whether the current context treats entered prices as tax inclusive.
+     */
+    public static function pricesIncludeTax(): bool
+    {
+        return static::$pricesIncludeTax;
+    }
+
+    /**
      * withContext executes a callback with a temporary tax context,
      * restoring the previous context when done.
      */
