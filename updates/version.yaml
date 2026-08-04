@@ -42,3 +42,4 @@ v3.1.2: Added Activity Log entry for paid invoices
 v3.1.3: Added support for merging users
 v3.2.0: Added support for emailing invoices
 v3.2.1: Fixes state validation when country has no states
+v3.2.2: Fixes missing code field on tax classes
