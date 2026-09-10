@@ -29,6 +29,7 @@ tabs:
             tab: Rates
             type: datatable
             size: large
+            # legacyMode: true
             columns:
                 tax_name:
                     title: Tax Name

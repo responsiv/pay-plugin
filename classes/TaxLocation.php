@@ -26,6 +26,7 @@ use October\Rain\Element\ElementBase;
  * @method TaxLocation countryCode(string $countryCode) countryCode
  * @method TaxLocation stateCode(string $stateCode) stateCode
  * @method TaxLocation isBusiness(bool $isBusiness) isBusiness
+ * @method TaxLocation taxIdNumber(string $taxIdNumber) taxIdNumber
  * @method TaxLocation addressBookId(string $addressBookId) addressBookId
  *
  * @package responsiv\pay
@@ -139,6 +140,7 @@ class TaxLocation extends ElementBase
             ->stateId(post($prefix.'state_id', $this->stateId) ?: null)
             ->countryId(post($prefix.'country_id', $this->countryId) ?: null)
             ->isBusiness(post($prefix.'is_business', $this->isBusiness))
+            ->taxIdNumber(post($prefix.'tax_id_number', $this->taxIdNumber))
             ->countryCode(null)
             ->stateCode(null)
         ;
@@ -187,6 +189,7 @@ class TaxLocation extends ElementBase
             ->zip($invoice->zip)
             ->stateId($invoice->state_id)
             ->countryId($invoice->country_id)
+            ->taxIdNumber($invoice->tax_id_number)
         ;
 
         $this->loadInternals();
@@ -247,6 +250,7 @@ class TaxLocation extends ElementBase
         $invoice->zip = $this->zip;
         $invoice->state_id = $this->stateId;
         $invoice->country_id = $this->countryId;
+        $invoice->tax_id_number = $this->taxIdNumber;
     }
 
     /**
