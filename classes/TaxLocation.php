@@ -106,18 +106,26 @@ class TaxLocation extends ElementBase
     }
 
     /**
-     * getCountryCode
+     * getCountryCode returns the stored country code, resolving it from the country ID as needed.
      */
     public function getCountryCode()
     {
+        if ($this->countryCode) {
+            return $this->countryCode;
+        }
+
         return $this->countryId ? Country::findByKey($this->countryId)?->code : null;
     }
 
     /**
-     * getStateCode
+     * getStateCode returns the stored state code, resolving it from the state ID as needed.
      */
     public function getStateCode()
     {
+        if ($this->stateCode) {
+            return $this->stateCode;
+        }
+
         return $this->stateId ? State::findByKey($this->stateId)?->code : null;
     }
 
@@ -274,7 +282,7 @@ class TaxLocation extends ElementBase
      */
     public function matchesCountry($country): bool
     {
-        return $this->checkValuesMatch($country, $this->countryCode);
+        return $this->checkValuesMatch($country, $this->getCountryCode());
     }
 
     /**
@@ -282,7 +290,7 @@ class TaxLocation extends ElementBase
      */
     public function matchesState($state): bool
     {
-        return $this->checkValuesMatch($state, $this->stateCode);
+        return $this->checkValuesMatch($state, $this->getStateCode());
     }
 
     /**

@@ -168,7 +168,7 @@ class Tax extends Model
         ], $options));
 
         $location = static::$locationContext;
-        if (!$location || !$location->countryCode) {
+        if (!$location || !$location->getCountryCode()) {
             return null;
         }
 
