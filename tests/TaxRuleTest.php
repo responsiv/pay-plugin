@@ -26,6 +26,7 @@ class TaxRuleTest extends PluginTestCase
         Tax::setPricesIncludeTax(false);
         Tax::setTaxExempt(false);
         Tax::setUserContext(null);
+        Tax::clearKeyCodeCache();
     }
 
     /**
@@ -37,6 +38,7 @@ class TaxRuleTest extends PluginTestCase
         Tax::setPricesIncludeTax(false);
         Tax::setTaxExempt(false);
         Tax::setUserContext(null);
+        Tax::clearKeyCodeCache();
 
         parent::tearDown();
     }
@@ -78,7 +80,7 @@ class TaxRuleTest extends PluginTestCase
     //
 
     /**
-     * testCaliforniaStateSalesTax — California charges a flat 7.25% state
+     * testCaliforniaStateSalesTax california charges a flat 7.25% state
      * sales tax on all purchases. This is the base rate before any local
      * district taxes are added.
      */
@@ -105,9 +107,9 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testNewYorkCitySalesTax — NYC has three additive tax layers:
+     * testNewYorkCitySalesTax NYC has three additive tax layers:
      * state (4%), city (4.5%), and MCTD surcharge (0.375%), totaling 8.875%.
-     * In the USA, all sales tax layers are additive (not compound) — each
+     * In the USA, all sales tax layers are additive (not compound), each
      * is calculated independently on the base price and then summed.
      *
      * The system models this as two separate rate rows with priority 1 and 2.
@@ -156,7 +158,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testTexasCombinedSalesTax — Texas has a state rate of 6.25% plus
+     * testTexasCombinedSalesTax texas has a state rate of 6.25% plus
      * up to 2% local tax (city/county/transit), for a maximum combined
      * rate of 8.25%. All layers are additive.
      */
@@ -193,7 +195,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testUsStateOnlyMatchesCorrectState — A California tax rate should
+     * testUsStateOnlyMatchesCorrectState a California tax rate should
      * not apply when the buyer is located in Texas.
      */
     public function testUsStateOnlyMatchesCorrectState()
@@ -209,11 +211,11 @@ class TaxRuleTest extends PluginTestCase
             ],
         ]);
 
-        // Buyer in Texas — should NOT match California rate
+        // Buyer in Texas should NOT match California rate
         Tax::setLocationContext($this->makeLocation('US', 'TX'));
         $this->assertEquals(0, $tax->getTotalTax(10000));
 
-        // Buyer in California — should match
+        // Buyer in California should match
         Tax::setLocationContext($this->makeLocation('US', 'CA'));
         $this->assertEquals(725, $tax->getTotalTax(10000));
     }
@@ -779,6 +781,87 @@ class TaxRuleTest extends PluginTestCase
         // HST 13%: $200.00 × 0.13 = $26.00 = 2600
         $this->assertEquals(2600, $result['taxTotal']);
         $this->assertArrayHasKey('HST', $result['taxes']);
+    }
+
+    /**
+     * testCalculateTaxesMatchesPerItemRoundThenSum — calculateTaxes must agree
+     * with the per-item getTotalTax path so that checkout and invoice totals
+     * never disagree by a cent. Three items at $23.47, $17.32 and
+     * $40.11 at 20% round-then-sum to 469 + 346 + 802 = 1617 cents, not the
+     * 1618 an aggregate-then-round approach would produce.
+     */
+    public function testCalculateTaxesMatchesPerItemRoundThenSum()
+    {
+        $tax = $this->createTaxClass('Flat VAT', [
+            [
+                'tax_name' => 'VAT',
+                'rate' => 20,
+                'country' => 'GB',
+                'state' => '*',
+                'priority' => 1,
+                'is_compound' => 0,
+            ],
+        ]);
+
+        Tax::setLocationContext($this->makeLocation('GB'));
+
+        $prices = [2347, 1732, 4011];
+        $items = [];
+        foreach ($prices as $price) {
+            $item = new TaxItem;
+            $item->taxClassId = $tax->id;
+            $item->quantity = 1;
+            $item->unitPrice = $price;
+            $items[] = $item;
+        }
+
+        $result = Tax::calculateTaxes($items);
+
+        // round(469.4) + round(346.4) + round(802.2) = 469 + 346 + 802 = 1617
+        $this->assertEquals(1617, $result['taxTotal']);
+
+        // taxTotal must equal the sum of the per-item getTotalTax path exactly
+        $perItemTotal = 0;
+        foreach ($prices as $price) {
+            $perItemTotal += $tax->getTotalTax($price);
+        }
+        $this->assertEquals($perItemTotal, $result['taxTotal']);
+
+        // The result must be a whole number of cents, never a fractional float
+        $this->assertSame((float) $result['taxTotal'], round($result['taxTotal']));
+    }
+
+    /**
+     * testCalculateTaxesQuantityMatchesRepeatedItems — a single line of
+     * quantity N must tax the same as N separate lines, both agreeing with
+     * the rounded per-unit rate.
+     */
+    public function testCalculateTaxesQuantityMatchesRepeatedItems()
+    {
+        $tax = $this->createTaxClass('German VAT', [
+            [
+                'tax_name' => 'MwSt 19%',
+                'rate' => 19,
+                'country' => 'DE',
+                'state' => '*',
+                'priority' => 1,
+                'is_compound' => 0,
+            ],
+        ]);
+
+        Tax::setLocationContext($this->makeLocation('DE'));
+
+        // $9.99 unit → round(999 * 0.19) = round(189.81) = 190 per unit
+        $item = new TaxItem;
+        $item->taxClassId = $tax->id;
+        $item->quantity = 3;
+        $item->unitPrice = 999;
+
+        $result = Tax::calculateTaxes([$item]);
+
+        // 3 * 190 = 570
+        $this->assertEquals(570, $result['taxTotal']);
+        $this->assertEquals(3 * $tax->getTotalTax(999), $result['taxTotal']);
     }
 
     /**

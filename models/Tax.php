@@ -297,28 +297,13 @@ class Tax extends Model
             ];
         }
 
-        extract(array_merge([
-            'pricesIncludeTax' => null,
-        ], $options));
-
-        if ($pricesIncludeTax === null) {
-            $pricesIncludeTax = static::doPricesIncludeTax();
-        }
-
         $taxes = [];
         $itemTaxes = [];
         $taxTotal = 0;
 
-        $findAddedTax = function ($taxes) {
-            foreach ($taxes as $tax) {
-                if ($tax['addedTax']) {
-                    return $tax;
-                }
-            }
-            return null;
-        };
-
-        // Process cart items
+        // Process cart items, accumulating the per-item rounded tax so this
+        // matches getTaxRates()/getTotalTax() exactly (round-then-sum), rather
+        // than aggregating raw totals and applying the rate once at the end.
         foreach ($items as $index => $item) {
             $taxClass = $item->getTaxModel();
             if (!$taxClass) {
@@ -333,50 +318,20 @@ class Tax extends Model
                     continue;
                 }
 
-                $iKey = "{$taxClass->id}||{$tax['name']}";
+                $name = $tax['name'];
+                $itemTaxValue = $item->quantity * $tax['rate'];
 
-                if (!isset($taxes[$iKey])) {
-                    $effectiveRate = $tax['taxRate'];
-                    if ($tax['compoundTax']) {
-                        if ($addedTax = $findAddedTax($iTaxes)) {
-                            $effectiveRate = $tax['taxRate'] * (1 + $addedTax['taxRate']);
-                        }
-                    }
-
-                    $taxes[$iKey] = [
-                        'name' => $tax['name'],
-                        'rate' => $tax['rate'],
-                        'effectiveRate' => $effectiveRate,
-                        'total' => 0,
-                    ];
+                if (!isset($taxes[$name])) {
+                    $taxes[$name] = ['name' => $name, 'total' => 0];
                 }
 
-                $taxes[$iKey]['total'] += $item->quantity * $iPrice;
+                $taxes[$name]['total'] += $itemTaxValue;
+                $taxTotal += $itemTaxValue;
             }
-        }
-
-        // Process compounding taxes
-        $compoundTaxes = [];
-        foreach ($taxes as $taxInfo) {
-            $name = $taxInfo['name'];
-
-            if ($pricesIncludeTax) {
-                $taxValue = ($taxInfo['total'] * $taxInfo['effectiveRate']) / (1 + $taxInfo['effectiveRate']);
-            }
-            else {
-                $taxValue = $taxInfo['total'] * $taxInfo['effectiveRate'];
-            }
-
-            if (!isset($compoundTaxes[$name])) {
-                $compoundTaxes[$name] = ['name' => $name, 'total' => 0];
-            }
-
-            $compoundTaxes[$name]['total'] = $taxValue;
-            $taxTotal += $taxValue;
         }
 
         return [
-            'taxes' => $compoundTaxes,
+            'taxes' => $taxes,
             'itemTaxes' => $itemTaxes,
             'taxTotal' => $taxTotal,
         ];

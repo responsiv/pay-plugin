@@ -149,6 +149,7 @@ class TaxLocation extends ElementBase
             ->countryId(post($prefix.'country_id', $this->countryId) ?: null)
             ->isBusiness(post($prefix.'is_business', $this->isBusiness))
             ->taxIdNumber(post($prefix.'tax_id_number', $this->taxIdNumber))
+            ->addressBookId(post($prefix.'address_book_id', $this->addressBookId) ?: null)
             ->countryCode(null)
             ->stateCode(null)
         ;

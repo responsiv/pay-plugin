@@ -455,7 +455,7 @@ class InvoiceTest extends PluginTestCase
     }
 
     /**
-     * testRefundedIsTerminal — refunded status cannot transition further
+     * testRefundedIsTerminal refunded status cannot transition further
      */
     public function testRefundedIsTerminal()
     {
@@ -478,7 +478,7 @@ class InvoiceTest extends PluginTestCase
     }
 
     /**
-     * testVoidIsTerminal — void status cannot transition further
+     * testVoidIsTerminal void status cannot transition further
      */
     public function testVoidIsTerminal()
     {
@@ -497,7 +497,7 @@ class InvoiceTest extends PluginTestCase
     }
 
     /**
-     * testCannotSkipToPaidFromDraft — draft can go to paid directly
+     * testCannotSkipToPaidFromDraft draft can go to paid directly
      * (this is a valid shortcut in the status map)
      */
     public function testDraftCanSkipToPaid()
@@ -525,7 +525,7 @@ class InvoiceTest extends PluginTestCase
         $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_APPROVED);
         $invoice->refresh();
 
-        // Same status again — should return false (no-op)
+        // Same status again, should return false (no-op)
         $result = $invoice->updateInvoiceStatus(InvoiceStatus::STATUS_APPROVED);
         $this->assertFalse($result);
     }
