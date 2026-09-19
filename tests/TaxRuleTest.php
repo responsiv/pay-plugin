@@ -225,7 +225,7 @@ class TaxRuleTest extends PluginTestCase
     //
 
     /**
-     * testGermanyStandardVat — Germany charges 19% Mehrwertsteuer (MwSt)
+     * testGermanyStandardVat - Germany charges 19% Mehrwertsteuer (MwSt)
      * on most goods and services.
      */
     public function testGermanyStandardVat()
@@ -251,7 +251,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testGermanyReducedVat — Germany charges a reduced 7% VAT on food,
+     * testGermanyReducedVat - Germany charges a reduced 7% VAT on food,
      * books, newspapers, and some other categories.
      */
     public function testGermanyReducedVat()
@@ -274,7 +274,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testGermanyVatInclusivePricing — In Germany, consumer prices include
+     * testGermanyVatInclusivePricing - In Germany, consumer prices include
      * VAT. Extracting 19% VAT from a €119.00 gross price should yield
      * €19.00 tax and €100.00 net.
      */
@@ -303,7 +303,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testGermanyVatDoesNotApplyOutsideCountry — German VAT should not
+     * testGermanyVatDoesNotApplyOutsideCountry - German VAT should not
      * apply to a buyer located in the USA.
      */
     public function testGermanyVatDoesNotApplyOutsideCountry()
@@ -329,7 +329,7 @@ class TaxRuleTest extends PluginTestCase
     //
 
     /**
-     * testOntarioHst — Ontario uses a harmonized sales tax (HST) of 13%
+     * testOntarioHst - Ontario uses a harmonized sales tax (HST) of 13%
      * that combines the 5% federal GST with the 8% provincial portion
      * into a single tax.
      */
@@ -356,8 +356,8 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testBritishColumbiaGstPlusPst — British Columbia charges GST (5%)
-     * and PST (7%) separately. Both are additive — each is calculated
+     * testBritishColumbiaGstPlusPst - British Columbia charges GST (5%)
+     * and PST (7%) separately. Both are additive - each is calculated
      * independently on the base price, for a combined 12%.
      */
     public function testBritishColumbiaGstPlusPst()
@@ -400,7 +400,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testSaskatchewanGstPlusPst — Saskatchewan charges GST (5%) and
+     * testSaskatchewanGstPlusPst - Saskatchewan charges GST (5%) and
      * PST (6%) separately, both additive, for a combined 11%.
      */
     public function testSaskatchewanGstPlusPst()
@@ -434,7 +434,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testAlbertaGstOnly — Alberta has no provincial sales tax. Only the
+     * testAlbertaGstOnly - Alberta has no provincial sales tax. Only the
      * federal 5% GST applies.
      */
     public function testAlbertaGstOnly()
@@ -461,7 +461,7 @@ class TaxRuleTest extends PluginTestCase
     //
 
     /**
-     * testQuebecPreHarmonizationCompoundTax — Before January 1, 2013,
+     * testQuebecPreHarmonizationCompoundTax - Before January 1, 2013,
      * Quebec's QST (9.975%) was compound: it was calculated on the
      * base price PLUS the GST, creating a "tax on tax" effect.
      *
@@ -515,7 +515,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testQuebecCurrentNonCompound — Since January 1, 2013, Quebec's QST
+     * testQuebecCurrentNonCompound - Since January 1, 2013, Quebec's QST
      * is no longer compound. Both GST (5%) and QST (9.975%) are calculated
      * independently on the base price, for a combined 14.975%.
      */
@@ -559,7 +559,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testCompoundVsAdditiveProducesDifferentResults — Demonstrates the
+     * testCompoundVsAdditiveProducesDifferentResults - Demonstrates the
      * mathematical difference between compound and additive tax. With the
      * same rates, compound tax always produces a higher total because it
      * creates a "tax on tax" effect.
@@ -608,13 +608,13 @@ class TaxRuleTest extends PluginTestCase
 
         Tax::setLocationContext($this->makeLocation('US'));
 
-        // $100.00 item — additive
+        // $100.00 item - additive
         // Tax A: 10000 * 0.05 = 500
         // Tax B: 10000 * 0.10 = 1000
         // Total: 1500
         $this->assertEquals(1500, $additive->getTotalTax(10000));
 
-        // $100.00 item — compound
+        // $100.00 item - compound
         // Tax A: 10000 * 0.05 = 500
         // Tax B: (10000 + 500) * 0.10 = 1050
         // Total: 1550
@@ -628,7 +628,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testCompoundTaxInclusivePricing — When prices include compound tax,
+     * testCompoundTaxInclusivePricing - When prices include compound tax,
      * extracting the tax requires working backwards through the compound
      * calculation. Uses Quebec pre-2013 rates as the real-world example.
      */
@@ -671,7 +671,7 @@ class TaxRuleTest extends PluginTestCase
     //
 
     /**
-     * testTaxExemptReturnsZero — When the tax-exempt flag is set, no tax
+     * testTaxExemptReturnsZero - When the tax-exempt flag is set, no tax
      * should be calculated regardless of the tax class configuration.
      */
     public function testTaxExemptReturnsZero()
@@ -695,7 +695,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testNoLocationContextReturnsZero — When no location context is set,
+     * testNoLocationContextReturnsZero - When no location context is set,
      * the system cannot determine which tax rates apply and returns zero.
      */
     public function testNoLocationContextReturnsZero()
@@ -716,7 +716,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testWildcardStateMatchesAllStates — When a tax rate uses '*' for the
+     * testWildcardStateMatchesAllStates - When a tax rate uses '*' for the
      * state, it should apply to all states within that country.
      */
     public function testWildcardStateMatchesAllStates()
@@ -744,7 +744,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testCalculateTaxesAcrossMultipleItems — Verifies the static
+     * testCalculateTaxesAcrossMultipleItems - Verifies the static
      * calculateTaxes method correctly sums taxes across multiple cart
      * items with different quantities. Uses Ontario HST as example.
      */
@@ -784,7 +784,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testCalculateTaxesMatchesPerItemRoundThenSum — calculateTaxes must agree
+     * testCalculateTaxesMatchesPerItemRoundThenSum - calculateTaxes must agree
      * with the per-item getTotalTax path so that checkout and invoice totals
      * never disagree by a cent. Three items at $23.47, $17.32 and
      * $40.11 at 20% round-then-sum to 469 + 346 + 802 = 1617 cents, not the
@@ -832,7 +832,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testCalculateTaxesQuantityMatchesRepeatedItems — a single line of
+     * testCalculateTaxesQuantityMatchesRepeatedItems - a single line of
      * quantity N must tax the same as N separate lines, both agreeing with
      * the rounded per-unit rate.
      */
@@ -865,7 +865,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testWithContextRestoresPreviousState — The withContext method should
+     * testWithContextRestoresPreviousState - The withContext method should
      * temporarily change the tax context and restore it afterwards.
      */
     public function testWithContextRestoresPreviousState()
@@ -899,7 +899,7 @@ class TaxRuleTest extends PluginTestCase
     }
 
     /**
-     * testMultipleRatesSameCountryDifferentStates — A single tax class
+     * testMultipleRatesSameCountryDifferentStates - A single tax class
      * can have different rates for different states. The system should
      * select the matching rate based on the buyer's location.
      */
