@@ -45,3 +45,6 @@ v3.2.1: Fixes state validation when country has no states
 v3.2.2: Fixes missing code field on tax classes
 v3.2.3: Support customer tax ID (VAT) on invoices
 v3.2.4: Optimize tax rule calculation
+v3.3.0:
+    - Added tax exempt flag for invoice items
+    - migrate_v3_3_0.php

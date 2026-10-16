@@ -35,3 +35,8 @@ tabs:
             label: Tax Class
             type: relation
             emptyOption: -- use default --
+
+        is_tax_exempt:
+            label: Tax Exempt
+            comment: Exclude this line from tax instead of using the default tax class.
+            type: checkbox

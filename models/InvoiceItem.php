@@ -20,6 +20,7 @@ use Model;
  * @property string $related_type
  * @property int $invoice_id
  * @property int $tax_class_id
+ * @property bool $is_tax_exempt is_tax_exempt excludes the line from tax instead of using the default tax class
  * @property \Illuminate\Support\Carbon $updated_at
  * @property \Illuminate\Support\Carbon $created_at
  *
@@ -66,7 +67,7 @@ class InvoiceItem extends Model
      */
     public function beforeSave()
     {
-        if (!$this->tax_class_id) {
+        if (!$this->tax_class_id && !$this->is_tax_exempt) {
             $this->tax_class = Tax::getDefault();
         }
 

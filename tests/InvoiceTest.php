@@ -6,6 +6,8 @@ use Responsiv\Pay\Models\Invoice;
 use Responsiv\Pay\Models\InvoiceItem;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
+use Responsiv\Pay\Models\Tax;
+use Responsiv\Pay\Classes\TaxLocation;
 
 /**
  * InvoiceTest validates invoice model attributes, computed properties,
@@ -176,6 +178,69 @@ class InvoiceTest extends PluginTestCase
         ]);
 
         $this->assertEquals(2200, $invoice->final_discount);
+    }
+
+    //
+    // Tax Exempt Items
+    //
+
+    /**
+     * testTaxExemptItemIsNotTaxed verifies an exempt line keeps no tax class and
+     * no tax, while a line without a class still falls back to the default class.
+     */
+    public function testTaxExemptItemIsNotTaxed()
+    {
+        Model::unguard();
+        $tax = Tax::create([
+            'name' => 'Default',
+            'is_default' => true,
+            'rates' => [
+                [
+                    'country' => '*',
+                    'state' => '*',
+                    'city' => '*',
+                    'zip' => '*',
+                    'rate' => 10,
+                    'tax_name' => 'GST',
+                    'priority' => 1,
+                    'is_compound' => 0,
+                ],
+            ],
+        ]);
+        Model::reguard();
+
+        $invoice = $this->createInvoice($this->createUser());
+        $address = (new TaxLocation)->countryCode('AU');
+
+        $taxed = new InvoiceItem;
+        $taxed->invoice = $invoice;
+        $taxed->description = 'Taxed';
+        $taxed->quantity = 1;
+        $taxed->price = 10000;
+        $taxed->discount = 0;
+        $taxed->save();
+
+        $exempt = new InvoiceItem;
+        $exempt->invoice = $invoice;
+        $exempt->description = 'Exempt';
+        $exempt->quantity = 1;
+        $exempt->price = 5000;
+        $exempt->discount = 0;
+        $exempt->is_tax_exempt = true;
+        $exempt->save();
+
+        Tax::withContext($address, false, function() use ($invoice, $taxed, $exempt, $address) {
+            $taxed->evalInvoiceItemTotals(['invoice' => $invoice, 'address' => $address]);
+            $exempt->evalInvoiceItemTotals(['invoice' => $invoice, 'address' => $address]);
+            $invoice->evalInvoiceTotals(['items' => [$taxed, $exempt], 'address' => $address]);
+        });
+
+        $this->assertEquals($tax->id, $taxed->tax_class_id);
+        $this->assertEquals(1000, $taxed->tax);
+        $this->assertNull($exempt->tax_class_id);
+        $this->assertEquals(0, $exempt->tax);
+        $this->assertEquals(1000, $invoice->tax);
+        $this->assertEquals(16000, $invoice->total);
     }
 
     //

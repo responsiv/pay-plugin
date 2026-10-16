@@ -38,7 +38,7 @@ trait HasCalculatedAttributes
                     $this->subtotal += $item->quantity * $item->price - $item->discount;
 
                     // Calculate the tax portion of the discount
-                    if ($item->discount) {
+                    if ($item->discount && !$item->is_tax_exempt) {
                         $taxClass = Tax::findByKey($item->tax_class_id);
                         if ($taxClass) {
                             if ($this->prices_include_tax) {

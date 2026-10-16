@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('related_type')->index()->nullable();
             $table->integer('invoice_id')->unsigned()->nullable()->index();
             $table->integer('tax_class_id')->unsigned()->nullable()->index();
+            $table->boolean('is_tax_exempt')->default(false);
             $table->timestamps();
         });
     }

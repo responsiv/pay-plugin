@@ -26,6 +26,10 @@ trait HasCalculatedAttributes
         $this->price_with_tax = $this->price_less_tax = $this->price;
         $this->tax = 0;
 
+        if ($this->is_tax_exempt) {
+            return;
+        }
+
         // Recalculate taxes
         $taxClass = Tax::findByKey($this->tax_class_id);
         if (!$taxClass) {

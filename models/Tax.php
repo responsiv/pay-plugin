@@ -273,7 +273,7 @@ class Tax extends Model
         foreach ($invoiceItems as $invoiceItem) {
             if ($invoiceItem instanceof InvoiceItem) {
                 $item = new TaxItem;
-                $item->taxClassId = $invoiceItem->tax_class_id;
+                $item->taxClassId = $invoiceItem->is_tax_exempt ? null : $invoiceItem->tax_class_id;
                 $item->quantity = $invoiceItem->quantity;
                 $item->unitPrice = $invoiceItem->price;
                 $items[] = $item;
