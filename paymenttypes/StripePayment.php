@@ -94,7 +94,7 @@ class StripePayment extends GatewayBase
     public function processPaymentForm($data, $invoice)
     {
         try {
-            $invoice = $this->findInvoiceFromHash(post('invoice_hash'));
+            $invoice = $invoice ?: $this->findInvoiceFromHash(post('invoice_hash'));
             if ($invoice->isPaymentProcessed()) {
                 throw new ApplicationException('Invoice already paid');
             }
