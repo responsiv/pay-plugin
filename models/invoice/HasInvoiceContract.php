@@ -4,6 +4,7 @@ use Log;
 use Cms;
 use Event;
 use Cms\Classes\Controller;
+use Cms\Classes\PageManager;
 use Responsiv\Pay\Models\Setting;
 use Responsiv\Pay\Models\InvoiceStatus;
 use Responsiv\Pay\Models\InvoiceStatusLog;
@@ -56,14 +57,7 @@ trait HasInvoiceContract
     public function getReceiptUrl()
     {
         if ($link = $this->payment_method?->getReceiptPage()) {
-            $controller = Controller::getController() ?: new Controller;
-
-            // @todo this is a pagefinder link
-            // \Cms\Classes\PageManager::url($link, ...)
-            return $controller->pageUrl($link, [
-                'id' => $this->id,
-                'hash' => $this->hash,
-            ]);
+            return $this->getPageLinkUrl($link);
         }
 
         return Cms::entryUrl('payment', ['hash' => $this->hash]);
@@ -75,17 +69,30 @@ trait HasInvoiceContract
     public function getCustomPaymentPageUrl()
     {
         if ($link = $this->payment_method->getCustomPaymentPage()) {
-            $controller = Controller::getController() ?: new Controller;
-
-            // @todo this is a pagefinder link
-            // \Cms\Classes\PageManager::url($link, ...)
-            return $controller->pageUrl($link, [
-                'id' => $this->id,
-                'hash' => $this->hash,
-            ]);
+            return $this->getPageLinkUrl($link);
         }
 
         return Cms::entryUrl('payment', ['hash' => $this->hash]);
+    }
+
+    /**
+     * getPageLinkUrl returns the URL for a page link with the invoice parameters. The link
+     * is a page finder address (october://...) or, as stored by older versions, a page name.
+     */
+    protected function getPageLinkUrl(string $link): ?string
+    {
+        $params = [
+            'id' => $this->id,
+            'hash' => $this->hash,
+        ];
+
+        if (str_starts_with($link, 'october://')) {
+            return PageManager::url($link, $params) ?: null;
+        }
+
+        $controller = Controller::getController() ?: new Controller;
+
+        return $controller->pageUrl($link, $params);
     }
 
     /**
